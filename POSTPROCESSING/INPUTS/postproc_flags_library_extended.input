@@ -1,0 +1,17 @@
+  skip_time = 1
+  nbox = 1
+  n_topspecies = 10
+  flag_atomratios = .false.
+  flag_carbonchain = .false.
+  flag_phasedist = .false.
+  flag_chon = .false.
+  flag_functions = .false.
+  flag_pvap = .false.
+  flag_henry = .false.
+  flag_soayield = .false.
+  flag_topspec = .false.
+  flag_smiles = .false.
+  selected_species(1:1) = "GC04000"
+  flag_bubble = .true.
+  flag_massspectrum = .true.
+/

@@ -1,0 +1,9 @@
+*
+!WORK
+!*.f
+!.gitignore
+!*intp
+!readme
+!Makefile
+!*.f90
+!template.mk

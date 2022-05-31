@@ -1,0 +1,80 @@
+#!/bin/csh
+#            unix command file (for SILICON) to run programs 
+#            which depend on the library 'cklib' or 'rklib'
+
+if( $#argv == 0 ) then
+  echo --ERROR-- this unix procedure must be run with some arguments
+  exit
+endif
+
+
+cd ./POST_WORK
+\rm *
+
+set savestatus=0
+################################################
+# copie les fichiers dans le rep. de travail   #
+################################################
+cp ../../PROG/aeroplot ./
+if( $status != 0 ) set savestatus=$status
+
+cp ../$1/$1.ppa ./indat.ppa
+if( $status != 0 ) set savestatus=$status
+
+ln -sf $2 ./dict_post
+if( $status != 0 ) set savestatus=$status
+
+ln -sf $3 ./mech_post
+if( $status != 0 ) set savestatus=$status
+
+ln -sf $4 ./pvap_post
+if( $status != 0 ) set savestatus=$status
+
+ln -sf $5 ./kOH_post
+if( $status != 0 ) set savestatus=$status
+
+#ln -sf $6 ./jvals_post
+#if( $status != 0 ) set savestatus=$status
+
+ln -sf $6 ./Henry_post
+if( $status != 0 ) set savestatus=$status
+
+cp ../plot.key ./indat.plot
+if( $status != 0 ) set savestatus=$status
+
+if( $savestatus != 0 ) then
+  echo
+  echo the plot program has not been started
+#  rm -f *
+  cd ../
+  exit
+endif
+
+#################################################
+# test que le programme est a jour              #
+# (a faire dans le futur => ancienne version)   #
+#################################################
+#set progmkfile=/usr/local/ck_rk/com/mkprog.sil
+#make -f $progmkfile -q -r -s libid=ak pgdir=$HOME/S2/PROG prog=selsp
+#if ( $status != 0 ) echo --warning--  plot program has been changed \
+#after last compilation
+
+echo running the plot program
+./aeroplot
+foreach i (`ls outdat.*`)
+  mv $i  ../aer.$i:e
+end
+foreach i (`ls aoutdat.*`)
+  mv $i  ../aoutdat.$i:e
+end
+foreach i (`ls fort.*`)
+  mv $i  ../aer.$i:e
+end
+cd ../
+
+cd ./POST_WORK
+\rm *
+cd ../
+
+echo normal stop
+echo 

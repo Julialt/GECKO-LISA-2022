@@ -1,0 +1,299 @@
+==================================================
+README_BOXMOD_INDAT
+==================================================
+Date: 23 March, 2020
+Author: Jula Lee-Taylor, NCAR
+Purpose:
+This file describes all keywords available for the 
+GECKO-A boxmodel input files indat_*.key
+Most keywords have default values defined in the code,
+in subroutine init_defaults.f90. Keyword can be omitted
+if the default value is desired.
+==================================================
+==== Integer flags : Format in this file =========
+KYWD in-code-variable-name : default value : explanation
+   m = meaning of value 'm'
+==================================================
+==== Integer flags : FOR GENERAL USE =============
+==================================================
+NBOX nbox : number of boxes where chemistry is solved  
+   (valid values = 1, 2)
+...................
+PREV prevflag : 0 : are we continuing from a previous run?
+   0 = fresh run, from scratch DEFAULT
+   1 = use output from a previous run as initial conditions
+...................
+LAGR lagflag : 0 : Eulerian or Lagrangian mode?
+   0 = Eulerian
+   1 = Lagrangian
+...................
+DEPO depos_fg : 0 : deposition (0/1 = off/on)
+   (REQUIRES variables SEAS and SURF)
+...................
+PVAP pvap_fg : 2 : vapour pressure estimation method
+   2 = Nannoolal
+   3 = SIMPOL.1
+   DEPRECATED OPTION: 1 = Myrdal & Yalkowski
+...................
+SOAF soa_fg : 2 : SOA (0/2 = off/on)
+   0 = no SOA
+   2 = SOA with mass transfer method 
+   DEPRECATED OPTION: 1 = basic equilirium SOA method 
+...................
+NVID seedtyp_fg : 0 : identity of aerosol seed (affects density, allocation of organic mass for partitioning)
+   0 = organic
+   1 = inorganic
+...................
+WALL wall_fg : 0 : wall losses (0/1 = off/on)
+...................
+CHAM icham : 0 : identity of chamber for wall losses
+NB: Each chamber has its own subroutine, to enable addition of other well-characterized chambers.
+   0 = none
+   1 = Matsunaga & Ziemann
+   2 = CU: Ziemann
+   3 = CU: Jimenez 
+   4 = Huang, 2018
+   99 = test
+...................
+RRAT reacrate_fg : 0 : flag to activate reaction rate output
+   0 = no rate output
+   1 = output instantaneous rates of all reactions at every o/p time
+=================================================================
+DATA : placeholder between flags and data sections (COMPULSORY)
+=================================================================
+==== Input Data Variables and Formats in this file =========
+==== default format: 
+KWYD value
+==== sinusoidal format: 
+KYWD followed by nbox lines containing 3 variables a,b,c where:
+     m = mean; a = amplitude; tm = time of maximum
+==== standard table: 
+KYWD nlin; followed by nlin lines of format:
+     time(s)  value
+     NB: table format overrides single-line or sinusoidal formats
+==== per-box table: 
+KYWD BOT/TOP nlin; for bottom / top box, followed by nlin lines of format:
+     time(s)  value
+==== per-species table: 
+KYWD ntab; followed by ntab tables with following format:
+     PNAME nlin  (PNAME = GECKO name with phase prefix G/A/W etc)
+     time(s)  value
+=================================================================
+==== Input data variables : REQUIRED =========
+=================================================================
+TSTR tstart(s) : time at start of simulation
+...................
+TSTP tstop(s) : time at end of simulation
+...................
+TLEN tlen(s) : length of timestep for interpolation of environmental inputs. 
+...................
+SKIP nskip(unitless) : UPDATED DEFINITION: number of model timesteps to skip
+                       (i.e. to not output) between output time-points
+...................
+REAC pname conc1(molec/cc) conc2(molec/cc) conc3(molec/cc)
+       initial concentrations of species "pname" in:
+       box1, box2 (background if nbox = 1), background (if nbox = 2)
+       one line per species
+...................
+END : keyword marking end of input data
+=================================================================
+==== Input data variables : AT LEAST 1 OPTION REQUIRED IN EACH CASE ======
+=================================================================
+::::::::::::::::::::::::
+HBOX nhd : altitude of top of box 1 (standard table)
+  boxt(s) boxh(cm) 
+..AND.(IF nbox = 2).....
+HTOP htop(cm) : altitude of top of box 2 (if present)
+::::::::::::::::::::::::
+TEMP : temperature, sinusoidal format (separate line per box)
+ tempm(K)  tempa(K) temptm(s)  <- box 1
+ tempm(K)  tempa(K) temptm(s)  <- box 2 (if applicable)
+.....OR.................
+TKTB ntk : temperature (standard table)
+  tktim(s)  tkval(1:nbox)(K)
+::::::::::::::::::::::::
+WATR water_concentration (molecules/cm3)
+.....OR.................
+RHUM : relative humidity sinusoidal format (separate line per box)
+ tempa(K)  tempb(K) rhtm(s)  <- box 1
+ tempa(K)  tempb(K) rhtm(s)  <- box 2 (if applicable)
+.....OR.................
+RHTB nrh : relative humidity (standard table)
+  rhtim (s)  rhvals(1:nbox) (%)
+::::::::::::::::::::::::
+WIND  winda(m.s-1)  windb(m.s-1) windtm(s)
+      wind speed, sinusoidal format (all on one line), applies to box1 only
+      used for deposition
+.....OR.................
+WSTB nws : box 1 wind speed (standard table)
+  wstim (s)  wsval (m.s-1)
+::::::::::::::::::::::::
+PPHO sla(degrees), slo(degrees), tz(HH), iy(yyyy), im(mm), id(dd)
+     {lat,         lon,     timezone, year,    month,  day}
+     parameters to calculate diurnally varying solar zenith angle 
+     timezone = hours west of Greenwich (in case o/p desired in UT)
+.....OR.................
+SZAF szaval(degrees) : fixed solar zenith angle. Sets flag szafix = 1
+=================================================================
+==== Input data variables : OPTIONAL =========
+=================================================================
+::::::::::::::::::::::::
+NDEN sumc(1:nbox)(molec/cc) : number density of atmosphere (fixed)
+                  (overrides PRES, PRTB)
+                  (If NOT set here, sumc calculated from lapse rate & gas const)
+.....OR.................
+PRES pres(bar = Pa/1e5): atmospheric pressure (fixed) used to find sumc.
+.....OR.................
+PRTB npr: pressure (standard table)
+  prtim(s)  prval(1:nbox)(bar)
+::::::::::::::::::::::::
+DILF dilconst(s-1) : dilution rate throughout lowest box
+                    (Affects only concentration in box receiving material.)
+                    (1-box case: box1 diluted with background if +ive     )
+                    (2-box case: box2->box1 transfer if +ive,             )
+                    (            box1->box2 transfer if -ive              )
+                    (OVERRIDES height-driven dilution.                    )
+                    (Sets dilfix = 1                                      )
+.....OR.................
+DLTB ndil : Time-varying version of DILF, which it OVERRIDES (standard table)
+    diltim(s) dilval(s-1)
+...................
+SUBS vs(cm.s-1) : tropospheric subsidence velocity in 2-box case.
+                 (Bidirectional exchange of box2 with background )
+...................
+MIX nmx : bidirectional cross-interface mixing velocity (standard table)
+    mixt(s) mixv(1:nbox)(cm.s-1) 
+    (Instantaneously affects conc in each box (but not background) )
+    (1-box case: box 1 exchanging with background                  )
+    (2-box case: box 1 exchanging with box 2                       )
+    (        AND box 2 exchanging with background                  )
+    (Always positive.                                              )
+    (ADDITIONAL to any other exchange terms: included for flexibility)
+::::::::::::::::::::
+SEAS iseas(unitless) : season i.d.
+   (used for deposition parameterization)
+   (1 = late autumn, no leaves, no snow)
+   (2 = summer, luxuriant vegetation)
+....AND............
+SURF nsd : fraction of surface occupied by vegetation type(n) (standard table) 
+   surft(s) psurf(n=1:4)
+   (4 surface types are URB1 : CULT : FLEA : FCON ) 
+   (i.e. urban, cultivated, forest:leafy, forest:coniferous)
+   (4 values must add up to 1.0)
+   (used for deposition parameterization)
+   (REQUIRES SEAS)
+...................
+CONS constrained concentrations (molec.cm-3)(per-species table)
+...................
+SEMI surface-dependent emissions (molec.cm-2.s-1)(per-species table)
+...................
+NOEM noem_fg (fraction) Surface NO emissions per Amazon rainforest 
+               (standard flux = 2.6 ngN m-2 s-1 for wet soil, Yienger & Levy 95)
+               (default fraction = 0)
+...................
+ISOP isop_fac (isoprene emission factor, default = 1)
+...................
+MTER mterp_fac (monoterpene emission factor, default = 1)
+:::::::::::::::::::
+SEED cnv(mole/cc) : concentration of non-volatile seed particles
+.....OR..............
+SEET nseed : time-varying nonvolatile seed aerosol conc (standard table)
+     tseed(s) cseed(molec/cc)
+:::::::::::::::::::
+NVMW Mp(amu) : mean molecular mass of non-volatile seed particles
+...................
+NVRO Rpo(cm) : initial radius of nonvolatile aerosol particles
+...................
+GAMM gamm(unitless) : bulk activity coeff for SOA, default = 1.
+...................
+JFAC njf : wavelenght-independent multiplier for j-values (standard table)
+     jftim(s) jfval(real, unitless)
+...................
+LGHT nlights : timing of chamber lights on/off (modified table)
+     light_ton(s) light_toff(s)
+...................
+INJC ninject : timing of injections to chamber (modified table)
+               (creates emission rate throughout chamber (molec.cm3.s-1)  
+                = inject_conc*(inject_tstop-inject_tstart))
+     inject_code(=chrsp) inject_tstart(s)  inject_tstop(s)  inject_conc(molec.cm-3)
+...................
+AVRT A_V_ratio (m-1) : Area/Volume ratio for chamber experiment (wall losses)
+                       (specific to subroutine wall_Huang2018)
+==================================================
+==================================================
+==== Specialist Integer Flags : FOR USE WITH CARE
+==================================================
+DIMR dimer_fg : 0 : dimerisation (0/1 = off/on)
+...................
+RO2F ro2_fg : 1 : allow RO2+RO2 reactions (0/1 = off/on)
+...................
+OFR OFR_fg : 0 : OFR mode (0/1 = off/on)
+     !! also requires keywords {F185, F254}, see below.
+...................
+ISOA isopsoa_fg : 0 : isoprene aq. soa (0/1 = off/on)
+       (CAUTION! ONLY FOR USE IN SPECIFIC CASES. ASK!)
+     !! also requires keywords {PHAR, NITR, SULF, KAPA}, see below.
+===========================================================
+==== Specialist Input Data Variables : ONLY FOR USE IN SPECIFIC CASES
+===========================================================
+RTOL rtol(unitless) : relative solver tolerance. Default = 1e-2
+...................
+ATOL atol(unitless) : absolute solver tolerance. Default = 1e2
+...................
+DTMN dtmin(s) : smallest solver timestep. Default = MIN(0.1,TLEN)
+...................
+F185 f185(photons.cm-2.s-1) : photon flux at 185 nm 
+     (for OFR only)
+...................
+F254 f254(photons.cm-2.s-1) : photon flux at 254 nm 
+     (for OFR only)
+...................
+AERO saero(cm2/cm3)(t=0) : initial wet aerosol surface area
+     (for inorganic aerosol use)
+...................
+PHAR ph_const(unitless) : constrained pH (per-box table)
+     (requires ISOA=1) (Apparently not implemented in current version)
+...................
+NITR nitrate_const(molec/cc_air) : constrained nitrate (per-box table)
+     (requires ISOA=1) (Apparently not implemented in current version)
+...................
+SULF sulfate_const(molec/cc_air) : constrained sulfate (per-box table)
+     (requires ISOA=1) (Apparently not implemented in current version)
+...................
+KAPA kappa_const(unitless) : constrained sulfate (per-box table)
+     (requires ISOA=1) (Apparently not implemented in current version)
+==================================================
+==================================================
+==== INPUT KEYWORDS NOT IN CURRENT USE ===========
+==================================================
+CROM jall_fg : 1 : FLAG : text o/p for all reference j-values (0/1 = off/on) 
+...................
+DYNF dyn_fg : 1 : FLAG : dynamic representation of gas-> aerosol transfer?
+   0 = off (equilibrium only: DEPRECATED)
+   1 = on 
+...............
+EMIS emissions (molec.cm-2.s-1)(per-species table)
+...................
+IFMT iofmt_fg : 0 : FLAG : input/output file format (Standard i/o is NetCDF) 
+   0 = NetCDF only
+   1 = binary only (DEPRECATED)
+   2 = NetCDF AND binary (DEPRECATED)
+...................
+NPAS total number of timesteps requested : DATA section
+...................
+NPRT number of output data time-points requested : DATA section
+...................
+PSSF print_steadystate_fg : 1 : FLAG : produce separate output for last time
+   0 = no
+   1 = yes (OBSOLETE, NOT WORKING)
+...................
+SCAP iscape : 0 : FLAG : calculate "thermodynamic equilibrium for inorganic aerosol" ("thermo" inputs are NOT invoked in NetCDF version). Also invokes NH3 emission from surface vegetation (0/1 = off/on)
+...................
+C0EQ DATA : thermodynamic equilibrium species initial concs (1 line/species/box), requires SCAP = 1
+...................
+JO2  jo2 : DATA: j-value of O2 (s-1): requires OFR=1
+          (now calculated from f185)
+...................
+JH2O jho2 : DATA: j-value of H2O (s-1): requires OFR = 1
+           (now calculated from f185)
+==================================================

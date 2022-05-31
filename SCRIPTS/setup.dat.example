@@ -1,0 +1,14 @@
+#===========================================
+     ==SET UP GECKO VERSION AND PATHS==
+!! this is a searchable TEXT FILE - RETAIN SPACES IN EACH LINE !!
+#===========================================
+home_dir = /ur/username/TUTORIAL/GECKO-A/
+scratch_dir = /ur/username/TUTORIAL/GECKO-A/
+gecko_version = GECKO-A
+gecko_inp_dir = GECKO-A/INPUTS
+gecko_run_dir = GECKO_SCRATCH
+boxmod_version = BOXMOD
+boxmod_run_dir = BOXMOD_RUNS
+postproc_version = POSTPROCESSING
+postproc_run_dir = POST_SCRATCH
+

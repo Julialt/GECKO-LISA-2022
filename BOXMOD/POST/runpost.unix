@@ -1,0 +1,162 @@
+#!/bin/csh
+
+################################################
+# hardwire path for dictionary files
+# ################################################
+set prec = 'double'
+#set prec = 'single'
+
+set chempath = /home/julial/GECKO/GIT_COPY/GECKO-A/GECKO_SCRATCH
+set runpath  = /home/julial/GECKO/GIT_COPY/GECKO-A/BOXMOD_RUNS
+
+# hardwired, superseded by command line arguments below
+set outdir = $runpath
+
+# JLJ chamber runs
+set dicnam = alkanols_6-12_vd
+set run = alkanols_6-12_vd_XL_2a_DOS15u_190110t
+
+################################################
+
+# OR USE STRINGS SPECIFID ABOVE #
+echo ''
+ set dicpath = $chempath'/'$dicnam
+ echo 'dictionary = '$dicnam'/'$dicnam'.dict'
+ echo ' '
+ echo 'simulation = '$run
+ echo ' '
+
+################################################
+# copy required files into working directory   #
+################################################
+
+set dict_post = $dicpath/$dicnam.dict 
+set prec_list = $dicpath/cheminput.dat
+set mech_post = $dicpath/$dicnam.mech
+set pvap_post = $dicpath/$dicnam.pvap
+set kOH_post = $dicpath/$dicnam.kOH
+if (-e  $dicpath/$dicnam.henry) then
+  set Henry_post = $dicpath/$dicnam.henry
+else
+  set Henry_post = $dicpath/$dicnam.Henry
+endif
+
+echo 'individual (indv), gas (gas), aerosol (aer), or ascii (ascii)?'
+set typ = $<
+#set typ = 'ascii'
+
+################################################
+
+##------------------------##
+
+echo 'processing boxmodel output...',$run
+echo ' '
+#mkdir $outdir/$run
+
+if ($typ == 'indv') then
+  echo selsp ............
+  echo 
+  cd ../PROG
+  if ($prec == 'single') then
+    ./callmake.unix.sp selsp
+  else
+    ./callmake.unix selsp
+  endif
+  cd ../POST
+  ./runplot.unix $run
+  echo 
+  echo adfi ............
+  echo 
+  cd ../PROG
+  if ($prec == 'single') then
+    ./callmake.unix.sp adfi
+  else
+    ./callmake.unix adfi
+  endif
+  cd ../POST
+  ./../PROG/adfi indv.GNO indv.GNO2 > indv.GNOx
+
+  echo 'copying output to directory "'$run'"'
+  cp indv.* $outdir/$run
+  mv indv.* $run
+endif
+
+echo 'checking for existence of aklib.a'
+if (-e ../OBJ/aklib.a) then
+  echo 'its all good'
+else
+  echo 'compiling new aklib.a'
+  cd ../OBJ
+     #make -f lib.makefile
+     make all  # this command is used in the bash make script
+endif
+
+if ($typ == 'gas') then
+  echo running gasplot ............
+  echo 
+  cd ../PROG
+  if ($prec == 'single') then
+    ./callmake.unix.sp gasplot $dicpath
+  else 
+    ./callmake.unix gasplot $dicpath
+  endif
+  cd ../POST
+  ./gasplot.unix $run  $dict_post
+  echo 
+  echo 'copying output to directory "'$run'"'
+  cp gas.* $dicpath
+  mv gas.* $run
+endif
+
+if ($typ == 'aer') then
+  echo running aeroplot ............
+  echo 
+  cd ../PROG
+  if ($prec == 'single') then
+    ./callmake.unix.sp aeroplot $dicpath
+  else
+    ./callmake.unix aeroplot $dicpath
+  endif
+
+  cd ../POST
+  ./aeroplot.unix $run $dict_post $mech_post $pvap_post $kOH_post $Henry_post
+
+  echo 
+  echo 'copying output to directory "'$run'"'
+
+  cp aer.* $dicpath
+  mv aer.* $run
+endif
+
+if ($typ == 'ascii') then
+  echo running asciiplot ............
+  echo 
+  cd ../PROG
+  if ($prec == 'single') then
+    ./callmake.unix.sp asciiplot $dicpath
+  else
+    ./callmake.unix asciiplot $dicpath
+  endif
+  cd ../POST
+  ./asciiplot.unix $run $dict_post $pvap_post $Henry_post $dicpath $runpath
+
+#  echo 
+#  echo 'copying output to directory "'$run'"'
+
+  cp ascii.out $run/$run.ascii
+endif
+
+# make sure all raw info gets transferred too!
+#cp $run/$run.* $dicpath
+#cp $run/boxmod*.f $dicpath
+#cp $run/jfile.phot $dicpath
+
+#!!!!DO NOT DO THIS!!! CHANCE OF ERROR IS TOO GREAT!!!!
+#--copy files to archive dir without affecting date/time stamp--#
+#echo 'copying raw output to directory "'$dicpath'"'
+#mv $run/$run.* $dicpath
+#cp $dicpath/$run.* $run
+
+end
+
+

@@ -1,0 +1,54 @@
+#---------------------------------------------
+# declaration of definitions (macros)
+
+# remember to delete previous *.o files when you change the compiler
+#FC = pgf90
+FC = gfortran
+
+#OMPFLAGS = -mp -fast
+OMPFLAGS =
+#FFLAGS =  $(OMPFLAGS ) -g -fimplicit-none  -Wall  #-ffpe-trap=invalid,zero,overflow
+FFLAGS =  ${OMPFLAGS} -g -mcmodel=medium -fdefault-real-8 -finit-real=nan -Wall -std=f2008ts
+LIBDIR = ./LIB
+OBJDIR = ./OBJ
+INCDIR = ./LIB
+RUNDIR = ./RUN
+
+LIBS = ../GECKO-A/OBJ/geckolib.a
+
+EXC=postproc
+#---------------------------------------------
+# VPATH specifies directories to search, in order: VPATH = dir1:dir2:dir3
+# so that dependency file.o : file.f is interpreted file.o : dir1/file.f
+# vpath (lower case) allows selective specification, e.g.
+# vpath %.f ../LIB means files *.f in dir ../LIB
+
+#vpath %.f $(LIBDIR):$(LIBDIR)/AQPHASE
+vpath %.f90 ${LIBDIR}
+# # vpath %.h $(LIBDIR)
+# vpath %.d ${OBJDIR}
+vpath %.o ${OBJDIR}
+vpath %.mod ${OBJDIR}
+
+.SUFFIXES:
+.SUFFIXES : .f .h .o .d .mod
+
+
+${OBJDIR}/%.o: ${LIBDIR}/%.f90 ../GECKO-A/OBJ/geckolib.a
+	$(FC) -c $(FFLAGS) $< -o$@
+
+include ${OBJDIR}/.depend
+
+clean:
+	rm -f ${OBJDIR}/*.o ${OBJDIR}/*.mod ${OBJDIR}/.depend  ${RUNDIR}/${EXC}
+
+# Create a dependency list using makedepf90.  All files
+# that needs to be compiled to build the program,
+# i.e all source files except include files, should
+# be given on the command line to makedepf90.
+#
+# The argument to the '-o' option will be the name of the
+# resulting program when running 'make', in this case
+# 'foobar'
+depend ${OBJDIR}/.depend:
+	makedepf90 -b ${OBJDIR} -o ${RUNDIR}/${EXC} ${LIBDIR}/*.f90 > ${OBJDIR}/.depend

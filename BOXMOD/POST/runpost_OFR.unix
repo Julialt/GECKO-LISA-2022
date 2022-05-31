@@ -1,0 +1,115 @@
+#!/bin/csh
+
+################################################
+# hardwire path for dictionary files
+# ################################################
+
+set chempath = /ur/julial/GECKO/BOXMOD-OFR/CHEMDAT
+#set dicnam = MXYL_reduced_151216
+#set dicnam = OFR-propane
+#set dicnam = OFR-decane
+set dicnam = propane_160713
+#set dicnam = OFR-CH4
+
+#set outdir = results_$dicnam
+#set outdir = results_$dicnam'_rpt'
+
+################################################
+
+#set run = CH4_A-PNR_60s_10d_1hop_OHR10_jf25
+#set run = C03000_185_LHL_orgphot_1800
+set run = C03000_254_HHL_orgphot_36
+#set run = C03000_254_MMV_orgphot
+#set run = C03000_ohv_185_HHL_18s_pt05
+#set run = C03000_254_LLL_1800s_10op
+#set run = C03000_254_LLL_300_100op
+#set run = C03000_254_MMV_extn_noorgphot
+#set run = C03000_254_MMV_30_10op
+
+echo ''
+
+# OR USE STRINGS SPECIFID ABOVE #
+ set dicpath = $chempath'/'$dicnam
+ echo 'dictionary = '$dicnam'/'$dicnam'.dict'
+ echo ' '
+
+################################################
+# copy required files into working directory   #
+################################################
+
+set dict_post = $dicpath/$dicnam.dict 
+set mech_post = $dicpath/$dicnam.mech
+set pvap_post = $dicpath/$dicnam.pvap
+set kOH_post = $dicpath/$dicnam.kOH
+#set jvals_post = $dicpath/$dicnam.jval
+if (-e  $dicpath/$dicnam.henry) then
+  set Henry_post = $dicpath/$dicnam.henry
+else
+  set Henry_post = $dicpath/$dicnam.Henry
+endif
+
+echo 'individual (indv), gas (gas), or aerosol (aer)?'
+set typ = $<
+
+echo 'processing boxmodel output...',$run
+echo ' '
+
+if ($typ == 'indv') then
+  echo selsp ............
+  echo 
+  cd ../PROG
+  ./callmake.unix selsp
+  cd ../POST
+  ./runplot.unix $run
+  echo 
+  echo adfi ............
+  echo 
+  cd ../PROG
+  ./callmake.unix adfi
+  cd ../POST
+  ./../PROG/adfi indv.GNO indv.GNO2 > indv.GNOx
+
+#  echo 'copying output to directory "'$outdir/$run'"'
+#  cp indv.* $outdir/$run
+  echo 'moving output to directory "'$run'"'
+  mv indv.* $run
+endif
+
+if ($typ == 'gas') then
+  echo running gasplot ............
+  echo 
+  cd ../PROG
+  ./callmake.unix gasplot
+  cd ../POST
+  ./gasplot.unix $run  $dict_post
+  echo 
+#  echo 'copying output to directory "'$outdir/$run'"'
+#  cp gas.* $outdir/$run
+  echo 'moving output to directory "'$run'"'
+  mv gas.* $run
+endif
+
+if ($typ == 'aer') then
+  echo running aeroplot ............
+  echo 
+  cd ../PROG
+  ./callmake.unix aeroplot
+  cd ../POST
+  ./aeroplot.unix $run $dict_post $mech_post $pvap_post $kOH_post $Henry_post
+
+  echo 
+#  echo 'copying output to directory "'$outdir/$run'"'
+#  cp aer.* $outdir/$run
+  echo 'moving output to directory "'$run'"'
+  mv aer.* $run
+endif
+
+#!!!!DO NOT DO THIS!!! CHANCE OF ERROR IS TOO GREAT!!!!
+#--copy files to archive dir without affecting date/time stamp--#
+#echo 'copying raw output to directory "'$outdir/$run'"'
+#mv $run/$run.* $outdir/$run
+#cp $outdir/$run/$run.* $run
+
+end
+
+

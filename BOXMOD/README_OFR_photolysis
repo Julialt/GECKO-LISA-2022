@@ -1,0 +1,52 @@
+================================================
+README_OFR_photolysis
+================================================
+Author: Julia Lee-Taylor, NCAR, May 21, 2020
+================================================
+To model photolysis at 185 and 254 nm, you need:
+1) Generator input inorganic mechanism data file *inorg_mch_pam.dat*
+
+2) Boxmodel input photolysis file, constructed using TUV (see below)
+
+3) Box model subroutine *calc_phot_OFR.f90* and parameters from OFR_params_module (contained in file *forcing_params_module.f90*)
+
+4) The values of photon flux at 185 and 254nm, in quanta.cm-2.s-1. These are fed in as keywords F185 and F254 in the input file indat.key, via subroutine spreadkey (mapping to variable names f185, f254). 
+
+*starred* files may be downloaded at ftp://ftp.acom.ucar.edu/user/julial/for_Bernard/
+
+--------------------------------------
+TO CONSTRUCT THE INPUT PHOTOLYSIS FILE
+--------------------------------------
+The user supplies their own lamp spectrum file, in units of either W.m-2, mW.m-2, or quanta.cm-2.s-1.
+The TUV code supplied with GECKO-A reads lamp spectra inputs. 
+The user must customize TUV subroutine *rdlamp.f* to accept the lamp spectrum file.
+The user must set parameter llamp=.TRUE. in program *TUV.f* to tell the program to use the lamp spectrum.
+Once the phot file is created, the following lines must be added manually at the top, to provide placeholders for reactions 15 and 16, which are required for photolysis at 185 and 254nm:
+
+/ null array for OFR
+PHOT  O2  15  10
+   0.0  0.0
+  10.0  0.0
+  20.0  0.0
+  30.0  0.0
+  40.0  0.0
+  50.0  0.0
+  60.0  0.0
+  70.0  0.0
+  78.0  0.0
+  86.0  0.0
+/
+/ null array for OFR
+PHOT  H2O 16  10
+   0.0  0.0
+  10.0  0.0
+  20.0  0.0
+  30.0  0.0
+  40.0  0.0
+  50.0  0.0
+  60.0  0.0
+  70.0  0.0
+  78.0  0.0
+  86.0  0.0
+/
+

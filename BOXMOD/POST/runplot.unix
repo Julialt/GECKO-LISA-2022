@@ -1,0 +1,62 @@
+#!/bin/csh
+#            unix command file (for SILICON) to run programs 
+#            which depend on the library 'cklib' or 'rklib'
+# called by runpost.unix
+
+set outdir = /home/julial/GECKO/GIT_COPY/GECKO-A/BOXMOD_RUNS
+
+if ( $#argv == 0 ) then
+#  echo '--ERROR-- input as argument {name of boxmodel run}'
+#  exit
+  echo 'input name of boxmodel run'
+  set run = $<
+else
+  set run = $argv[1]
+endif
+
+cd ./POST_WORK
+rm *
+
+set savestatus=0
+################################################
+# copy files into working directory   #
+################################################
+cp ../../PROG/selsp ./selsp.exe
+if( $status != 0 ) set savestatus=$status
+
+cp $outdir/$run/$run.ppf ./indat.ppf
+if( $status != 0 ) set savestatus=$status
+
+cp $outdir/$run/$run.ppa ./indat.ppa
+if( $status != 0 ) set savestatus=$status
+
+cp ../plot.key ./indat.plot
+if( $status != 0 ) set savestatus=$status
+
+if( $savestatus != 0 ) then
+  echo
+  echo the plot program has not been started
+#  rm -f *
+  cd ../
+  exit
+endif
+
+#################################################
+# test that the program is up-to-date           #
+# (a faire dans le futur => ancienne version)   #
+#################################################
+#set progmkfile=/usr/local/ck_rk/com/mkprog.sil
+#make -f $progmkfile -q -r -s libid=ak pgdir=$HOME/S2/PROG prog=selsp
+#if ( $status != 0 ) echo --warning--  plot program has been changed \
+#after last compilation
+
+echo 'running the plot program'
+./selsp.exe
+foreach i (`ls outdat.*`)
+#  mv $i  ../$run.$i:e
+  mv $i  ../indv.$i:e
+end
+rm -f *
+cd ../
+echo 'normal stop'
+echo 

@@ -1,0 +1,700 @@
+/Photolysis rates for GECKO from TUV inputs:
+/==================================================================
+/inpfil =      usrinp   outfil =      usrout   nstr =             4
+/lat =         40.000   lon =          0.000   tmzone =         0.0
+/iyear =         2002   imonth =           6   iday =            21
+/zstart =       0.000   zstop =      120.000   nz =             121
+/wstart =     300.000   wstop =      850.000   nwint =         -156
+/tstart =       0.000   tstop =       90.000   nt =              10
+/lzenit =           T   alsurf =       0.100   psurf =       -999.0
+/o3col =      348.000   so2col =       0.000   no2col =       0.000
+/taucld =       0.000   zbase =        4.000   ztop =         5.000
+/tauaer =       0.000   ssaaer =       0.000   alpha =        1.000
+/dirsun =       1.000   difdn =        1.000   difup =        1.000
+/zout =         0.000   zaird =    2.450E+19   ztemp =      295.000
+/==================================================================
+/           DATALAMP/ncar_cafs2016.dat              
+/ 
+/ O3 -> O2 + O(1D)                        
+PHOT  O3  2                              2
+   0.0  5.9444E-07
+  90.0  5.9444E-07
+/ 
+/ O3 -> O2 + O(3P)                        
+PHOT  O3  3                              2
+   0.0  3.9149E-06
+  90.0  3.9149E-06
+/ 
+/ NO2 -> NO + O(3P)                       
+PHOT  NO2  4                             2
+   0.0  1.3186E-03
+  90.0  1.3186E-03
+/ 
+/ CH3ONO -> NO + CH3O after NO2 MCM       
+PHOT  CH3ONO  40000                      2
+   0.0  1.3435E-03
+  90.0  1.3435E-03
+/ 
+/ NO3 -> NO + O2                          
+PHOT  NO3  5                             2
+   0.0  3.3642E-06
+  90.0  3.3642E-06
+/ 
+/ NO3 -> NO2 + O(3P)                      
+PHOT  NO3  6                             2
+   0.0  1.4910E-03
+  90.0  1.4910E-03
+/ 
+/ H2O2 -> 2 OH                            
+PHOT  H2O2  11                           2
+   0.0  4.5185E-07
+  90.0  4.5185E-07
+/ 
+/ HONO -> NO + OH MCM                     
+PHOT  HONO  12                           2
+   0.0  2.6201E-04
+  90.0  2.6201E-04
+/ 
+/ HNO3 -> NO2 + OH MCM                    
+PHOT  HNO3  13                           2
+   0.0  1.9758E-08
+  90.0  1.9758E-08
+/ 
+/ HNO4 -> 0.61 NO2+ 0.61 HO2+ 0.39 NO3+ 0.
+PHOT  HNO4  14                           2
+   0.0  1.6804E-07
+  90.0  1.6804E-07
+/ 
+/ HCHO -> 2 HO2 + CO MCM                  
+PHOT  H2CO  110                          2
+   0.0  9.1832E-07
+  90.0  9.1832E-07
+/ 
+/ HCHO -> H2 + CO MCM                     
+PHOT  H2CO  17                           2
+   0.0  3.2514E-06
+  90.0  3.2514E-06
+/ 
+/ C2H5COCH2(ONO2) + hv -> C2H5COCH2(O.) + 
+/PHOT  C2H5COCH2(ONO2)  70100             2
+PHOT  C2H5COCH2(ONO2)  40003             2
+   0.0  6.0730E-07
+  90.0  6.0730E-07
+/ 
+/ C2H4(ONO2)COCH3 + hv -> C2H4(O.)COCH3 + 
+/PHOT  C2H4(ONO2)COCH3  70200             2
+PHOT  C2H4(ONO2)COCH3  40002             2
+   0.0  1.8904E-06
+  90.0  1.8904E-06
+/ 
+/ CH3ONO2 -> CH3O. + NO2                  
+PHOT  CH3ONO2  100                       2
+   0.0  2.7814E-08
+  90.0  2.7814E-08
+/ 
+/ C2H5ONO2 + hv -> C2H5O. + NO2           
+PHOT  C2H5ONO2  200                      2
+   0.0  4.6818E-08
+  90.0  4.6818E-08
+/ 
+/ n_C3H7ONO2 + hv -> n_C3H7O. + NO2       
+PHOT  C3H7ONO2  300                      2
+   0.0  1.5656E-07
+  90.0  1.5656E-07
+/ 
+/ i_C3H7ONO2 + hv -> i_C3H7O. + NO2       
+PHOT C3H7ONO2  400                       2
+   0.0  8.2713E-08
+  90.0  8.2713E-08
+/ 
+/ 1_C4H9ONO2 + hv -> 1_C4H9O. + NO2       
+PHOT  C4H9ONO2  500                      2
+   0.0  1.3451E-07
+  90.0  1.3451E-07
+/ 
+/ 2_C4H9ONO2 + hv -> 2_C4H9O. + NO2       
+PHOT  C4H9ONO2  600                      2
+   0.0  6.7601E-08
+  90.0  6.7601E-08
+/ 
+/ tert_C4H9ONO2 + hv -> tert_C4H9O. + NO2 
+PHOT  C4H9ONO2 700                       2
+   0.0  2.7902E-07
+  90.0  2.7902E-07
+/ 
+/ 1_C5H11ONO2 + hv -> 1_C5H11H9O. + NO2   
+PHOT  C5H11ONO2  800                     2
+   0.0  7.0557E-08
+  90.0  7.0557E-08
+/ 
+/ 2_C5H11ONO2 + hv -> 2_C5H11H9O. + NO2   
+PHOT  2_C5H11ONO2  900                   2
+   0.0  6.5358E-08
+  90.0  6.5358E-08
+/ 
+/ 3_C5H11ONO2 + hv -> 3_C5H11H9O. + NO2   
+PHOT  3_C5H11ONO2 1000                   2
+   0.0  6.0218E-08
+  90.0  6.0218E-08
+/ 
+/ 2methyl1propylnitrate + hv -> RO. + NO2 
+PHOT  2methyl1propylnitrate 1100         2
+   0.0  1.0348E-07
+  90.0  1.0348E-07
+/ 
+/ CH3OONO2 + hv -> CH3OO. + NO2           
+PHOT  CH3OONO2  1200                     2
+   0.0  2.5070E-07
+  90.0  2.5070E-07
+/ 
+/ CH3OONO2 + hv -> CH3O. + NO3.           
+PHOT  CH3OONO2 1300                      2
+   0.0  2.5070E-07
+  90.0  2.5070E-07
+/ 
+/ PAN + hv -> CH3C(O)OO. + NO2            
+PHOT  PAN  1400                          2
+   0.0  4.2183E-08
+  90.0  4.2183E-08
+/ 
+/ CH3CHO + hv -> CH3. + CHO.              
+PHOT  CH3CHO  1700                       2
+   0.0  1.0382E-07
+  90.0  1.0382E-07
+/ 
+/ C2H5CHO + hv -> C2H5. + CHO.            
+PHOT  C2H5CHO  1800                      2
+   0.0  4.7859E-07
+  90.0  4.7859E-07
+/ 
+/ n-C3H7CHO + hv -> n-C3H7. +  CHO.       
+PHOT  n_C3H7CHO  1900                    2
+   0.0  4.4068E-07
+  90.0  4.4068E-07
+/ 
+/ n-C3H7CHO + hv -> C2H4 + CH3CHO Norrish 
+PHOT  n_C3H7CHO  2000                    2
+   0.0  1.3916E-07
+  90.0  1.3916E-07
+/ 
+/ i-C3H7CHO + hv -> C3H7. + CHO.          
+PHOT  i_C3H7CHO  2100                    2
+   0.0  1.7884E-06
+  90.0  1.7884E-06
+/ 
+/ nC4H9CHO + hv -> C4H9. +  CHO.          
+PHOT  nC4H9CHO  2300                     2
+   0.0  3.5039E-07
+  90.0  3.5039E-07
+/ 
+/ nC4H9CHO + hv -> HCO.                   
+PHOT  nC4H9CHO  2400                     2
+   0.0  6.0177E-07
+  90.0  6.0177E-07
+/ 
+/ iC4H9CHO + hv -> C4H9. + CHO.           
+PHOT  iC4H9CHO  2500                     2
+   0.0  9.0118E-07
+  90.0  9.0118E-07
+/ 
+/ iC4H9CHO + hv -> CH3CHO +  CH2=CHCH3    
+PHOT  iC4H9CHO  2600                     2
+   0.0  6.8661E-07
+  90.0  6.8661E-07
+/ 
+/ t-C4H9CHO + hv -> HCO. +  t-C4H9.       
+PHOT  t_C4H9CHO  2700                    2
+   0.0  1.3568E-06
+  90.0  1.3568E-06
+/ 
+/ C5H11CHO + hv -> HCO. + n-C5H11.        
+PHOT  C5H11CHO  2800                     2
+   0.0  1.7827E-07
+  90.0  1.7827E-07
+/ 
+/ C5H11CHO + hv ->CH3CHO + CH2=CHCH2CH3   
+PHOT  C5H11CHO  2900                     2
+   0.0  4.1595E-07
+  90.0  4.1595E-07
+/ 
+/ Acetone + hv -> CH3CO + CH3             
+PHOT  acetone  3000                      2
+   0.0  1.2120E-08
+  90.0  1.2120E-08
+/ 
+/ CH3COC2H5 + hv -> C2H5. + CH3CO.        
+PHOT  CH3COC2H5  3100                    2
+   0.0  8.9082E-08
+  90.0  8.9082E-08
+/ 
+/ CH3COC2H5 + hv -> CH3. + C2H5CO.        
+PHOT  CH3COC2H5  3200                    2
+   0.0  1.5359E-08
+  90.0  1.5359E-08
+/ 
+/ CH3COC3H7 + hv -> C3H7. + CH3CO.        
+PHOT  CH3COC3H7  3300                    2
+   0.0  1.4480E-07
+  90.0  1.4480E-07
+/ 
+/ C2H5COC2H5 + hv -> C2H5CO. + C2H5.      
+PHOT  C2H5COC2H5  3400                   2
+   0.0  1.0632E-07
+  90.0  1.0632E-07
+/ 
+/ (CH3)2CHCOCH(CH3)2 + hv -> (CH3)2CHCO(.)
+PHOT  (CH3)2CHCOCH(CH3)2  3500           2
+   0.0  3.3173E-07
+  90.0  3.3173E-07
+/ 
+/ CH3COCH2CH(CH3)2 + hv -> CH3CO. + CH2(.)
+PHOT  CH3COCH2CH(CH3)2  3600             2
+   0.0  6.7162E-08
+  90.0  6.7162E-08
+/ 
+/ CH3COCH2CH(CH3)2 + hv -> CH3COCH3 + CH2=
+PHOT  CH3COCH2CH(CH3)2  3700             2
+   0.0  1.6119E-07
+  90.0  1.6119E-07
+/ 
+/ CH3COCH2CH2CH(CH3)2 + hv ->CH3CO. + .CH2
+PHOT  CH3COCH2CH2CH(CH3)2  3800          2
+   0.0  5.9295E-08
+  90.0  5.9295E-08
+/ 
+/ CH3COCH2CH2CH(CH3)2 + hv ->CH3COCH3 + CH
+PHOT  CH3COCH2CH2CH(CH3)2  3900          2
+   0.0  1.4231E-07
+  90.0  1.4231E-07
+/ 
+/ CH2=CHCHO + hv -> CH2CH=CHCO. + HO2.    
+PHOT  CH2=CHCHO  4000                    2
+   0.0  6.9783E-08
+  90.0  6.9783E-08
+/ 
+/ CH2=CHCHO + hv -> CH2=CH. + CHO.        
+PHOT  CH2=CHCHO  4100                    2
+   0.0  5.2337E-08
+  90.0  5.2337E-08
+/ 
+/ CH2=CHCHO + hv -> CH3C(.)(.)H + CO      
+PHOT  CH2=CHCHO  4200                    2
+   0.0  5.2337E-08
+  90.0  5.2337E-08
+/ 
+/ CH2=C(CH3)CHO + hv -> CH2=C(.)CH3 +CHO. 
+PHOT  CH2=C(CH3)CHO  4300                2
+   0.0  6.8211E-07
+  90.0  6.8211E-07
+/ 
+/ CH2=C(CH3)CHO + hv ->CH3C(.)(.)CH3 + CO 
+PHOT  CH2=C(CH3)CHO  4400                2
+   0.0  6.8210E-07
+  90.0  6.8210E-07
+/ 
+/ CH2=C(CH3)CHO + hv ->CH2=C(CH3)C(.)O    
+PHOT  CH2=C(CH3)CHO  4500                2
+   0.0  6.8210E-07
+  90.0  6.8210E-07
+/ 
+/ CH3CH=CHCHO + hv -> CH3CH=CH(.) + CHO.  
+PHOT  CH3CH=CHCHO  4600                  2
+   0.0  4.8324E-07
+  90.0  4.8324E-07
+/ 
+/ CH3CH=CHCHO + hv -> CH2CH=CHC(.)O + H.  
+PHOT  CH3CH=CHCHO  4700                  2
+   0.0  4.8324E-07
+  90.0  4.8324E-07
+/ 
+/ CH3CH=CHCHO + hv -> CH3CH2CH(.)(.)H + CO
+PHOT  CH3CH=CHCHO  4800                  2
+   0.0  4.8324E-07
+  90.0  4.8324E-07
+/ 
+/ CH2=CHCOCH3 + hv -> CH2=CHCH3 + CO      
+PHOT  CH2=CHCOCH3  4900                  2
+   0.0  6.5185E-07
+  90.0  6.5185E-07
+/ 
+/ CH2=CHCOCH3 + hv -> CH2=CH. + CH3CO.    
+PHOT  CH2=CHCOCH3  5000                  2
+   0.0  6.5185E-08
+  90.0  6.5185E-08
+/ 
+/ CHOCHO + hv -> H2 + 2CO                 
+PHOT  CHOCHO  5100                       2
+   0.0  1.5405E-07
+  90.0  1.5405E-07
+/ 
+/ CHOCHO  + hv -> 2 CHO.                  
+PHOT  CHOCHO  5200                       2
+   0.0  2.9576E-06
+  90.0  2.9576E-06
+/ 
+/ CHOCHO + hv -> H2CO + CO                
+PHOT  CHOCHO  5300                       2
+   0.0  8.0875E-07
+  90.0  8.0875E-07
+/ 
+/ CH3COCHO + hv -> CHO. + CH3CO.          
+PHOT  CH3COCHO  5400                     2
+   0.0  1.0300E-05
+  90.0  1.0300E-05
+/ 
+/ CH3COCHO + hv -> CO + CH3CHO            
+PHOT  CH3COCHO  5500                     2
+   0.0  5.7220E-07
+  90.0  5.7220E-07
+/ 
+/ CH3COCHO + hv -> 2 CO + CH4             
+PHOT  CH3COCHO  5600                     2
+   0.0  5.7220E-07
+  90.0  5.7220E-07
+/ 
+/ CH3COCOCH3 + hv -> 2 CH3CO.             
+PHOT  CH3COCOCH3  5700                   2
+   0.0  3.9060E-05
+  90.0  3.9060E-05
+/ 
+/ CHOCH=CHCH=CHCHO + hv ->  CHO. + .CH=CHC
+PHOT  CHOCH=CHCH=CHCHO  5800             2
+   0.0  3.5411E-06
+  90.0  3.5411E-06
+/ 
+/ CHOCH=CHCH=CHCHO + hv ->  CHOCH=CHCH=CHC
+PHOT  CHOCH=CHCH=CHCHO  5900             2
+   0.0  3.5411E-06
+  90.0  3.5411E-06
+/ 
+/ CHOC(CH3)=CHCH=CHCHO + hv -> CHOC(CH3)=C
+PHOT  CHOC(CH3)=CHCH=CHCHO  6100         2
+   0.0  1.4301E-06
+  90.0  1.4301E-06
+/ 
+/ CHOC(CH3)=CHCH=CHCHO + hv -> CHO. +     
+PHOT  CHOC(CH3)=CHCH=CHCHO  6200         2
+   0.0  1.4301E-06
+  90.0  1.4301E-06
+/ 
+/ CHOC(CH3)=CHCH=CHCHO + hv -> CHOC(CH3)=C
+PHOT  CHOC(CH3)=CHCH=CHCHO  6300         2
+   0.0  1.4301E-06
+  90.0  1.4301E-06
+/ 
+/ CHOC(CH3)=CHCH=CHCHO + hv -> C(.)OC(CH3)
+PHOT  CHOC(CH3)=CHCH=CHCHO  6400         2
+   0.0  1.4301E-06
+  90.0  1.4301E-06
+/ 
+/ CH3CH(ONO2)CH2(ONO2) + hv -> CH3CH(O.)CH
+PHOT  CH3CH(ONO2)CH2(ONO2)  6500         2
+   0.0  1.9511E-07
+  90.0  1.9511E-07
+/ 
+/ CH3CH(ONO2)CH2(ONO2) + hv -> products   
+PHOT  CH3CH(ONO2)CH2(ONO2)  6600         2
+   0.0  1.9511E-07
+  90.0  1.9511E-07
+/ 
+/ CH3CH2CH(ONO2)CH2(ONO2) + hv ->         
+PHOT  CH3CH2CH(ONO2)CH2(ONO2)  6700      2
+   0.0  2.7946E-07
+  90.0  2.7946E-07
+/ 
+/ CH3CH2CH(ONO2)CH2(ONO2) + hv -> CH3CH2CH
+PHOT  CH3CH2CH(ONO2)CH2(ONO2)  6800      2
+   0.0  2.7946E-07
+  90.0  2.7946E-07
+/ 
+/ CH3CH(ONO2)CH(ONO2)CH3 + hv -> CH3CH(O.)
+PHOT  CH3CH(ONO2)CH(ONO2)CH3  6900       2
+   0.0  3.9057E-07
+  90.0  3.9057E-07
+/ 
+/ CH2(ONO2)CH(ONO2)CH=CH2 + hv -> CH2(ONO2
+PHOT  CH2(ONO2)CH(ONO2)CH=CH2  7000      2
+   0.0  1.0733E-07
+  90.0  1.0733E-07
+/ 
+/ CH2(ONO2)CH(ONO2)CH=CH2 + hv -> CH2(O.)C
+PHOT  CH2(ONO2)CH(ONO2)CH=CH2  7100      2
+   0.0  1.0733E-07
+  90.0  1.0733E-07
+/ 
+/ CH2(ONO2)CH=CHCH2(ONO2) + hv -> CH2(ONO2
+PHOT  CH2(ONO2)CH=CHCH2(ONO2)  7200      2
+   0.0  1.4332E-07
+  90.0  1.4332E-07
+/ 
+/ CH3OOH + hv -> CH3O.+ OH.               
+PHOT  CH3OOH  7300                       2
+   0.0  4.2336E-07
+  90.0  4.2336E-07
+/ 
+/ OHCH2CHO + hv -> OHCH2. + .CHO          
+PHOT  OHCH2CHO  7400                     2
+   0.0  2.3386E-07
+  90.0  2.3386E-07
+/ 
+/ OHCH2CH2ONO2 + hv -> OHCH2CH2O. + NO2   
+PHOT  OHCH2CH2ONO2  7500                 2
+   0.0  1.7482E-09
+  90.0  1.7482E-09
+/ 
+/ OHCH2COCH3 + hv -> OHCH2. + .COCH3      
+PHOT  OHCH2COCH3  7600                   2
+   0.0  8.8072E-08
+  90.0  8.8072E-08
+/ 
+/ OHCH2OOH + hv -> OHCH2O. + .OH          
+PHOT  OHCH2OOH  7700                     2
+   0.0  3.6287E-07
+  90.0  3.6287E-07
+/ 
+/ CHOCOOH + hv -> CO2 + HCHO              
+PHOT  CHOCOOH  7800                      2
+   0.0  2.3014E-05
+  90.0  2.3014E-05
+/ 
+/ CHOCOOH + hv -> 2 CO + H2O              
+PHOT  CHOCOOH  7900                      2
+   0.0  2.5261E-06
+  90.0  2.5261E-06
+/ 
+/ COOH-COOH + hv -> CO2 + HCOOH           
+PHOT  COOHCOOH  8000                     2
+   0.0  9.7006E-09
+  90.0  9.7006E-09
+/ 
+/ COOH-COOH + hv -> CO2 + CO + H2O        
+PHOT  COOHCOOH  8100                     2
+   0.0  3.6377E-09
+  90.0  3.6377E-09
+/ 
+/ CH3COCOOH + hv -> CO2 + CH3CHO          
+PHOT  CH3COCOOH  8200                    2
+   0.0  1.8952E-05
+  90.0  1.8952E-05
+/ 
+/ 1_C5H11ONO2 + hv -> 1_C5H11H9O. + NO2   
+PHOT  1_C5H11ONO2  10100                           2
+   0.0  7.0557E-08
+  90.0  7.0557E-08
+/ 
+/ 2_C4H9ONO2 + hv -> 2_C4H9O. + NO2       
+PHOT  2_C4H9ONO2  10200                            2
+   0.0  6.7601E-08
+  90.0  6.7601E-08
+/ 
+/ tert_C4H9ONO2 + hv -> tert_C4H9O. + NO2 
+PHOT  tert_C4H9ONO2  10300                         2
+   0.0  2.7902E-07
+  90.0  2.7902E-07
+/ 
+/ CH3OONO2 + hv -> products               
+PHOT  CH3OONO2  10400                              2
+   0.0  2.5070E-07
+  90.0  2.5070E-07
+/ 
+/ PAN + hv -> products                    
+PHOT  PAN  10500                                   2
+   0.0  4.2183E-08
+  90.0  4.2183E-08
+/ 
+/ n-aldehyde (no gamma-H + Calpha tert)+ h
+PHOT  n_aldehyde  20100                            2
+   0.0  1.3568E-06
+  90.0  1.3568E-06
+/ 
+/ n-aldehyde (no gamma-H + Calpha sec) + h
+PHOT  n_aldehyde  20200                            2
+   0.0  1.7884E-06
+  90.0  1.7884E-06
+/ 
+/ linear aldehyde (no gamma-H + Calpha pri
+PHOT  aldehyde  20300                              2
+   0.0  4.7859E-07
+  90.0  4.7859E-07
+/ 
+/ aldehyde (gamma-H + Calpha tert) + hv ->
+PHOT  aldehyde  20400                              2
+   0.0  2.2077E-07
+  90.0  2.2077E-07
+/ 
+/ RCHO (gamma-H + Calpha tert) + hv -> Nor
+PHOT  RCHO  20500                                  2
+   0.0  3.4158E-07
+  90.0  3.4158E-07
+/ 
+/ RCHO (gamma-H + Calpha sec or prim) + hv
+PHOT  RCHO  20600                                  2
+   0.0  3.5039E-07
+  90.0  3.5039E-07
+/ 
+/ RCHO (gamma-H + Calpha sec or prim) + hv
+PHOT  RCHO  20700                                  2
+   0.0  6.0177E-07
+  90.0  6.0177E-07
+/ 
+/ RRC=CRCHO structures+ hv -> CHO. + =.   
+PHOT  RRC=CRCHO  21100                             2
+   0.0  4.1669E-07
+  90.0  4.1669E-07
+/ 
+/ RRC=CRCHO structures+ hv -> CO + Criegge
+PHOT  RRC=CRCHO  21200                             2
+   0.0  4.0444E-07
+  90.0  4.0444E-07
+/ 
+/ RRC=CRCHO structures+ hv -> H. + RRC=CRC
+PHOT  RRC=CRCHO  21300                             2
+   0.0  4.0444E-07
+  90.0  4.0444E-07
+/ 
+/ RCOCHO + hv -> RC(.)O + CHO.            
+PHOT  RCOCHO  21400                                2
+   0.0  1.0300E-05
+  90.0  1.0300E-05
+/ 
+/ CH3COCHO + hv -> CO + RCHO              
+PHOT  CH3COCHO  21500                              2
+   0.0  5.7220E-07
+  90.0  5.7220E-07
+/ 
+/ CH3COCHO + hv -> 2 CO + RH              
+PHOT  CH3COCHO  21600                              2
+   0.0  5.7220E-07
+  90.0  5.7220E-07
+/ 
+/ EEhexadienedial + hv -> 4 ways          
+PHOT  EEhexadienedial  21900                       2
+   0.0  1.7705E-06
+  90.0  1.7705E-06
+/ 
+/ EEhexadienedial + hv -> 2 different ways
+PHOT  EEhexadienedial  22000                       2
+   0.0  3.5411E-06
+  90.0  3.5411E-06
+/ 
+/ RRC(OH)CHO + hv -> CHO. + RRC(OH).      
+PHOT  RRC(OH)CHO  21800                            2
+   0.0  2.3386E-07
+  90.0  2.3386E-07
+/ 
+/ n-ketone (no gammaH) + hv -> RC(.)O + R.
+PHOT  n_ketone  30100                              2
+   0.0  1.0632E-07
+  90.0  1.0632E-07
+/ 
+/ n-ketone + hv -> RC(.)O + R.            
+PHOT  n_ketone  30200                              2
+   0.0  3.1271E-08
+  90.0  3.1271E-08
+/ 
+/ n_ketone + hv -> Norrish II             
+PHOT  n_ketone  30300                              2
+   0.0  7.5051E-08
+  90.0  7.5051E-08
+/ 
+/ i_ketone (no gamma-H) + hv -> RC(.)O + R
+PHOT  i_ketone  30600                              2
+   0.0  2.1915E-07
+  90.0  2.1915E-07
+/ 
+/ i_ketone(with gammaH) + hv -> RC(.)O + R
+PHOT  i_ketone  30700                              2
+   0.0  6.4457E-08
+  90.0  6.4457E-08
+/ 
+/ i_ketone + hv -> Norrish II             
+PHOT  i_ketone  30800                              2
+   0.0  1.5470E-07
+  90.0  1.5470E-07
+/ 
+/ t_ketone (no gammaH) + hv -> RC(.)O + R.
+PHOT  t_ketone  31100                              2
+   0.0  3.3173E-07
+  90.0  3.3173E-07
+/ 
+/ t_ketone + hv -> R. + RC(.)O            
+PHOT  t_ketone  31200                              2
+   0.0  9.7568E-08
+  90.0  9.7568E-08
+/ 
+/ t_ketone + hv -> Norrish II             
+PHOT  t_ketone  31300                              2
+   0.0  2.3416E-07
+  90.0  2.3416E-07
+/ 
+/ CH2=CHCOCH3 + hv -> = + CO              
+PHOT  CH2=CHCOCH3  31600                           2
+   0.0  6.5185E-07
+  90.0  6.5185E-07
+/ 
+/ CH2=CHCOCH3 + hv -> =. + RC(.)O         
+PHOT  CH2=CHCOCH3  31700                           2
+   0.0  6.5185E-08
+  90.0  6.5185E-08
+/ 
+/ CH3COCOCH3 + hv -> 2 CH3CO.             
+PHOT  CH3COCOCH3  31800                            2
+   0.0  3.9060E-05
+  90.0  3.9060E-05
+/ 
+/ OHCH2COR + hv -> RC(.)O + C(OH)(.)H2    
+PHOT  OHCH2COR  31900                              2
+   0.0  1.4679E-07
+  90.0  1.4679E-07
+/ 
+/ RC(O)COOH + hv -> RCHO + CO2            
+PHOT  RC(O)COOH  32100                             2
+   0.0  1.8952E-05
+  90.0  1.8952E-05
+/ 
+/ CH3OOH + hv -> CH3O.+ OH.               
+PHOT  CH3OOH  40100                                2
+   0.0  4.2336E-07
+  90.0  4.2336E-07
+/ 
+/ RC(O)CR=CRCHO + hv ->3H furan-2-one     
+PHOT  RC(O)CR=CRCHO  23000                         2
+   0.0  7.7923E-05
+  90.0  7.7923E-05
+/ 
+/ RC(O)CR=CRCHO + hv ->maleic anhydride + 
+PHOT  RC(O)CR=CRCHO  23100                         2
+   0.0  7.7923E-05
+  90.0  7.7923E-05
+/ 
+/ RaC(O)CR=CRCHO + hv -> 5(Ra)-3H-furan-2-
+PHOT  RC(O)CR=CRCHO  23200                         2
+   0.0  1.0614E-04
+  90.0  1.0614E-04
+/ 
+/ RC(O)CR=CRCHO + hv ->maleic anhydride + 
+PHOT  RC(O)CR=CRCHO  23300                         2
+   0.0  1.0614E-04
+  90.0  1.0614E-04
+/ 
+/ RC(O)CR=CRC(O)R + hv -> 4 oxo pentenal +
+PHOT  RC(O)CR=CRC(O)R  23400                       2
+   0.0  6.7175E-05
+  90.0  6.7175E-05
+/ 
+/ RC(O)CR=CRC(O)R + hv ->maleic anhydride 
+PHOT  RC(O)CR=CRC(O)R  23500                       2
+   0.0  6.7175E-05
+  90.0  6.7175E-05
+/
+/ CH3COCH(ONO2)CH3 -> CH3COCH(O.)CH3
+PHOT  CH3COCH(ONO2)CH3 40002                       2
+   0.0  6.3357E-05
+  90.0  6.3357E-05
+/
+/ CH3COCH2(ONO2) -> CH3COCH2(O.) +  NO2
+PHOT CH3COCH2(ONO2) 40001                          2
+   0.0  5.2114E-05
+  90.0  5.2114E-05
+/
+END 

@@ -1,0 +1,46 @@
+  skip_time = 1
+  input_type = "netcdf"
+  output_type = "ascii"
+  nbox = 1
+  n_topspecies =  20
+  flag_selected = .true.
+  selected_species(1:137) ="GORG-4449" "GORG-0339" "GORG-0662" "GORG-0935" "GORG-0333" "GORG-1786" "GVOC-0137" "GORG-1896" "GORG-1701" "GORG-0732" "GVOC-0157" "GVOC-0148" "GVOC-0150" "GVOC-0149" "GVOC-0060" "GVOC-0153" "GVOC-0058" "GVOC-0155" "GVOC-0145" "GVOC-0146" "GVOC-0193" "GVOC-0196" "GVOC-0224" "GVOC-0233" "GVOC-0142" "GVOC-0194" "GVOC-0197" "GVOC-0144" "GVOC-0213" "GVOC-0195" "GVOC-0143" "GVOC-0215" "GVOC-0181" "GVOC-0192" "GVOC-0210" "GVOC-0098" "GVOC-0103" "GVOC-0182" "GVOC-0209" "GVOC-0130" "GVOC-0173" "GVOC-0199" "GVOC-0050" "GVOC-0201" "GVOC-0002" "GXYZ-0001" "GXYZ-0004" "GVOC-0178" "GVOC-0183" "GVOC-0204" "GVOC-0051" "GXYZ-0003" "GVOC-0221" "GVOC-0179" "GVOC-0185" "GVOC-0191" "GVOC-0205" "GVOC-0206" "GVOC-0152" "GVOC-0158" "GVOC-0159" "GORG-4450" "GORG-4451" "GVOC-0160" "GVOC-0172" "GVOC-0174" "GVOC-0075" "GVOC-0151" "GVOC-0212" "GVOC-0219" "GORG-0216" "GVOC-0180" "GVOC-0230" "GVOC-0140" "GVOC-0141" "GVOC-0061" "GVOC-0072" "GVOC-0161" "GVOC-0054" "GVOC-0055" "GVOC-0001" "GVOC-0220" "GVOC-0231" "GVOC-0190" "GVOC-0097" "GVOC-0102" "GVOC-0163" "GVOC-0168" "GVOC-0117" "GVOC-0129" "GVOC-0171" "GVOC-0045" "GVOC-0138" "GVOC-0139" "GVOC-0059" "GVOC-0080" "GVOC-0081" "GVOC-0084" "GVOC-0057" "GVOC-0052" "GVOC-0053" "GXYZ-0002" "GVOC-0062" "GVOC-0066" "GVOC-0074" "GVOC-0090" "GVOC-0091" "GVOC-0216" "GVOC-0222" "GVOC-0225" "GVOC-0226" "GVOC-0135" "GVOC-0018" "GVOC-0211" "GVOC-0218" "GVOC-0214" "GVOC-0200" "GVOC-0202" "GVOC-0207" "GVOC-0208" "GVOC-0229" "GVOC-0203" "GVOC-0232" "GVOC-0198" "GVOC-0227" "GVOC-0228" "GVOC-0156" "GVOC-0147" "GVOC-0154" "GVOC-0003" "GVOC-0004" "GORG-0219" "GVOC-0184" "GHFON52M4" "GHFON52M3" "GVOC-0056" "G3M-FURAN" /
+  flag_OHR = .true.
+  flag_NO3R = .true.
+  flag_functions = .true.
+/
+  flag_pvap = .true.
+  flag_henry = .true.
+  flag_functions = .true.
+  flag_topspec = .true.
+  flag_ppb = .false.
+  flag_ppbc = .false.
+  flag_amsfactors = .false.
+  flag_atomratios = .false.
+  flag_bubble = .false.
+  flag_carbonchain=.false.
+  flag_chochonfreq = .false.
+  flag_chon = .false.
+  flag_contributingspecs = .false.
+  flag_dbeai = .false.
+  flag_elementscontrib = .false.
+  flag_entropy = .false.
+  flag_massspectrum = .false.
+  flag_ohexposure = .false.
+  flag_phasestate = .false.
+  flag_phasedist = .false.
+  flag_selected = .false.
+  flag_soayield = .false.
+  flag_vbs_param = .false.
+/  selected_species(1:17) = "G2M-FURAN","GCO2","GCH2O","GCO","GXCLOST","GMAL-ANH","GORG-2019","GVOC-0030","GHFON52M5","GORG-2629","GPAN","G4OX2PEAL","GORG-2145","GORG-1815","GVOC-0014","GORG-1766","GORG-0233"
+/  selected_species(1:4) = "GISOPRN", "GO3", "GHO", "GCO"
+/
+/  gas_dyn_filter(1:2) = "C5;NN!",";N!NN"
+/  aer_dyn_filter(1:2) = "C5;NO!OO", "C6;OH!HH"
+/
+  flag_functions = .true.
+  flag_OHR = .false.
+  flag_O3R = .false.
+  flag_NO3R = .false.
+  flag_rates = .false.
+  rate_species = "GISOPRN"

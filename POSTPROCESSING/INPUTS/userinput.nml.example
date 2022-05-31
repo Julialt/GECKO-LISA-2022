@@ -1,0 +1,24 @@
+ &userinput
+  precursor_codes(1:49)="GD02000" "GK03000" "GU04000" "GC04000" "GC04001" "GK04000" "GC05000" "GU05000" "GC50001" "GC06000" "GU06001" "GC06001" "GC06002" "GC06003" "GT06000" "GT06001" "GAR0002" "GC07000" "GC07001" "GC07002" "GC07003" "GT07000" "GAR0084" "GC08000" "GC08001" "GAR0403" "GAR0167" "GAR0245" "GAR0332" "GAR0486" "GC09000" "GAR0790" "GAR0860" "GAR0916" "GAR0666" "GAR0745" "GAR0497" "GAR0583" "GC00000" "GTT0000" "GTT00Ci" "GC10001" "GC10014" "GTT00M7" "GTU000B" "GTT00YK" "GTT00eM" "GC01000" "GC02001" ,
+  input_type = "binary"
+  nbox = 2
+  flag_chon=.false.
+  flag_selected=.true.
+  flag_phasedist=.true.
+  flag_contributingspecs=.true.
+  flag_soayield=.true.
+  flag_functions=.true.
+  flag_carbonchain=.true.
+  flag_topspec=.true.
+  flag_atomratios=.true.
+  flag_pvap=.true.
+  flag_henry=.true.
+  flag_elementscontrib=.true.
+  flag_phasestate=.true.
+  flag_entropy=.true.
+  flag_chochonfreq=.true.
+  flag_dbeai=.true.
+  flag_massspectrum=.true.
+  selected_species(1:41) = "GHO", "GCO2", "GHO2", "GO3", "GH2O2", "GNO", "GNO2", "GNO3", "GO3P", "GO1D", "GCH2O", "GHNO2", "GCO",  "GCH3O2", "GN2O5", "GHNO3", "GC02000","GC50001","GTT0000","GTT00Ci","GC10001","GC10014","GTT00M7","GTU000B","GTT00YK","GTT00eM","GC01000","GC02001","GC03001","GC04002","GC05001","GC06004","GC07004","GC08002","GC09001","GC00001","GC01001","GC02002","GC03002","GC04003","GC05002"
+
+/

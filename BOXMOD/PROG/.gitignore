@@ -1,0 +1,6 @@
+*
+!*.f
+!.gitignore
+*.unix
+prog.makefile
+asciiplot.f

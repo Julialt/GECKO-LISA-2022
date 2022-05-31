@@ -1,0 +1,7 @@
+Fortran files in the current directory are used to
+make the program that interpret the chemical scheme.
+
+"inca" is the exe provided as output.
+
+TO MAKE THE PROGRAM, the makefile uses the 
+"akparameter_module.f90" file given in the mechanism directory.

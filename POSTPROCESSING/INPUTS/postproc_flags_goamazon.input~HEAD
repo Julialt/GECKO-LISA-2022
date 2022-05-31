@@ -1,0 +1,23 @@
+  skip_time = 6
+  input_type = "binary"
+  nbox = 2
+  flag_chon=.true.
+  flag_selected=.true.
+  flag_phasedist=.true.
+  flag_contributingspecs=.true.
+  flag_soayield=.true.
+  flag_functions=.true.
+  flag_carbonchain=.true.
+  flag_topspec=.true.
+  flag_atomratios=.true.
+  flag_pvap=.true.
+  flag_henry=.true.
+  flag_elementscontrib=.true.
+  flag_phasestate=.true.
+  flag_entropy=.true.
+  flag_chochonfreq=.true.
+  flag_dbeai=.true.
+  flag_massspectrum=.true.
+  selected_species(1:46) = "GHO", "GCO2", "GHO2", "GO3", "GH2O2", "GNO", "GNO2", "GNO3", "GO3P", "GO1D", "GCH2O", "GHNO2", "GCO",  "GCH3O2", "GN2O5", "GHNO3", "GC02000","GISOPRN","GAPINEN","GBPINEN","GLIMONN","GCARENE","GTT00M7","GCAMPHN","GTPNOLN","GTPNENE","GTHUJEN","BMYRCN","BOCIMN","GC01000","GC02001","GC03001","GC04002","GC05001","GC06004","GC07004","GC08002","GC09001","GC00001","GC01001","GC02002","GC03002","GC04003","GC05002","GMVK","GMACR"
+
+/

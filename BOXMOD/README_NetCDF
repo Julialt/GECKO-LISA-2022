@@ -1,0 +1,16 @@
+README_NetCDF
+=============
+PURPOSE: a basic guide to the implementation of NetCDF
+         reading/writing by GECKO-A routines
+
+BACKGROUND:
+- originally, the output from the GECKO generator was all in ASCII format,
+  while the link file that packaged the mechanism for the box model, and 
+  the box model output were mainly in fortran-generated binary (with a few
+  auxiliary ascii files).  This created several problems: 
+  1) binary files were machine-specific
+  2) it was possible to retain output files but NOT the mechanism/dictionary 
+     files required to inperpret them, rendering useless the archived output.
+         
+CURRENT DESIGN:
+

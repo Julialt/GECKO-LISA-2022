@@ -1,0 +1,15 @@
+  flag_chon=.false.
+  flag_selected=.true.
+  flag_phasedist=.true.
+  flag_contributingspecs=.true.
+  flag_soayield=.true.
+  flag_functions=.true.
+  flag_carbonchain=.true.
+  flag_topspec=.true.
+  flag_atomratios=.true.
+  flag_pvap=.true.
+  flag_henry=.true.
+  flag_elementscontrib=.true.
+  selected_species = "GHO", "GCO2", "GHO2", "GO3", "GH2O2", "GNO", "GNO2", "GNO3", "GO3P", "GO1D"
+
+/

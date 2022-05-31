@@ -1,0 +1,50 @@
+  skip_time = 1
+  input_type = "netcdf"
+  output_type = "ascii"
+  nbox = 1
+  n_topspecies = 20
+  flag_topspec =.true.
+  flag_selected=.true.
+selected_species(1:40)="GTE7001" "GTE0001" "GTE7000" "GTE0000" "GNO7002" "GKO7001" "GDO5000" "GNO000A" "GKO0000" "GDO5001" "GNO0008" "GDO7000" "GDO6000" "GNO7001" "GTE0002" "GNO0007" "GNO0003" "GNO0009" "GNO0002" "GNO0001" "GNO0000" "GKO0004" "GKO0001" "GTE0004" "GNO0004" "GNO7000" "GNO0005" "GNO0006" "GDO8000" "GKO0002" "GD06000" "GKO0003" "GK00000" "GTE0005" "GD05000" "GTE0003" "GD04000" "GKO7000" "GD03000" "GD02000"
+/
+  n_toprates=20
+  flag_rates=.true.
+  rate_species="G3K2001"
+  n_topspecies =50
+  flag_bubble = .true.
+  flag_Cstar = .true.
+/
+  flag_topNspc = .true.
+  flag_ppb = .true.
+  flag_OHR     =.true.
+  flag_NO3R    =.true.
+  flag_atomratios =.true.
+  flag_functions  =.true.
+  flag_carbonchain=.true.
+  flag_henry   =.true.
+  flag_ohexposure = .true.
+  flag_ppb     =.true.
+  flag_phasedist  =.true.
+  flag_pvap    =.true.
+  flag_smiles  =.true.
+  flag_soayield=.true.
+  flag_selected=.true.
+selected_species(1:43)="GCH2O","GCH3OH","GD02000","GU02000","GU03000","GU04001","GU04002","GUU4000","GISOPRN","GMVK","GMACR","GKK4000","GAPINEN","GBPINEN","GCARENE","GBOCIMN","GCAMPHN","GLIMONN","GFU0001","GFU0002","GFU0003","GFU0004","GFU0007","GFU0010","GFU0011","GAR0084","GAR0167","GAR0015","GAR0486","GAR0045","AAR0045","GTU5000","GTU6000","GC08000","GP02000","GP03000","GO3","GNO","GNO2","GHNO2","GHNO3","GHO","GHO2"
+  gas_dyn_filter(1:2) = "C5;NN!",";N!NN"
+  aer_dyn_filter(1:2) = "C5;NO!OO", "C6;OH!HH"
+/
+  n_toprates=20
+  flag_rates=.true.
+  rate_species="G3K2001"
+/
+  flag_amsfactors = .false.
+  flag_chochonfreq=.false.
+  flag_chon=.false.
+  flag_contributingspecs=.false.
+  flag_dbeai=.false.
+  flag_elementscontrib=.false.
+  flag_entropy=.false.
+  flag_massspectrum=.false.
+  flag_phasestate=.false.
+  flag_vbs_param =.false.
+/

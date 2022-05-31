@@ -1,0 +1,59 @@
+README file for directory GECKO-A/SCRIPTS
+=========================================
+
+RUNNING ON CHEYENNE:
+
+All scripts invoke cheyenne_scripting_functions.bash (contains functions write_cheyenne_*script) which writes GENERATED_SCRIPTS specific to particular run.  THESE are what is sent to cheyenne.
+
+
+1a) generate mechanism from scratch & interpret it (submit as one job: RECOMMENDED):
+./generate_scheme_cheyenne_bundle.bash -i {cheminput.dat file} -m {mechname} -s {settings file}
+invokes: 
+        cheyenne_scripting_functions.bash
+	launch_gen_bundle.bash
+...which in turn invokes:
+	gen_package_cheyenne.bash >> write_akparameter.bash
+	                          >> run_interp_cheyenne.bash
+
+1b) generate mechanism from scratch & interpret it (submit each species as a separate job):
+./generate_scheme_cheyenne.bash -i {cheminput.dat file} -m {mechname} -s {settings file}
+invokes: 
+        cheyenne_scripting_functions.bash
+	launch_generator_cheyenne.bash
+	gen_package_cheyenne.bash >> write_akparameter.bash
+	                          >> run_interp_cheyenne.bash
+
+2) add to existing mechanism:
+EITHER ./generate_scheme_cheyenne_bundle.bash -i {cheminput.dat file} -m {mechname} -x {existing mechanism} -s {settings file}
+OR     ./generate_scheme_cheyenne.bash -i {cheminput.dat file} -m {mechname} -x {existing mechanism} -s {settings file}
+
+
+3) interpret existing mechanism (eg if you edited/added to it):
+./gen_package_cheyenne.bash {GECKO_generatorcode_source_path} {GECKO_SCRATCH_path} {mechname} {BOXMOD_sourcecode_path}
+
+
+4) run box model (edit job section length "runlength" inside script: 
+SEPARATE JOBS:
+./run_boxmod_cheyenne.bash -m {mechname} -k {keyfile} -p {photfile} [-c {conc_file} -v {previous_output}]
+SUBMIT AS ONE JOB:
+./run_boxmod_bundle -m {mechname} -k {keyfile} -p {photfile} [-c {conc_file} -v {previous_output}]
+invokes:
+        cheyenne_scripting_functions.bash
+	compile_boxmod.bash 
+	launch_boxmod_cheyenne.bash OR launch_box_bundle.bash >> run_postproc_cheyenne.bash
+	run_postproc_cheyenne.bash
+
+5) run box model continuation:
+./run_boxmod_cheyenne.bash -m {mechname} -k {keyfile} -p {photfile} -c {conc_file} -v {previous runname} 
+invokes:
+	compile_boxmod.bash 
+	launch_boxmod_cheyenne.bash 
+	run_postproc_cheyenne.bash
+
+5) run postprocessing independently of box model submission (INTERACTIVE)
+./run_postproc_cheyenne.bash {mechname} {keyfilename} {flags_input_filename}
+OR
+./run_postproc_local.bash -m {mechname} -k {keyfilename} -f {flags_input_filename}
+
+NOTES:
+- boxmod must be recompiled for each specific akparameter_module.f90 file

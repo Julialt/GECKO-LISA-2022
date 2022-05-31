@@ -1,0 +1,480 @@
+# Makefile created by mkmf $Id: mkmf,v 18.0 2010/03/02 23:26:08 fms Exp $ 
+
+include template.mk
+
+.DEFAULT:
+	-echo $@ does not exist.
+all: ../PROG/BOXMOD
+apply_constraints.o: ../LIB/apply_constraints.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/apply_constraints.f
+bilan_species.o: ../LIB/bilan_species.f ../LIB/general.h akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/bilan_species.f
+calc_phot_OFR.o: ../LIB/calc_phot_OFR.f90 forcing_params_module.o module_data_gecko_main.o 
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/calc_phot_OFR.f90
+calc_psat.o: ../LIB/calc_psat.f90 akparameter_module.o flags_module.o forcing_params_module.o module_data_gecko_main.o 
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/calc_psat.f90
+calc_Cstar298.o: ../LIB/calc_Cstar298.f90 akparameter_module.o flags_module.o forcing_params_module.o module_data_gecko_main.o 
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/calc_Cstar298.f90
+cdcase.o: ../LIB/cdcase.f ../LIB/general.h ../LIB/organic.h
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/cdcase.f
+chemmap.o: ../LIB/chemmap.f ../LIB/general.h
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/chemmap.f
+cleanup.o: ../LIB/cleanup.f90 flags_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/cleanup.f90
+defenvinp_ncdf.o: ../LIB/defenvinp_ncdf.f90 akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/defenvinp_ncdf.f90
+defflags_ncdf.o: ../LIB/defflags_ncdf.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/defflags_ncdf.f
+defopvals_ncdf.o: ../LIB/defopvals_ncdf.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/defopvals_ncdf.f
+extract_reacrates.o: ../LIB/extract_reacrates.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/extract_reacrates.f
+findring.o: ../LIB/findring.f ../LIB/general.h
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/findring.f
+fit.o: ../LIB/fit.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/fit.f
+get_cheminp.o: ../LIB/get_cheminp.f90 sorting_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/get_cheminp.f90
+get_envinp.o: ../LIB/get_envinp.f90 akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/get_envinp.f90
+getpvap_nan.o: ../LIB/getpvap_nan.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/getpvap_nan.f
+gettrack.o: ../LIB/gettrack.f ../LIB/general.h
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/gettrack.f
+init_defaults.o: ../LIB/init_defaults.f90 flags_module.o forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/init_defaults.f90
+solve_box.o: ../LIB/solve_box.f90 flags_module.o akparameter_module.o forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/solve_box.f90
+iter4.o: ../LIB/iter4.f prodloss_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/iter4.f
+manage_loop.o: ../LIB/manage_loop.f90 forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/manage_loop.f90
+manage_initial.o: ../LIB/manage_initial.f90 forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/manage_initial.f90
+map_indices.o: ../LIB/map_indices.f90 module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/map_indices.f90
+map_sp_ids.o: ../LIB/map_sp_ids.f90 module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/map_sp_ids.f90
+mtdyn_rp.o: ../LIB/mtdyn_rp.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/mtdyn_rp.f
+mtrat.o: ../LIB/mtrat.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/mtrat.f
+mtrat_ba.o: ../LIB/mtrat_ba.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/mtrat_ba.f
+ncutil.o: ../LIB/ncutil.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/ncutil.f
+newdt.o: ../LIB/newdt.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/newdt.f
+nodmap.o: ../LIB/nodmap.f ../LIB/general.h
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/nodmap.f
+open_op_files.o: ../LIB/open_op_files.f90 forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/open_op_files.f90
+open_io_files.o: ../LIB/open_io_files.f90 module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/open_io_files.f90
+output_vals.o: ../LIB/output_vals.f90 flags_module.o akparameter_module.o forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/output_vals.f90
+pbl_height_forcage.o: ../LIB/pbl_height_forcage.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/pbl_height_forcage.f
+printreaction.o: ../LIB/printreaction.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/printreaction.f
+printsteadystate.o: ../LIB/printsteadystate.f90 akparameter_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/printsteadystate.f90
+read_idgaw.o: ../LIB/read_idgaw.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/read_idgaw.f
+readkeyflags.o: ../LIB/readkeyflags.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readkeyflags.f
+readppf.o: ../LIB/readppf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readppf.f
+get_prev.o: ../LIB/get_prev.f90 akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/get_prev.f90
+readprev.o: ../LIB/readprev.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readprev.f
+readprev_ncdf.o: ../LIB/readprev_ncdf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readprev_ncdf.f
+readpvap.o: ../LIB/readpvap.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readpvap.f
+readpvap_nan_bin.o: ../LIB/readpvap_nan_bin.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readpvap_nan_bin.f
+readpvap_nan_ncdf.o: ../LIB/readpvap_nan_ncdf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readpvap_nan_ncdf.f
+readpvap_sim_bin.o: ../LIB/readpvap_sim_bin.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readpvap_sim_bin.f
+readpvap_sim_ncdf.o: ../LIB/readpvap_sim_ncdf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/readpvap_sim_ncdf.f
+read_dvsp_bin.o: ../LIB/read_dvsp_bin.f90 akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/read_dvsp_bin.f90
+read_dvsp_ncdf.o: ../LIB/read_dvsp_ncdf.f90 akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/read_dvsp_ncdf.f90
+rjgadd.o: ../LIB/rjgadd.f ../LIB/general.h
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/rjgadd.f
+rjgrm.o: ../LIB/rjgrm.f ../LIB/general.h
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/rjgrm.f
+setup_GECKO.o: ../LIB/setup_GECKO.f90 
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/setup_GECKO.f90
+setup_ncdf_op.o: ../LIB/setup_ncdf_op.f90 forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/setup_ncdf_op.f90
+setup_printphoto.o: ../LIB/setup_printphoto.f90 module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/setup_printphoto.f90
+find_concs.o: ../LIB/find_concs.f90 akparameter_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/find_concs.f90
+phys_rates.o: ../LIB/phys_rates.f90 akparameter_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/phys_rates.f90
+surface_rates.o: ../LIB/surface_rates.f90 akparameter_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/surface_rates.f90
+soa_dyn.o: ../LIB/soa_dyn.f90 akparameter_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/soa_dyn.f90
+soa_dyn_update.o: ../LIB/soa_dyn_update.f90 akparameter_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/soa_dyn_update.f90
+soa_equil.o: ../LIB/soa_equil.f90 akparameter_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/soa_equil.f90
+soapartition.o: ../LIB/soapartition.f90 akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/soapartition.f90
+spakinit9_bin.o: ../LIB/spakinit9_bin.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spakinit9_bin.f
+spakinit9_ncdf.o: ../LIB/spakinit9_ncdf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spakinit9_ncdf.f
+spakkextra4.o: ../LIB/spakkextra4.f akparameter_module.o inorganic_aer_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spakkextra4.f
+spakkfo.o: ../LIB/spakkfo.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/spakkfo.f
+spakkrat6.o: ../LIB/spakkrat6.f akparameter_module.o inorganic_aer_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spakkrat6.f
+spakspnum.o: ../LIB/spakspnum.f akparameter_module.o sorting_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spakspnum.f
+spchge_cvar4.o: ../LIB/spchge_cvar4.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/spchge_cvar4.f
+spdatsurf.o: ../LIB/spdatsurf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spdatsurf.f
+spdeposition3.o: ../LIB/spdeposition3.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spdeposition3.f
+spforcage6.o: ../LIB/spforcage6.f90 akparameter_module.o flags_module.o constraints_module.o forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spforcage6.f90
+spgetemi4.o: ../LIB/spgetemi4.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spgetemi4.f
+spinterp5.o: ../LIB/spinterp5.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spinterp5.f
+spprint_bin.o: ../LIB/spprint_bin.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spprint_bin.f
+spreadcoeff3.o: ../LIB/spreadcoeff3.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreadcoeff3.f
+spreaddep3.o: ../LIB/spreaddep3.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreaddep3.f
+spreaddep3_ncdf.o: ../LIB/spreaddep3_ncdf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreaddep3_ncdf.f
+spreaddimer.o: ../LIB/spreaddimer.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreaddimer.f
+spreadj4.o: ../LIB/spreadj4.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreadj4.f
+spreadj4_ncdf.o: ../LIB/spreadj4_ncdf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreadj4_ncdf.f
+spreadkey6.o: ../LIB/spreadkey6.f90 flags_module.o constraints_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreadkey6.f90
+spreadro2jenk.o: ../LIB/spreadro2jenk.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreadro2jenk.f
+spreadro2sof2_bin.o: ../LIB/spreadro2sof2_bin.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreadro2sof2_bin.f
+spreadro2sof2_ncdf.o: ../LIB/spreadro2sof2_ncdf.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spreadro2sof2_ncdf.f
+spsolar.o: ../LIB/spsolar.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/spsolar.f
+spsplna.o: ../LIB/spsplna.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spsplna.f
+spsplnb.o: ../LIB/spsplnb.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/spsplnb.f
+sptimesurf3.o: ../LIB/sptimesurf3.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/sptimesurf3.f
+sputil.o: ../LIB/sputil.f
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/sputil.f
+surface_emissions.o: ../LIB/surface_emissions.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/surface_emissions.f
+surfdep_wesely89.o: ../LIB/surfdep_wesely89.f akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/surfdep_wesely89.f
+twostep5.o: ../LIB/twostep5.f prodloss_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/twostep5.f
+wall_MatZie2010.o: ../LIB/wall_MatZie2010.f90 module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wall_MatZie2010.f90
+wall_Krech2016_Z.o: ../LIB/wall_Krech2016_Z.f90 module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wall_Krech2016_Z.f90
+wall_Krech2016_J.o: ../LIB/wall_Krech2016_J.f90 module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wall_Krech2016_J.f90
+write_op_hdrs.o: ../LIB/write_op_hdrs.f90 flags_module.o forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/write_op_hdrs.f90
+write_printphoto.o: ../LIB/write_printphoto.f90 flags_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/write_printphoto.f90
+wrtenvinp_ncdf.o: ../LIB/wrtenvinp_ncdf.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wrtenvinp_ncdf.f
+wrtflags_ncdf.o: ../LIB/wrtflags_ncdf.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wrtflags_ncdf.f
+wrtjvinp_ncdf.o: ../LIB/wrtjvinp_ncdf.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wrtjvinp_ncdf.f
+wrtopaer_ncdf.o: ../LIB/wrtopaer_ncdf.f akparameter_module.o flags_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wrtopaer_ncdf.f
+wrtopgas_ncdf.o: ../LIB/wrtopgas_ncdf.f akparameter_module.o flags_module.o forcing_params_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/wrtopgas_ncdf.f
+akparameter_module.o: ../LIB/akparameter_module.f90 
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/akparameter_module.f90
+flags_module.o: ../LIB/flags_module.f90 
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/flags_module.f90
+constraints_module.o: ../LIB/constraints_module.f90 akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/constraints_module.f90
+forcing_params_module.o: ../LIB/forcing_params_module.f90 akparameter_module.o constraints_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/forcing_params_module.f90
+inorganic_aer_module.o: ../LIB/inorganic_aer_module.f90
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c	../LIB/inorganic_aer_module.f90
+module_data_gecko_main.o: ../LIB/module_data_gecko_main.f90 constraints_module.o forcing_params_module.o sorting_module.o inorganic_aer_module.o prodloss_module.o akparameter_module.o flags_module.o 
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB    ../LIB/module_data_gecko_main.f90
+prodloss_module.o: ../LIB/prodloss_module.f90
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/prodloss_module.f90
+sorting_module.o: ../LIB/sorting_module.f90 akparameter_module.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../LIB/sorting_module.f90
+boxmod_main.o: ../PROG/boxmod_main.f90 flags_module.o  akparameter_module.o forcing_params_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) -c -I../LIB	../PROG/boxmod_main.f90
+./boxmod_main.f90: ../PROG/boxmod_main.f90
+	cp ../PROG/boxmod_main.f90 .
+./fit.f: ../LIB/fit.f
+	cp ../LIB/fit.f .
+./flags.h: flags_module.o
+	cp flags_module.o .
+./get_cheminp.f90: ../LIB/get_cheminp.f90
+	cp ../LIB/get_cheminp.f90 .
+./get_envinp.f90: ../LIB/get_envinp.f90
+	cp ../LIB/get_envinp.f90 .
+./getpvap_nan.f: ../LIB/getpvap_nan.f
+	cp ../LIB/getpvap_nan.f .
+./gettrack.f: ../LIB/gettrack.f
+	cp ../LIB/gettrack.f .
+./init_defaults.f90: ../LIB/init_defaults.f90 
+	cp ../LIB/init_defaults.f90 .
+./solve_box.f90: ../LIB/solve_box.f90 
+	cp ../LIB/solve_box.f90 .
+./iter4.f: ../LIB/iter4.f
+	cp ../LIB/iter4.f .
+./manage_initial.f90: ../LIB/manage_initial.f90
+	cp ../LIB/manage_initial.f90 .
+./manage_loop.f90: ../LIB/manage_loop.f90
+	cp ../LIB/manage_loop.f90 .
+./map_indices.f90: ../LIB/map_indices.f90
+	cp ../LIB/map_indices.f90 .
+./map_sp_ids.f90: ../LIB/map_sp_ids.f90
+	cp ../LIB/map_sp_ids.f90 .
+./output_vals.f90: ../LIB/output_vals.f90 
+	cp ../LIB/output_vals.f90 .
+./readkeyflags.f: ../LIB/readkeyflags.f
+	cp ../LIB/readkeyflags.f .
+./spakkextra4.f: ../LIB/spakkextra4.f
+	cp ../LIB/spakkextra4.f .
+./spreadj4_ncdf.f: ../LIB/spreadj4_ncdf.f
+	cp ../LIB/spreadj4_ncdf.f .
+./spreadkey6.f90: ../LIB/spreadkey6.f90
+	cp ../LIB/spreadkey6.f90 .
+./mtrat_ba.f: ../LIB/mtrat_ba.f
+	cp ../LIB/mtrat_ba.f .
+./spakkfo.f: ../LIB/spakkfo.f
+	cp ../LIB/spakkfo.f .
+./mtdyn_rp.f: ../LIB/mtdyn_rp.f
+	cp ../LIB/mtdyn_rp.f .
+./akparameter.h: akparameter_module.o
+	cp akparameter_module.o .
+./spreaddep3_ncdf.f: ../LIB/spreaddep3_ncdf.f
+	cp ../LIB/spreaddep3_ncdf.f .
+./read_idgaw.f: ../LIB/read_idgaw.f
+	cp ../LIB/read_idgaw.f .
+./readpvap_sim_bin.f: ../LIB/readpvap_sim_bin.f
+	cp ../LIB/readpvap_sim_bin.f .
+./readpvap_sim_ncdf.f: ../LIB/readpvap_sim_ncdf.f
+	cp ../LIB/readpvap_sim_ncdf.f .
+./read_dvsp.f90: ../LIB/read_dvsp.f90
+	cp ../LIB/read_dvsp.f90 .
+./read_dvsp_ncdf.f90: ../LIB/read_dvsp_ncdf.f90
+	cp ../LIB/read_dvsp_ncdf.f90 .
+./sptimesurf3.f: ../LIB/sptimesurf3.f
+	cp ../LIB/sptimesurf3.f .
+./general.h: ../LIB/general.h
+	cp ../LIB/general.h .
+./find_concs.f90: ../LIB/find_concs.f90
+	cp ../LIB/find_concs.f90 .
+./phys_rates.f90: ../LIB/phys_rates.f90
+	cp ../LIB/phys_rates.f90 .
+./surface_rates.f90: ../LIB/surface_rates.f90
+	cp ../LIB/surface_rates.f90 .
+./soa_dyn.f90: ../LIB/soa_dyn.f90
+	cp ../LIB/soa_dyn.f90 .
+./soa_dyn_update.f90: ../LIB/soa_dyn_update.f90
+	cp ../LIB/soa_dyn_update.f90 .
+./soa_equil.f90: ../LIB/soa_equil.f90
+	cp ../LIB/soa_equil.f90 .
+./soapartition.f90: ../LIB/soapartition.f90
+	cp ../LIB/soapartition.f90 .
+./spakspnum.f: ../LIB/spakspnum.f
+	cp ../LIB/spakspnum.f .
+./bilan_species.f: ../LIB/bilan_species.f
+	cp ../LIB/bilan_species.f .
+./spreadcoeff3.f: ../LIB/spreadcoeff3.f
+	cp ../LIB/spreadcoeff3.f .
+./spreadro2sof2_bin.f: ../LIB/spreadro2sof2_bin.f
+	cp ../LIB/spreadro2sof2_bin.f .
+./organic.h: ../LIB/organic.h
+	cp ../LIB/organic.h .
+./spakinit9_ncdf.f: ../LIB/spakinit9_ncdf.f
+	cp ../LIB/spakinit9_ncdf.f .
+./spsplna.f: ../LIB/spsplna.f
+	cp ../LIB/spsplna.f .
+./wrtflags_ncdf.f: ../LIB/wrtflags_ncdf.f
+	cp ../LIB/wrtflags_ncdf.f .
+./readpvap_nan_bin.f: ../LIB/readpvap_nan_bin.f
+	cp ../LIB/readpvap_nan_bin.f .
+./spreadro2sof2_ncdf.f: ../LIB/spreadro2sof2_ncdf.f
+	cp ../LIB/spreadro2sof2_ncdf.f .
+./write_op_hdrs.f90: ../LIB/write_op_hdrs.f90
+	cp ../LIB/write_op_hdrs.f90 .
+./write_printphoto.f90: ../LIB/write_printphoto.f90
+	cp ../LIB/write_printphoto.f90 .
+./wrtenvinp_ncdf.f: ../LIB/wrtenvinp_ncdf.f
+	cp ../LIB/wrtenvinp_ncdf.f .
+./pbl_height_forcage.f: ../LIB/pbl_height_forcage.f
+	cp ../LIB/pbl_height_forcage.f .
+./readpvap_nan_ncdf.f: ../LIB/readpvap_nan_ncdf.f
+	cp ../LIB/readpvap_nan_ncdf.f .
+./nodmap.f: ../LIB/nodmap.f
+	cp ../LIB/nodmap.f .
+./open_op_files.f90: ../LIB/open_op_files.f90
+	cp ../LIB/open_op_files.f90 .
+./open_io_files.f90: ../LIB/open_io_files.f90
+	cp ../LIB/open_io_files.f90 .
+./spreadro2jenk.f: ../LIB/spreadro2jenk.f
+	cp ../LIB/spreadro2jenk.f .
+./ncutil.f: ../LIB/ncutil.f
+	cp ../LIB/ncutil.f .
+./calc_phot_OFR.f90: ../LIB/calc_phot_OFR.f90
+	cp ../LIB/calc_phot_OFR.f90 .
+./calc_psat.f90: ../LIB/calc_psat.f90
+	cp ../LIB/calc_psat.f90 .
+./calc_Cstar298.f90: ../LIB/calc_Cstar298.f90
+	cp ../LIB/calc_Cstar298.f90 .
+./cdcase.f: ../LIB/cdcase.f
+	cp ../LIB/cdcase.f .
+./defenvinp_ncdf.f90: ../LIB/defenvinp_ncdf.f90
+	cp ../LIB/defenvinp_ncdf.f90 .
+./findring.f: ../LIB/findring.f
+	cp ../LIB/findring.f .
+./spsplnb.f: ../LIB/spsplnb.f
+	cp ../LIB/spsplnb.f .
+./get_prev_.f90: ../LIB/get_prev.f90
+	cp ../LIB/get_prev.f90 .
+./readprev_ncdf.f: ../LIB/readprev_ncdf.f
+	cp ../LIB/readprev_ncdf.f .
+./surfdep_wesely89.f: ../LIB/surfdep_wesely89.f
+	cp ../LIB/surfdep_wesely89.f .
+./sputil.f: ../LIB/sputil.f
+	cp ../LIB/sputil.f .
+./spdeposition3.f: ../LIB/spdeposition3.f
+	cp ../LIB/spdeposition3.f .
+./newdt.f: ../LIB/newdt.f
+	cp ../LIB/newdt.f .
+./spsolar.f: ../LIB/spsolar.f
+	cp ../LIB/spsolar.f .
+./chemmap.f: ../LIB/chemmap.f
+	cp ../LIB/chemmap.f .
+./cleanup.f90: ../LIB/cleanup.f90
+	cp ../LIB/cleanup.f90 .
+./readpvap.f: ../LIB/readpvap.f
+	cp ../LIB/readpvap.f .
+./mtrat.f: ../LIB/mtrat.f
+	cp ../LIB/mtrat.f .
+./spakinit9_bin.f: ../LIB/spakinit9_bin.f
+	cp ../LIB/spakinit9_bin.f .
+./readppf.f: ../LIB/readppf.f
+	cp ../LIB/readppf.f .
+./surface_emissions.f: ../LIB/surface_emissions.f
+	cp ../LIB/surface_emissions.f .
+./spprint_bin.f: ../LIB/spprint_bin.f
+	cp ../LIB/spprint_bin.f .
+./twostep5.f: ../LIB/twostep5.f
+	cp ../LIB/twostep5.f .
+./wall_MatZie2010.f90: ../LIB/wall_MatZie2010.f90
+	cp ../LIB/wall_MatZie2010.f90 .
+./wall_Krech2016_Z.f90: ../LIB/wall_Krech2016_Z.f90
+	cp ../LIB/wall_Krech2016_Z.f90 .
+./wall_Krech2016_J.f90: ../LIB/wall_Krech2016_J.f90
+	cp ../LIB/wall_Krech2016_J.f90 .
+./spinterp5.f: ../LIB/spinterp5.f
+	cp ../LIB/spinterp5.f .
+./rjgadd.f: ../LIB/rjgadd.f
+	cp ../LIB/rjgadd.f .
+./defopvals_ncdf.f: ../LIB/defopvals_ncdf.f
+	cp ../LIB/defopvals_ncdf.f .
+./extract_reacrates.f: ../LIB/extract_reacrates.f
+	cp ../LIB/extract_reacrates.f .
+./spdatsurf.f: ../LIB/spdatsurf.f
+	cp ../LIB/spdatsurf.f .
+./spakkrat6.f: ../LIB/spakkrat6.f
+	cp ../LIB/spakkrat6.f .
+./readprev.f: ../LIB/readprev.f
+	cp ../LIB/readprev.f .
+./spreadj4.f: ../LIB/spreadj4.f
+	cp ../LIB/spreadj4.f .
+./spgetemi4.f: ../LIB/spgetemi4.f
+	cp ../LIB/spgetemi4.f .
+./defflags_ncdf.f: ../LIB/defflags_ncdf.f
+	cp ../LIB/defflags_ncdf.f .
+./spchge_cvar4.f: ../LIB/spchge_cvar4.f
+	cp ../LIB/spchge_cvar4.f .
+./spreaddimer.f: ../LIB/spreaddimer.f
+	cp ../LIB/spreaddimer.f .
+./spforcage6.f90: ../LIB/spforcage6.f90
+	cp ../LIB/spforcage6.f90 .
+./wrtopaer_ncdf.f: ../LIB/wrtopaer_ncdf.f
+	cp ../LIB/wrtopaer_ncdf.f .
+./apply_constraints.f: ../LIB/apply_constraints.f
+	cp ../LIB/apply_constraints.f .
+./printreaction.f: ../LIB/printreaction.f
+	cp ../LIB/printreaction.f .
+./printsteadystate.f90: ../LIB/printsteadystate.f90
+	cp ../LIB/printsteadystate.f90 .
+./rjgrm.f: ../LIB/rjgrm.f
+	cp ../LIB/rjgrm.f .
+./setup_GECKO.f90: ../LIB/setup_GECKO.f90
+	cp ../LIB/setup_GECKO.f90 .
+./setup_ncdf_op.f90: ../LIB/setup_ncdf_op.f90
+	cp ../LIB/setup_ncdf_op.f90 .
+./setup_printphoto.f90: ../LIB/setup_printphoto.f90
+	cp ../LIB/setup_printphoto.f90 .
+./spreaddep3.f: ../LIB/spreaddep3.f
+	cp ../LIB/spreaddep3.f .
+./wrtjvinp_ncdf.f: ../LIB/wrtjvinp_ncdf.f
+	cp ../LIB/wrtjvinp_ncdf.f .
+./wrtopgas_ncdf.f: ../LIB/wrtopgas_ncdf.f
+	cp ../LIB/wrtopgas_ncdf.f .
+./flags_module.f90: ../LIB/flags_module.f90
+	cp ../LIB/flags_module.f90 .
+./akparameter_module.f90: ../LIB/akparameter_module.f90
+	cp ../LIB/akparameter_module.f90 .
+./constraints_module.f90: ../LIB/constraints_module.f90
+	cp ../LIB/constraints_module.f90 .
+./forcing_params_module.f90: ../LIB/forcing_params_module.f90
+	cp ../LIB/forcing_params_module.f90 .
+./inorganic_aer_module.f90: ../LIB/inorganic_aer_module.f90
+	cp ../LIB/inorganic_aer_module.f90 .
+./prodloss_module.f90: ../LIB/prodloss_module.f90
+	cp ../LIB/prodloss_module.f90 .
+./sorting_module.f90: ../LIB/sorting_module.f90
+	cp ../LIB/sorting_module.f90 .
+./module_data_gecko_main.f90: ../LIB/module_data_gecko_main.f90
+	cp ../LIB/module_data_gecko_main.f90 .
+SRC = ../LIB/flags_module.f90../LIB/akparameter_module.f90 ../LIB/apply_constraints.f ../LIB/bilan_species.f ../LIB/calc_phot_OFR.f90 ../LIB/calc_psat.f90 ../LIB/calc_Cstar298.f90 ../LIB/cdcase.f ../LIB/chemmap.f ../LIB/cleanup.f90 ../LIB/constraints_module.f90 ../LIB/defenvinp_ncdf.f90 ../LIB/defflags_ncdf.f ../LIB/defopvals_ncdf.f ../LIB/extract_reacrates.f ../LIB/findring.f ../LIB/fit.f flags_module.o ../LIB/forcing_params_module.f90 ../LIB/general.h ../LIB/get_cheminp.f90 ../LIB/get_envinp.f90 ../LIB/getpvap_nan.f ../LIB/gettrack.f ../LIB/init_defaults.f90 ../LIB/solve_box.f90 ../LIB/output_vals.f90 ../LIB/inorganic_aer_module.f90 ../LIB/iter4.f ../LIB/manage_initial.f90 ../LIB/manage_loop.f90 ../LIB/map_indices.f90 ../LIB/map_sp_ids.f90 ../LIB/module_data_gecko_main.f90 ../LIB/mtdyn_rp.f ../LIB/mtrat_ba.f ../LIB/mtrat.f ../LIB/ncutil.f ../LIB/newdt.f ../LIB/nodmap.f ../LIB/open_op_files ../LIB/open_io_files.f90 ../LIB/organic.h ../LIB/pbl_height_forcage.f ../LIB/printreaction.f ../LIB/printsteadystate.f90 ../LIB/prodloss_module.f90 ../LIB/read_idgaw.f ../LIB/readkeyflags.f ../LIB/readppf.f ../LIB/get_prev.f90 ../LIB/readprev.f ../LIB/readprev_ncdf.f ../LIB/readpvap.f ../LIB/readpvap_nan_bin.f ../LIB/readpvap_nan_ncdf.f ../LIB/readpvap_sim_bin.f ../LIB/readpvap_sim_ncdf.f ../LIB/read_dvsp_bin.f90 ../LIB/read_dvsp_ncdf.f90 ../LIB/rjgadd.f ../LIB/rjgrm.f ../LIB/setup_GECKO/f90 ../LIB/setup_ncdf_op.f90 ../LIB/setup_printphoto.f90 ../LIB/find_concs.f90 ../LIB/phys_rates.f90 ../LIB/surface_rates.f90 ../LIB/soa_dyn.f90 ../LIB/soa_dyn_update.f90 ../LIB/soa_equil.f90 ../LIB/soapartition.f90 ../LIB/sorting_module.f90 ../LIB/spakinit9_bin.f ../LIB/spakinit9_ncdf.f ../LIB/spakkextra4.f ../LIB/spakkfo.f ../LIB/spakkrat6.f ../LIB/spakspnum.f ../LIB/spchge_cvar4.f ../LIB/spdatsurf.f ../LIB/spdeposition3.f ../LIB/spforcage6.f90 ../LIB/spgetemi4.f ../LIB/spinterp5.f ../LIB/spprint_bin.f ../LIB/spreadcoeff3.f ../LIB/spreaddep3.f ../LIB/spreaddep3_ncdf.f ../LIB/spreaddimer.f ../LIB/spreadj4.f ../LIB/spreadj4_ncdf.f ../LIB/spreadkey6.f90 ../LIB/spreadro2jenk.f ../LIB/spreadro2sof2_bin.f ../LIB/spreadro2sof2_ncdf.f ../LIB/spsolar.f ../LIB/spsplna.f ../LIB/spsplnb.f ../LIB/sptimesurf3.f ../LIB/sputil.f ../LIB/surface_emissions.f ../LIB/surfdep_wesely89.f ../LIB/twostep5.f ../LIB/wall_MatZie2010.f90 ../LIB/wall_Krech2016_Z.f90 ../LIB/wall_Krech2016_J.f90 ../LIB/write_op_hdrs.f90 ../LIB/write_printphoto.f90 ../LIB/wrtenvinp_ncdf.f ../LIB/wrtflags_ncdf.f ../LIB/wrtjvinp_ncdf.f ../LIB/wrtopaer_ncdf.f ../LIB/wrtopgas_ncdf.f ../PROG/boxmod_main.f90
+OBJ = akparameter_module.o flags_module.o apply_constraints.o bilan_species.o calc_phot_OFR.o calc_psat.o calc_Cstar298.o cdcase.o chemmap.o cleanup.o constraints_module.o defenvinp_ncdf.o defflags_ncdf.o defopvals_ncdf.o extract_reacrates.o findring.o fit.o forcing_params_module.o get_cheminp.o get_envinp.o getpvap_nan.o gettrack.o init_defaults.o solve_box.o output_vals.o inorganic_aer_module.o iter4.o manage_initial.o manage_loop.o map_indices.o map_sp_ids.o module_data_gecko_main.o mtdyn_rp.o mtrat_ba.o mtrat.o ncutil.o newdt.o nodmap.o open_op_files.o open_io_files.o pbl_height_forcage.o printreaction.o printsteadystate.o read_idgaw.o readkeyflags.o readppf.o get_prev.o readprev_ncdf.o readprev.o readpvap_nan_bin.o readpvap_nan_ncdf.o readpvap.o readpvap_sim_bin.o readpvap_sim_ncdf.o read_dvsp_bin.o read_dvsp_ncdf.o rjgadd.o rjgrm.o setup_GECKO.o setup_ncdf_op.o setup_printphoto.o find_concs.o phys_rates.o surface_rates.o soa_dyn.o soa_dyn_update.o soa_equil.o soapartition.o sorting_module.o spakinit9_bin.o spakinit9_ncdf.o spakkextra4.o spakkfo.o spakkrat6.o spakspnum.o spchge_cvar4.o spdatsurf.o spdeposition3.o spforcage6.o spgetemi4.o spinterp5.o spprint_bin.o spreadcoeff3.o spreaddep3_ncdf.o spreaddep3.o spreaddimer.o spreadj4_ncdf.o spreadj4.o spreadkey6.o spreadro2jenk.o spreadro2sof2_bin.o spreadro2sof2_ncdf.o spsolar.o spsplna.o spsplnb.o sptimesurf3.o sputil.o surface_emissions.o surfdep_wesely89.o twostep5.o wall_MatZie2010.o wall_Krech2016_Z.o wall_Krech2016_J.o write_op_hdrs.o write_printphoto.o wrtenvinp_ncdf.o wrtflags_ncdf.o wrtjvinp_ncdf.o wrtopaer_ncdf.o wrtopgas_ncdf.o
+OFF =  ../LIB/akparameter_module.f90 ../LIB/flags_module.o ../LIB/apply_constraints.f ../LIB/bilan_species.f ../calc_phot_OFR.f90 ../LIB/calc_psat.f90 ../LIB/calc_Cstar298.f90 ../LIB/cdcase.f ../LIB/chemmap.f ../LIB/cleanup.f90 ../LIB/constraints_module.f90 ../LIB/defenvinp_ncdf.f90 ../LIB/defflags_ncdf.f ../LIB/defopvals_ncdf.f ../LIB/extract_reacrates.f ../LIB/findring.f flags_module.o ../LIB/forcing_params_module.f90 ../LIB/general.h ../LIB/get_cheminp.f90 ../LIB/get_envinp.f90 ../LIB/getpvap_nan.f ../LIB/gettrack.f ../LIB/init_defaults.f90 ../LIB/solve_box.f90 ../LIB/output_vals.f90 ../LIB/fit.f ../LIB/inorganic_aer_module.f90 ../LIB/iter4.f ../LIB/manage_initial.f90 ../LIB/manage_loop.f90 ../LIB/map_indices.f90 ../LIB/map_sp_ids.f90 ../LIB/module_data_gecko_main.f90 ../LIB/mtdyn_rp.f ../LIB/mtrat_ba.f ../LIB/mtrat.f ../LIB/ncutil.f ../LIB/newdt.f ../LIB/nodmap.f ../LIB/open_io_files.f90 ../LIB/organic.h ../LIB/pbl_height_forcage.f ../LIB/open_op_files.f90 ../LIB/printreaction.f ../LIB/printsteadystate.f90 ../LIB/prodloss_module.f90 ../LIB/read_idgaw.f ../LIB/readkeyflags.f ../LIB/readppf.f ../LIB/get_prev.f90 ../LIB/readprev.f ../LIB/readprev_ncdf.f ../LIB/readpvap.f ../LIB/readpvap_nan_bin.f ../LIB/readpvap_nan_ncdf.f ../LIB/readpvap_sim_bin.f ../LIB/readpvap_sim_ncdf.f ../LIB/read_dvsp_bin.f90 ../LIB/read_dvsp_ncdf.f90 ../LIB/rjgadd.f ../LIB/rjgrm.f ./LIB/setup_GECKO.f90 ../LIB/setup_ncdf_op.f90 ../LIB/setup_printphoto.f90 ../LIB/find_concs.f90 ../LIB/phys_rates.f90 ../LIB/surface_rates.f90 ../LIB/soa_dyn.f90 ../LIB/soa_dyn_update.f90 ../LIB/soa_equil.f90 ../LIB/soapartition.f90 ../LIB/sorting_module.f90 ../LIB/spakinit9_bin.f ../LIB/spakinit9_ncdf.f ../LIB/spakkextra4.f ../LIB/spakkfo.f ../LIB/spakkrat6.f ../LIB/spakspnum.f ../LIB/spchge_cvar4.f ../LIB/spdatsurf.f ../LIB/spdeposition3.f ../LIB/spforcage6.f90 ../LIB/spgetemi4.f ../LIB/spinterp5.f ../LIB/spprint_bin.f ../LIB/spreadcoeff3.f ../LIB/spreaddep3.f ../LIB/spreaddep3_ncdf.f ../LIB/spreaddimer.f ../LIB/spreadj4.f ../LIB/spreadj4_ncdf.f ../LIB/spreadkey6.f90 ../LIB/spreadro2jenk.f ../LIB/spreadro2sof2_bin.f ../LIB/spreadro2sof2_ncdf.f ../LIB/spsolar.f ../LIB/spsplna.f ../LIB/spsplnb.f ../LIB/sptimesurf3.f ../LIB/sputil.f ../LIB/surface_emissions.f ../LIB/surfdep_wesely89.f ../LIB/twostep5.f ../LIB/wall_MatZie2010.f90 ../LIB/wall_Krech2016_Z.f90 ../LIB/wall_Krech2016_J.f90  ../LIB/write_op_hdrs.f90 ../LIB/write_printphoto.f90 ../LIB/wrtenvinp_ncdf.f ../LIB/wrtflags_ncdf.f ../LIB/wrtjvinp_ncdf.f ../LIB/wrtopaer_ncdf.f ../LIB/wrtopgas_ncdf.f ../PROG/boxmod_main.f90
+clean: neat
+	-rm -f .../PROG/BOXMOD.cppdefs $(OBJ) ../PROG/BOXMOD
+neat:
+	-rm -f $(TMPFILES)
+localize: $(OFF)
+	cp $(OFF) .
+TAGS: $(SRC)
+	etags $(SRC)
+tags: $(SRC)
+	ctags $(SRC)
+aklib.a: $(OBJ)
+	ar -r $@ $(OBJ)
+../PROG/BOXMOD: aklib.a ../PROG/boxmod_main.f90 akparameter_module.o flags_module.o prodloss_module.o sorting_module.o constraints_module.o inorganic_aer_module.o module_data_gecko_main.o
+	$(FC) $(FFLAGS) $(OTHERFLAGS) ../PROG/boxmod_main.f90  aklib.a -I../LIB	-o ../PROG/BOXMOD 

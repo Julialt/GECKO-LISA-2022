@@ -1,0 +1,9 @@
+  skip_time = 1
+  input_type = "netcdf"
+  nbox = 1
+  n_topspecies = 10
+  flag_phasedist=.true.
+  flag_selected=.true.
+  flag_topspec=.true.
+  selected_species(1:24) = "GO3", "GHO", "GCO", "GNO", "GNO2", "GNO3", "GHNO2", "GHO2","GCH2O", "GK03000", "GUO5000", "GAPINEN","GTT000D","GTT000F","GTT000G","G2T0000","G2T0001","G2T0002","G2T0003","G2T0004","G2T0005","G2T0006","G2T0007","G2T0008"
+/

@@ -1,0 +1,13 @@
+SIZE     ! as generated + 1
+  17056  ! total number of species
+  93441  ! total number of reactions
+   7896  ! HV reactions
+      6  ! third body M reactions
+    391  ! O2 reactions
+     79  ! EXTRA reactions
+  30485  ! CH3O2/RO2 reactions
+     39  ! fall off reactions
+    664  ! R(O.) isomerization reactions
+   3367  ! gas <-> part. equilibrium
+   3367  ! gas <-> wall equilibrium
+      1  ! variable stoi. coef. reactions

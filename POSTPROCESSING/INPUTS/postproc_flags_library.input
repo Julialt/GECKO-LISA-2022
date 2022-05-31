@@ -1,0 +1,18 @@
+  skip_time = 1
+  nbox = 1
+  n_topspecies = 10
+  flag_atomratios=.true.
+  flag_bubble = .true.
+  flag_carbonchain=.true.
+  flag_chon=.true.
+  flag_Cstar = .true.
+  flag_functions=.true.
+  flag_henry=.true.
+  flag_massspectrum=.true.
+  flag_ppbC=.true.
+  flag_phasedist=.true.
+  flag_pvap=.true.
+  flag_smiles = .true.
+  flag_soayield=.true.
+  flag_topspec = .true.
+/

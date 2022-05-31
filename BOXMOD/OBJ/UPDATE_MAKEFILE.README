@@ -1,0 +1,4 @@
+# to generate BOXMOD with mkmf makefile after adding or removing new files 
+# on cheyenne:
+cd BOXMOD/OBJ
+mkmf -t template.mk -p ../PROG/BOXMOD ../LIB ../PROG/

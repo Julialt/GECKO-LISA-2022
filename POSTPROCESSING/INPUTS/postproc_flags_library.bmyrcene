@@ -1,0 +1,7 @@
+  skip_time = 1
+  nbox = 1
+  flag_bubble = .true.
+  flag_Cstar = .true.
+/  flag_massspectrum = .true.
+/  flag_Henry = .true.
+/

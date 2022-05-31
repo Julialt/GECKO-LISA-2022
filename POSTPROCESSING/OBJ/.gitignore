@@ -1,0 +1,4 @@
+*.o
+postproc
+Makefile
+!geckolib.a

@@ -1,0 +1,37 @@
+diff --git a/POSTPROCESSING/INPUTS/postproc_flags_i.input b/POSTPROCESSING/INPUTS/postproc_flags_i.input
+deleted file mode 100755
+index ab8dcbe..0000000
+--- a/POSTPROCESSING/INPUTS/postproc_flags_i.input
++++ /dev/null
+@@ -1,31 +0,0 @@
+-  skip_time = 1
+-  input_type = "netcdf"
+-  nbox = 1
+-  n_topspecies=50
+-  flag_atomratios=.true.
+-  flag_carbonchain=.true.
+-  flag_phasedist=.true.
+-  flag_soayield=.true.
+-  flag_chon=.true.
+-  flag_functions=.true.
+-  flag_pvap=.true.
+-  flag_henry=.true.
+-  flag_bubble = .true.
+-  flag_massspectrum=.true.
+-  flag_topspec=.true.
+-  flag_smiles=.true.
+-  flag_selected=.true.
+-  flag_contributingspecs=.false.
+-  flag_elementscontrib=.false.
+-  flag_phasestate=.false.
+-  flag_entropy=.false.
+-  flag_chochonfreq=.false.
+-  flag_dbeai=.false.
+-  flag_amsfactors = .false.
+-  selected_species(1:25)="GCH2O","GCH3OH","GD02000","GISOPRN","GMVK","GMACR","GKK4000","GAPINEN","GAR0167","GFU0001","GFU0002","GFU0003","GFU0004","GFU0007","GFU0010","GFU0011","GU04001","GC08000","GAR0084","GO3","GNO","GNO2","GHNO2","GHO","GHO2"
+-  flag_vbs_param = .true.
+-  gas_dyn_filter(1:2) = "C5;NN!",";N!NN"
+-  aer_dyn_filter(1:2) = "C5;NO!OO", "C6;OH!HH"
+-  flag_ohexposure = .true.
+-
+-/

@@ -1,0 +1,7 @@
+  skip_time = 1
+  nbox = 1
+  n_topspecies = 10
+  flag_bubble = .true.
+  flag_Cstar = .true.
+  flag_pvap = .true.
+/

@@ -1,0 +1,43 @@
+README file for directory GECKO-A/SCRIPTS
+=========================================
+
+RUNNING ON CHEYENNE:
+
+All scripts invoke cheyenne_scripting_functions.bash (contains functions write_cheyenne_*script) which writes GENERATED_SCRIPTS specific to particular run.  THESE are what is sent to cheyenne.
+
+1) generate mechanism from scratch & interpret it:
+./generate_scheme_cheyenne.bash -i {cheminput.dat file} -m {mechname} -s {settings file}
+invokes: 
+	launch_generator_cheyenne.bash
+	postprocess_generator_cheyenne.bash >> write_akparameter.bash
+	run_interp_cheyenne.bash
+
+
+2) add to existing mechanism:
+./generate_scheme_cheyenne.bash -i {cheminput.dat file} -m {mechname} -x {existing mechanism} -s {settings file}
+invokes: 
+	postprocess_generator_cheyenne.bash >> write_akparameter.bash
+	run_interp_cheyenne.bash
+
+3) interpret existing mechanism (eg if you edited/added to it):
+./gen_finish_scheme.bash {mechname}
+invokes: 
+	postprocess_generator_cheyenne.bash >> write_akparameter.bash
+	run_interp_cheyenne.bash
+
+4) run box model: 
+./run_boxmod_cheyenne.bash -m {mechname} -k {keyfile} -p {photfile} -c {conc_file}
+invokes:
+	compile_boxmod.bash 
+	launch_boxmod_cheyenne.bash 
+	run_postproc_cheyenne.bash
+
+5) run box model continuation:
+./run_boxmod_cheyenne.bash -m {mechname} -k {keyfile} -p {photfile} -c {conc_file} -v {previous runname} 
+invokes:
+	compile_boxmod.bash 
+	launch_boxmod_cheyenne.bash 
+	run_postproc_cheyenne.bash
+
+NOTES:
+- boxmod must be recompiled for each specific akparameter_module.f90 file

@@ -1,0 +1,620 @@
+MODULE IO
+  USE PARAMETERS
+  USE DICO
+  USE CONC
+  USE USER_INPUT
+  USE SORTING
+  USE NCUTILS
+  IMPLICIT NONE
+  integer, parameter                           :: read_unit = 19, write_unit = 20
+  integer, parameter                           :: filenames_length = 400
+  integer, parameter                           :: header_length = lfo+lco
+  character*(filenames_length)                 :: filename
+  character*(10)                               :: boxname
+
+  CONTAINS
+  SUBROUTINE get_userinfo()
+    integer                                    :: i
+
+      ! default values if not provided
+    nbox = 1
+    nprecu = 0
+    input_type = "binary"
+    precursor_codes = " "
+    selected_species = ''
+    flag_chon = .true.
+    flag_selected = .true.
+    flag_phasedist = .true.
+    flag_contributingspecs = .true.
+    flag_soayield = .true.
+    flag_functions = .true.
+    flag_carbonchain = .true.
+    flag_topspec = .true.
+    n_topspecies = 10
+    flag_atomratios = .true.
+    flag_potential_atomratios = .true.
+    flag_pvap = .true.
+    flag_cstar = .true.
+    flag_henry = .true.
+    flag_elementscontrib = .true.
+    flag_phasestate = .true.
+    flag_entropy = .true.
+    flag_chochonfreq = .true.
+    flag_dbeai = .true.
+    flag_massspectrum = .true.
+    flag_amsfactors = .true.
+    flag_bubble = .true.
+    flag_nitrates = .true.
+    flag_dyn_filter = .false.
+    gas_dyn_filter = " "
+    aer_dyn_filter = " "
+    flag_smiles = .false.
+    flag_ohexposure = .false.
+    seed_mass = 10.
+    seed_molw = 250.
+    skip_time = 1
+    OPEN(read_unit, file = "userinput.nml")
+    READ(read_unit, nml = userinput)
+    CLOSE(read_unit)
+
+    nprecu = count(precursor_codes .ne. " ")
+    if (nprecu == 0) then
+      write(6,*) ' --error-- no precursor code was initialized in '
+      write(6,*) ' userinput.nml'
+      stop
+    endif
+    do i = 1, nprecu
+      precursor_codes(i) = trim(precursor_codes(i))
+      PRINT*,"PRECU= ",precursor_codes(i)
+    enddo
+    
+    if (count(gas_dyn_filter .ne. " ") + count(aer_dyn_filter .ne. " ") > 0) then
+      flag_dyn_filter = .true.
+    endif
+
+    if (.not.(flag_chon .or. flag_selected .or. flag_phasedist .or. flag_contributingspecs .or. flag_soayield .or. &
+      flag_functions .or. flag_carbonchain .or. flag_topspec .or.flag_atomratios.or.flag_pvap.or.flag_cstar.or.flag_henry.or. &
+      flag_elementscontrib .or. flag_phasestate .or. flag_entropy .or. flag_chochonfreq .or. flag_dbeai .or. &
+      flag_massspectrum .or. flag_amsfactors .or. flag_bubble .or. flag_nitrates .or. flag_dyn_filter .or. flag_ohexposure .or. &
+      flag_potential_atomratios)) then
+      write(6,*) ' --error-- no posttreatment flag was activated in'
+      write(6,*) ' userinput.nml'
+      write(6,*) 'we should stop here'
+      stop
+    endif
+
+  END SUBROUTINE
+
+  SUBROUTINE read_dict()
+
+    integer                                                   :: i
+    character*(ldi)                                           :: line
+  !find number of species
+
+    write(6,*) ' opening: ', trim(filename)
+    open(read_unit, file = filename, status = 'OLD')
+    ndic = 0
+    do i = 1, maxsp
+      line = ""
+      read(read_unit, '(a)') line
+      if (line(1:4) == "****") exit
+      if (line(1:5) == '     ' .or. line(1:5) == 'HV   ' .or. &
+          line(1:5) == 'M    ' .or. line(1:5) == '(M)  ') cycle
+      ndic = ndic +1
+    enddo
+
+    write(6,*) 'found ', ndic, ' species in ', trim(filename)
+    if (ndic >= maxsp) then
+      write(6,*) ' -- error -- too many species in dictionary '
+      STOP
+    endif
+
+    write(6,*) 'reading ', trim(filename)
+    if( allocated(dictionary)) deallocate(dictionary)
+    allocate(dictionary(ndic))
+    rewind(read_unit)
+    do i = 1, maxsp
+      line = ""
+      read(read_unit,'(a)') line
+      if (line(1:4) == "****") exit
+      if (line(1:5) == '     ' .or. line(1:5) == 'HV   ' .or. &
+          line(1:5) == 'M    ' .or. line(1:5) == '(M)  ') cycle
+      read(line, '(A6, 3X, A120, 2X, A15)') dictionary(i)%code, dictionary(i)%formula, dictionary(i)%functions
+    enddo
+
+    close(read_unit)
+
+  END SUBROUTINE read_dict
+
+
+  SUBROUTINE read_ppf()
+
+    integer                                      :: numextra, lensp, dummy1, dummy2, i, j
+    integer                                      :: counter
+    character*(maxlsp)                           :: namextra1, namextra2, namextra3
+    real                                         :: t0, dummy
+
+    write(6,*) ' opening: ', trim(filename)
+    open(read_unit, file = filename, status = 'OLD', form = 'UNFORMATTED')
+
+    ! read parameters of the file and check the size
+    read(read_unit) numsp, numextra, lensp, dummy1, dummy2
+    write(6,*) 'found ', numsp, ' species in ', trim(filename)
+
+    if (numsp >= maxsp) then
+      write(6,*) ' -- error -- too many species in ppf file '
+      STOP
+    endif
+
+    if (numextra /= 3) then
+      WRITE(6,*) '--error--, length of the header not correct'
+      STOP
+    endif
+
+    !if(.not. ALLOCATED(species)) then
+    if(ALLOCATED(species)) deallocate(species)
+      allocate(species(numsp))
+    !endif
+
+    ! read header
+    read(read_unit) namextra1, namextra2, namextra3, (species(i)%code, i=1, numsp)
+
+
+    IF (namextra1(1:5).ne.'TIME ') THEN
+      WRITE(6,*) '--error--, first header expected to be TIME'
+      STOP
+    ENDIF
+
+    IF (namextra2(1:6).ne.'TEMPER') THEN
+      WRITE(6,*) '--error--, second header expected to be TEMPERATURE'
+      STOP
+    ENDIF
+
+    IF (namextra3(1:6).ne.'HUMIDI') THEN
+      WRITE(6,*) '--error--, second header expected to be HUMIDITY'
+      STOP
+    ENDIF
+
+    ndat = 0
+    counter = 0
+    t0 = 0.
+    dummy = 0.
+    ! we read the full first hour and every skip_time timestep after that
+    do
+      read(read_unit, end = 50) dummy
+      counter = counter + 1
+      if ( counter == 1) then 
+        t0 = dummy
+      endif      
+      if ( dummy <= (t0 + 3600) .or. modulo(counter,skip_time) == 0) then
+        ndat = ndat+1
+      endif
+    enddo
+
+50 write(6,*) 'found ', ndat, ' data points in ', trim(filename)
+
+   if (ndat >= mdat) then
+      write(6,*)  ' -- error -- too many data points in ppf file '
+      STOP
+    endif
+
+    if(allocated(concentrations)) then
+      deallocate(concentrations, time, temperature, pressure, rh)
+    endif
+    allocate(concentrations(ndat, numsp), time(ndat), temperature(ndat), pressure(ndat), rh(ndat))
+
+    rewind(read_unit)
+    write(6,*) 'reading ', trim(filename)
+    read(read_unit) ! skip header
+    read(read_unit) ! skip header
+    counter = 0
+    i = 1
+    do
+      counter = counter + 1
+      read(read_unit) time(i), temperature(i), rh(i), (concentrations(i, j), j =1, numsp)
+      if(time(i) <= (t0 + 3600) .or. modulo(counter,skip_time) == 0) then
+        i = i + 1
+        if (i == (ndat + 1)) exit
+      endif
+    enddo
+    
+
+    pressure = 1013.25
+
+    close(read_unit)
+  END SUBROUTINE read_ppf
+
+
+  SUBROUTINE read_pvap()
+    real, dimension(:), allocatable    :: Tb, dB
+    character*(maxlsp), dimension(:), allocatable :: name
+    integer                            :: npvap, i,j, ispec
+  real                               :: pvap_atm_280_temp
+
+! initialize
+    species%pvap%pvap_atm_298 = 0.
+    species%pvap%pvap_Cstar_298 = 0.
+    species%pvap%delta_H_vap_J_per_mol = 0.
+
+    open(read_unit, file = filename, status = 'OLD')
+    npvap = 0
+    do
+      read(read_unit, fmt=*, end = 60)
+      npvap = npvap+1
+    enddo
+60  npvap = npvap - 2 ! account for header and END
+    write(6,*) 'found ', npvap, ' pvap values in ', trim(filename)
+
+    if (npvap == 0) return
+    allocate(name(npvap), Tb(npvap), dB(npvap))
+
+    rewind(read_unit)
+    read(read_unit, fmt=*)
+    do i =1, npvap
+    !three columns to read, name, Tb, dB
+      read(read_unit,'(A7, 2x, f6.1, 2x, f8.4)') name(i), Tb(i), dB(i)
+    enddo
+
+    do i = 1, npvap
+      do j = 1, len_trim(phase_letter)
+        ispec = find_species_index(phase_letter(j:j)//name(i)(2:7))
+        !if (ispec .ne. -1) then
+        if (ispec .gt. 0) then
+          species(ispec)%pvap%Tb = Tb(i)
+          species(ispec)%pvap%dB = dB(i)
+          species(ispec)%pvap%pvap_atm_298 = &
+            exp((4.1012 + dB(i)) * ((298/Tb(i)-1)/(298/Tb(i) - 0.125))*log(10.))
+          !species(ispec)%pvap%pvap_cstar_298 = &
+          !  (1e6*seed_molw*seed_mass*species(ispec)%pvap%pvap_atm_298)/(8.2e-5*298)
+! Cstar corrected per CU work
+          call get_number(species(ispec)%formula, species(ispec)%molw,&
+                      species(ispec)%nc, species(ispec)%nh, species(ispec)%nn, &
+                      species(ispec)%no, species(ispec)%nr, species(ispec)%ns, &
+                      species(ispec)%nfl, species(ispec)%nbr, species(ispec)%ncl)
+          species(ispec)%pvap%pvap_cstar_298 = &
+            (1e6*species(ispec)%molw*species(ispec)%pvap%pvap_atm_298)/ &
+            (8.2e-5*298)
+
+    ! I'm too lazy to solve the clausius-clapeyron equation so here's a quick and dirty way
+    ! Siyuan Wang (siyuan@ucar.edu)
+    pvap_atm_280_temp = exp((4.1012 + dB(i)) * ((280./Tb(i)-1.)/(280./Tb(i) - 0.125))*log(10.))
+    species(ispec)%pvap%delta_H_vap_J_per_mol = & 
+                        log(pvap_atm_280_temp/species(ispec)%pvap%pvap_atm_298) * &
+                        8.314 / (1./298. - 1./280.)
+        else
+          write(6,*) " could not find: ", phase_letter(j:j)//name(i)(2:7)
+          write(6,*) " in subroutine read_pvap"
+        endif
+      enddo
+
+    enddo
+
+  END SUBROUTINE read_pvap
+!-------------------------------------------------------------------
+  SUBROUTINE read_henry
+    real, dimension(:), allocatable    :: cf, Keff, rf
+    character*(maxlsp), dimension(:), allocatable :: name
+    integer                            :: nhenry, i,j, ispec
+
+    open(read_unit, file = filename, status = 'OLD')
+    nhenry = 0
+    do
+      read(read_unit, fmt=*, end = 70)
+      nhenry = nhenry+1
+    enddo
+70  nhenry = nhenry -11 ! account for END and 10 lines preamble
+   write(6,*) 'found ', nhenry, ' henry values in ', trim(filename)
+
+    if (nhenry == 0) return
+    allocate(name(nhenry), cf(nhenry), Keff(nhenry), rf(nhenry) )
+
+    rewind(read_unit)
+    ! skip the first 10 lines
+    do i =1, 10
+      read(read_unit,*)
+    enddo
+    do i =1, nhenry
+    !four columns to cf, Keff, rf, name
+      read(read_unit,'(E7.1,2x,E7.1,2x,E7.1,2x,a7,1x)') cf(i), Keff(i), rf(i), name(i)
+    enddo
+
+
+    do i = 1, nhenry
+      do j=1, len_trim(phase_letter)
+        ispec = find_species_index(phase_letter(j:j)// &
+                name(i)(2:len_trim(name(i))))
+        if (ispec .gt. 0) then
+          species(ispec)%henry%cf = cf(i)
+          species(ispec)%henry%Keff = Keff(i)
+          species(ispec)%henry%rf = rf(i)
+        else if (ispec .lt. 0) then
+          write(6,*) " could not find: ", phase_letter(j:j)//name(i)(2:7)
+          write(6,*) " in subroutine read_henry"
+        endif
+      enddo
+    enddo
+
+    deallocate(name, cf, Keff, rf )
+
+  END SUBROUTINE read_henry
+
+
+  SUBROUTINE read_ncdf_dict(ncid)
+!! subroutine needs to know values of: {maxlsp,lfl,lfo} = {6,120,15} ! OK
+!! subroutine needs to access routines in ncutil.f !OK
+!! subroutine DOES NOT need to "use netcdf" !OK
+
+    integer                                                   :: ncid
+!    integer                                                   :: i
+!    character*(ldi)                                           :: line
+
+
+  !read number of species
+    CALL eznc_get_dimension(ncid,"mxdic",ndic)
+
+    write(6,*) 'found ', ndic, ' species in ', trim(filename)
+    if (ndic >= maxsp) then
+      write(6,*) ' -- error -- too many species in dictionary '
+      STOP
+    endif
+
+    write(6,*) 'reading ', trim(filename)
+    if( allocated(dictionary)) deallocate(dictionary)
+
+    allocate(dictionary(ndic))
+
+   !read dictionary names, formulae, functional group codes
+   
+    !do i=1, ndic
+    !  CALL eznc_get_1Dchar(ncid,"dicnam",maxlsp,ndic,dictionary(i)%code,i,i)
+    !enddo
+    CALL eznc_get_1Dchar(ncid,"dicnam",lco,ndic,dictionary(:)%code,1,ndic)
+    CALL eznc_get_1Dchar(ncid,"chem",lfo,ndic,dictionary(:)%formula,1,ndic)
+    CALL eznc_get_1Dchar(ncid,"code",lfl,ndic,dictionary(:)%functions,1,ndic)
+!    PRINT*,"CAUTION! igen read disabled in code"
+    CALL eznc_get_1Dint(ncid,"igen",ndic,dictionary(:)%igen,1,ndic)
+
+  END SUBROUTINE read_ncdf_dict
+
+  SUBROUTINE read_ncdf_ppf(ncid, ibox)
+!! subroutine needs to know values of: {nbox} = {?} !OK
+!! subroutine needs to access routines in ncutil.f ! OK
+!! subroutine DOES NOT need to "use netcdf" ! OK
+
+    integer, intent(in)                          :: ibox
+
+    integer                                      :: ncid
+    real(kind=8),  dimension(:,:), allocatable        ::  temp_conc
+!    integer                                      :: numextra
+!    character*(maxlsp)                           :: namextra1, namextra2, namextra3
+
+    ! read parameters of the file and check the size
+!    read(read_unit) numsp, numextra, lensp, dummy1, dummy2
+
+    CALL eznc_get_0Dint(ncid,"numsp",numsp)
+!    CALL eznc_get_0Dint(ncid,"numextra",numextra)
+
+    !?? we are not reading lensp (it's not currently used in NetCDF file - should it be?) or dummy1/2.
+
+    write(6,*) 'found ', numsp, ' species in ', trim(filename)
+
+    if (numsp >= maxsp) then
+      write(6,*) ' -- error -- too many species in output file '
+      STOP
+    endif
+
+
+    if(.not. ALLOCATED(species)) then
+      allocate(species(numsp))
+    endif
+
+    ! read header
+!    read(read_unit) namextra1, namextra2, namextra3, (species(i)%code, i=1, numsp)
+!    IF (namextra1(1:5).ne.'TIME ') (etc) => "time"
+!    IF (namextra2(1:6).ne.'TEMPER') (etc) => "tempbot" or "temptop"
+    !! humidity is not currently recorded in NetCDF file - TO DO !!
+!    IF (namextra3(1:6).ne.'HUMIDI') (etc) => ""
+    CALL eznc_get_1Dchar(ncid,"chrsp",maxlsp,numsp,species(:)%code,1,numsp)
+
+    ! read number of output times ("ntout")
+    CALL eznc_get_dimension(ncid,"ntout",ndat)
+
+    ! read number of boxes
+    call eznc_get_0Dint(ncid, "nbox", nbox)
+
+   write(6,*) 'found ', ndat, ' data points in ', trim(filename)
+
+   if (ndat >= mdat) then
+      write(6,*)  ' -- error -- too many data points in output file '
+      STOP
+    endif
+
+    if (ibox > nbox) then
+      write(6, *) ' -- error -- trying to read from a box that does not exist'
+      write(6, *) ibox, '>', nbox
+      stop
+    endif
+
+    if(allocated(concentrations)) then
+      deallocate(concentrations, time, temperature, pressure, rh, sza)
+    endif
+    allocate(concentrations(ndat, numsp), time(ndat), temperature(ndat), pressure(ndat), rh(ndat), &
+             temp_conc(numsp, ndat), sza(ndat))
+
+    write(6,*) 'reading ', trim(filename)
+
+    CALL eznc_get_1Dreal(ncid,"time",ndat,time(1:ndat),1,ndat)
+
+    call eznc_get_2Dreal(ncid, "temp", nbox, ndat, temperature(1:ndat),ibox, ibox, 1, ndat)
+    call eznc_get_3Dreal(ncid, "conc",numsp, ndat, nbox, temp_conc(1:numsp, 1:ndat), &
+                                                         1,numsp, ibox,ibox,1,ndat)
+    call eznc_get_2Dreal(ncid, "rh", nbox, ndat, rh(1:ndat), ibox, ibox, 1, ndat)
+
+!JMLT: variables not present in Julia_Cheyenne output (yet)
+ !   call eznc_get_2Dreal(ncid, "pres", nbox, ndat, pressure(1:ndat), ibox, ibox, 1, ndat)
+ !   call eznc_get_2Dreal(ncid, "sza", nbox, ndat, sza(1:ndat), ibox, ibox, 1, ndat)
+
+    concentrations = transpose(temp_conc)
+
+  END SUBROUTINE read_ncdf_ppf
+
+
+  SUBROUTINE read_ncdf_pvap(ncid)
+!! subroutine needs to know values of: {maxlsp, mxsat} ! OK
+!! subroutine needs to access routines in ncutil.f ! OK
+!! subroutine DOES NOT need to "use netcdf" !OK
+    integer, dimension(:), allocatable :: satid
+    real, dimension(:), allocatable    :: Tb, dB
+    real, dimension(:,:), allocatable  :: satdat
+!    character*(maxlsp), dimension(:), allocatable :: satname
+    integer                            :: npvap, i, ispec !, j
+    integer                            :: ncid
+    integer                            :: mxsat
+    real                               :: pvap_atm_280_temp
+
+
+! read max # of pvap ("mxsat")
+    CALL eznc_get_dimension(ncid,"mxsat",mxsat)
+! read npvap ("nsat")
+    CALL eznc_get_0Dint(ncid,"nsat",npvap)
+    write(6,*) 'found ', npvap, ' pvap values in ', trim(filename)
+
+    if (npvap == 0) return
+    allocate(satid(numsp),satdat(npvap,2))
+    !allocate(satname(npvap))
+    allocate(Tb(npvap), dB(npvap))
+
+! read name !! CAUSES PROG TO CRASH !!
+!    CALL eznc_get_1Dchar(ncid,"namsat",maxlsp,mxsat,satname,1,npvap)
+!    PRINT*,"CAUTION: READING NAMNAN NOT NAMSAT: TEMPORARY HARDWIRE"
+!    CALL eznc_get_1Dchar(ncid,"namnan",maxlsp,mxsat,satname,1,npvap)
+
+! read name, Tb, dB
+    CALL eznc_get_2Dreal(ncid,"nandat",mxsat,2,satdat(1:npvap,1:2),1,npvap,1,2)
+      Tb=satdat(:,1)
+      dB=satdat(:,2)
+
+! find index for species...
+!... or you could read it from the NetCDF file ...
+    CALL eznc_get_1Dint(ncid,"satid",maxsp,satid(1:numsp),1,numsp)
+!    PRINT*,"CAUTION: READING NANID NOT SATID: TEMPORARY HARDWIRE"
+!    CALL eznc_get_1Dint(ncid,"nanid",maxsp,satid(1:numsp),1,numsp)
+    
+    do ispec = 1, numsp
+      i = satid(ispec)
+      if (i .ne. 0) then
+        species(ispec)%pvap%Tb = Tb(i)
+        species(ispec)%pvap%dB = dB(i)
+        species(ispec)%pvap%pvap_atm_298 = &
+          exp((4.1012 + dB(i)) * ((298/Tb(i)-1)/(298/Tb(i) - 0.125))*log(10.))
+          !species(ispec)%pvap%pvap_cstar_298 = &
+          !  (1e6*seed_molw*seed_mass*species(ispec)%pvap%pvap_atm_298)/(8.2e-5*298)
+! Cstar corrected per CU work
+      call get_number(species(ispec)%formula, species(ispec)%molw,&
+                      species(ispec)%nc, species(ispec)%nh, species(ispec)%nn, &
+                      species(ispec)%no, species(ispec)%nr, species(ispec)%ns, &
+                      species(ispec)%nfl, species(ispec)%nbr, species(ispec)%ncl)
+          species(ispec)%pvap%pvap_cstar_298 = &
+            (1e6*species(ispec)%molw*species(ispec)%pvap%pvap_atm_298)/ &
+            (8.2e-5*298)
+
+
+    ! I'm too lazy to solve the clausius-clapeyron equation so here's a quick and dirty way
+    ! Siyuan Wang (siyuan@ucar.edu)
+    pvap_atm_280_temp = exp((4.1012 + dB(i)) * ((280./Tb(i)-1.)/(280./Tb(i) - 0.125))*log(10.))
+    species(ispec)%pvap%delta_H_vap_J_per_mol = & 
+                        log(pvap_atm_280_temp/species(ispec)%pvap%pvap_atm_298) * &
+                        8.314 / (1./298. - 1./280.)
+      endif
+    enddo
+
+    !DEALLOCATE (satdat,satid,satname,Tb,dB)
+    DEALLOCATE (satdat,satid,Tb,dB)
+
+  END SUBROUTINE read_ncdf_pvap
+!-----------------------------------------------------------
+  SUBROUTINE read_ncdf_henry(ncid)
+!! subroutine needs to know values of: {maxlsp, mxdep}
+!! subroutine needs to access routines in ncutil.f
+!! subroutine DOES NOT need to "use netcdf"
+    integer, dimension(:), allocatable :: iddep
+    real, dimension(:), allocatable    :: cf, Keff, rf
+    real, dimension(:,:), allocatable  :: depdat
+    character*(maxlsp), dimension(:), allocatable :: name
+    integer                            :: nhenry, i, ispec
+    integer                            :: ncid
+    integer                            :: mxdep
+
+! read max # of henry ("mxdep")
+    CALL eznc_get_dimension(ncid,"mxdep",mxdep)
+! read nhenry ("ndep")
+    CALL eznc_get_0Dint(ncid,"ndep",nhenry)
+
+    if (nhenry == 0) return
+    allocate(name(nhenry), cf(nhenry), Keff(nhenry), rf(nhenry) )
+    allocate(iddep(nhenry),depdat(nhenry,3))
+
+!read names
+!    CALL eznc_get_1Dchar(ncid,"depnam",maxlsp,mxdep,name,1,nhenry)
+!read depdat(cf, Keff, rf) and distribute into constituent arrays
+    CALL eznc_get_2Dreal(ncid,"depdat",mxdep,3,depdat(1:nhenry,1:3),1,nhenry,1,3)
+    cf=depdat(:,1)
+    Keff=depdat(:,2)
+    rf=depdat(:,3)
+
+! find index for species
+!... or you could read it from the NetCDF file ...
+    CALL eznc_get_1Dint(ncid,"iddep",mxdep,iddep(1:nhenry),1,nhenry)
+    do i = 1, nhenry
+      ispec = iddep(i)
+      species(ispec)%henry%cf = cf(i)
+      species(ispec)%henry%Keff = Keff(i)
+      species(ispec)%henry%rf = rf(i)
+    enddo
+
+!    do i = 1, nhenry
+!      do j=1, len_trim(phase_letter)
+!        ispec = find_species_index(phase_letter(j:j)//name(i)(2:7))
+!        if (ispec .ne. -1) then
+!          species(ispec)%henry%cf = cf(i)
+!          species(ispec)%henry%Keff = Keff(i)
+!          species(ispec)%henry%rf = rf(i)
+!        else
+!          write(6,*) " could not find: ", phase_letter(j:j)//name(i)(2:7)
+!          write(6,*) " in subroutine read_henry"
+!        endif
+!      enddo
+!    enddo
+
+    DEALLOCATE (depdat,iddep)
+
+  END SUBROUTINE read_ncdf_henry
+
+  SUBROUTINE write_2D_array(array, header, filename)
+    character*(filenames_length), intent(in)                    :: filename
+    character*(filenames_length)                                :: full_filename
+    real, dimension(:,:), intent(in)                            :: array
+    character*(header_length), dimension(:),   intent(in)       :: header
+    integer                                                     :: i, j
+
+    if(size(header) /= size(array,2)) then
+      write(6,*) " --error-- header size doesn't fit the data in write_2D_array "
+      stop
+    endif
+
+    IF(nbox.EQ.1)THEN
+    full_filename = trim(filename)//".csv"
+    ELSE
+    full_filename = trim(boxname)//"_"//trim(filename)//".csv"
+    ENDIF
+    open(write_unit, file =full_filename)
+
+    write(write_unit,*) (trim(header(i)), ", ", i =lbound(header,1), ubound(header, 1)-1), header(ubound(header, 1))
+
+    do i=lbound(array,1), ubound(array,1)
+      write(write_unit,*) (array(i,j), ", ", j = lbound(array,2), ubound(array,2)-1), array(i, ubound(array, 2))
+    enddo
+
+    close(write_unit)
+  END SUBROUTINE
+END MODULE

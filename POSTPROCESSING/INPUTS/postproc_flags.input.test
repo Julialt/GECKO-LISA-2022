@@ -1,0 +1,35 @@
+  skip_time = 1
+  input_type = "netcdf"
+  nbox = 1
+  n_topspecies =  5
+  flag_ppb = .true.
+  flag_phasedist = .true.
+  flag_pvap = .true.
+  flag_selected = .true.
+  flag_smiles = .true.
+  flag_topspec = .true.
+  selected_species(1:4) = "GC04000", "GO3", "GHO", "GCO"
+/
+  flag_amsfactors = .false.
+  flag_atomratios = .false.
+  flag_bubble = .false.
+  flag_carbonchain=.false.
+  flag_chochonfreq = .false.
+  flag_chon = .false.
+  flag_contributingspecs = .false.
+  flag_dbeai = .false.
+  flag_elementscontrib = .false.
+  flag_entropy = .false.
+  flag_functions = .false.
+  flag_henry = .false.
+  flag_massspectrum = .false.
+  flag_ohexposure = .false.
+  flag_phasestate = .false.
+  flag_pvap = .false.
+  flag_phasedist = .true.
+  flag_soayield = .false.
+  flag_vbs_param = .false.
+/  selected_species(1:4) = "GISOPRN", "GO3", "GHO", "GCO"
+/  gas_dyn_filter(1:2) = "C5;NN!",";N!NN"
+/  aer_dyn_filter(1:2) = "C5;NO!OO", "C6;OH!HH"
+/

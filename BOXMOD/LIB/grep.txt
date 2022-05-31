@@ -1,0 +1,5 @@
+iter4.f:          ire = p_lpmap%idl(j)
+iter4.f:          xfl(i) = xfl(i) + rate(p_lpmap%idl(j))
+map_indices.f90:       ALLOCATE(lpmap(ispec)%idl(lpmap(ispec)%nloss), &
+map_indices.f90:          lpmap(ispec)%idl(nloss) = ire
+prodloss_module.f90:        INTEGER, ALLOCATABLE :: idl(:) !id of loss reactions

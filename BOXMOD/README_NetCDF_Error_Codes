@@ -1,0 +1,65 @@
+README_NetCDF_Error_Codes
+=========================
+
+PURPOSE: A table of error codes from NetCDF versions 3 and 4
+         Codes are returned from a failed NetCDF operation
+         and printed out by subroutine nchandle_error (in ncutils.f)
+
+REFERENCE: https://www.unidata.ucar.edu/software/netcdf/docs/nc-error-codes.html
+
+NetCDF-3 Error Codes
+    1 #define NC_NOERR        0       // No Error
+    2 #define NC_EBADID       (-33)   // Not a netcdf id
+    3 #define NC_ENFILE       (-34)   // Too many netcdfs open
+    4 #define NC_EEXIST       (-35)   // netcdf file exists && NC_NOCLOBBER
+    5 #define NC_EINVAL       (-36)   // Invalid Argument
+    6 #define NC_EPERM        (-37)   // Write to read only
+    7 #define NC_ENOTINDEFINE (-38)   // Operation not allowed in data mode
+    8 #define NC_EINDEFINE    (-39)   // Operation not allowed in define mode
+    9 #define NC_EINVALCOORDS (-40)   // Index exceeds dimension bound
+   10 #define NC_EMAXDIMS     (-41)   // NC_MAX_DIMS exceeded
+   11 #define NC_ENAMEINUSE   (-42)   // String match to name in use
+   12 #define NC_ENOTATT      (-43)   // Attribute not found
+   13 #define NC_EMAXATTS     (-44)   // NC_MAX_ATTRS exceeded
+   14 #define NC_EBADTYPE     (-45)   // Not a netcdf data type
+   15 #define NC_EBADDIM      (-46)   // Invalid dimension id or name
+   16 #define NC_EUNLIMPOS    (-47)   // NC_UNLIMITED in the wrong index
+   17 #define NC_EMAXVARS     (-48)   // NC_MAX_VARS exceeded
+   18 #define NC_ENOTVAR      (-49)   // Variable not found
+   19 #define NC_EGLOBAL      (-50)   // Action prohibited on NC_GLOBAL varid
+   20 #define NC_ENOTNC       (-51)   // Not a netcdf file
+   21 #define NC_ESTS         (-52)   // In Fortran, string too short
+   22 #define NC_EMAXNAME     (-53)   // NC_MAX_NAME exceeded
+   23 #define NC_EUNLIMIT     (-54)   // NC_UNLIMITED size already in use
+   24 #define NC_ENORECVARS   (-55)   // nc_rec op when there are no record vars
+   25 #define NC_ECHAR        (-56)   // Attempt to convert between text & numbers
+   26 #define NC_EEDGE        (-57)   // Edge+start exceeds dimension bound
+   27 #define NC_ESTRIDE      (-58)   // Illegal stride
+   28 #define NC_EBADNAME     (-59)   // Attribute or variable name contains illegal characters
+   29 
+   30 // N.B. following must match value in ncx.h
+   31 
+   32 #define NC_ERANGE       (-60)   // Math result not representable
+   33 #define NC_ENOMEM       (-61)   // Memory allocation (malloc) failure
+   34 #define NC_EVARSIZE     (-62)   // One or more variable sizes violate format constraints
+   35 #define NC_EDIMSIZE     (-63)   // Invalid dimension size
+   36 #define NC_ETRUNC       (-64)   // File likely truncated or possibly corrupted
+
+ADDITIONAL CODES FOR NetCDF-4
+
+    1 #define NC_EHDFERR       (-101)
+    2 #define NC_ECANTREAD     (-102)
+    3 #define NC_ECANTWRITE    (-103)
+    4 #define NC_ECANTCREATE   (-104)
+    5 #define NC_EFILEMETA     (-105)
+    6 #define NC_EDIMMETA      (-106)
+    7 #define NC_EATTMETA      (-107)
+    8 #define NC_EVARMETA      (-108)
+    9 #define NC_ENOCOMPOUND   (-109)
+   10 #define NC_EATTEXISTS    (-110)
+   11 #define NC_ENOTNC4       (-111) // Attempting netcdf-4 operation on netcdf-3 file.
+   12 #define NC_ESTRICTNC3    (-112) // Attempting netcdf-4 operation on strict nc3 netcdf-4 file.
+   13 #define NC_EBADGRPID     (-113) // Bad group id. Bad!
+   14 #define NC_EBADTYPEID    (-114) // Bad type id.
+   15 #define NC_EBADFIELDID   (-115) // Bad field id.
+   16 #define NC_EUNKNAME      (-116)
