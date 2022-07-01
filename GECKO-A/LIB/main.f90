@@ -12,7 +12,7 @@
 !=======================================================================
 PROGRAM main
   USE keyparameter, ONLY:mxring,mxlgr,mxlfo,mxlco,mxps,mxnode,dirout,&
-                         logu,mecu,scru,kohu,waru,gasu,prtu,walu,&
+                         logu,mecu,scru,kohu,kno3u,waru,gasu,prtu,walu,&
                          tfu1,ohu,no3u,o3u,dhfu,saru,refu,prmu
   USE keyflag,    ONLY: dhffg,g2pfg,g2wfg,&
                         critvp,losar,wrtdhf,wrtpvap,wrthenry,wrttg,sar_info 
@@ -27,12 +27,13 @@ PROGRAM main
   USE dictstackdb,ONLY: nrec,dict,namlst,dbrch, &                      !  dictionary data
                         nhldvoc,holdvoc,nhldrad,holdrad,stabl,level, & ! stack data
                         lotopstack                                     ! fifo (default) or lifo
+!                        lotopstack,igen                                ! fifo (default) or lifo
   USE loadchemin, ONLY: rdchemin,in1chm  ! to load the input (primary) species
   USE tempflag,   ONLY: iflost
   USE masstranstool, ONLY:changephase
   USE outtool,    ONLY: dictelement,wrt_henry,wrt_depo,wrt_heatf,wrt_Tg,&
                         wrt_dict,wrt_psat,wrt_mxyield,wrt_ro2,&
-                        wrt_size
+                        wrt_size,wrt_difvol
   USE rochem,     ONLY: ro
   USE hochem,     ONLY: ho_voc
   USE no3chem,    ONLY: no3_voc
@@ -86,6 +87,7 @@ PROGRAM main
   OPEN(prmu,FILE=dirout//'listprimary.dat')
   OPEN(scru,FILE=dirout//'screeninfo.out')               !
   OPEN(kohu,FILE=dirout//'kicovi.dat')                   !
+  OPEN(kno3u,FILE=dirout//'kicovj.dat')                   !
   OPEN(waru,FILE=dirout//'warning.out')                  !
   OPEN(mecu,FILE=dirout//'reactions.dum')                ! 
   OPEN(refu,FILE=dirout//'reactionswithcom.dum')                ! 
@@ -313,8 +315,9 @@ PROGRAM main
     ENDIF
   ENDDO
 
-! close files - kicovi
+! close files - kicovi, kicovj
   WRITE(kohu,'(a)') "END   "  ; CLOSE (kohu)
+  WRITE(kno3u,'(a)') "END   " ; CLOSE (kno3u)
   IF (losar) THEN ; CLOSE(ohu) ; CLOSE(o3u) ; CLOSE(no3u) ; ENDIF
       
 ! compute molar mass and atoms for species (stored in dctmw & dctatom)
@@ -367,6 +370,12 @@ PROGRAM main
     PRINT*, '... compute Tg'
     CALL wrt_Tg()
   ENDIF
+
+! Write diffusion volume for partitioning
+!  IF (wrttg) THEN
+    PRINT*, '... compute difvol'
+    CALL wrt_difvol()
+!  ENDIF
 
 ! write numbers providing mechanism size (species, numbers ...)
   CALL wrt_size()

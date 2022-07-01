@@ -8,7 +8,7 @@ CONTAINS
 ! are written in the output mechanism file.
 !=======================================================================                                                                      
 SUBROUTINE no3_voc(idnam,chem,bond,group,brch,cut_off)
-  USE keyparameter, ONLY: mxpd,mxnr,mecu,no3u,mxcopd
+  USE keyparameter, ONLY: mxpd,mxnr,mecu,kno3u,no3u,mxcopd
   USE database, ONLY:nkno3db,kno3db_chem,kno3db_arr,kno3db_com, &         ! K_NO3 database
       nkwno3,nkwno3_pd,kwno3_rct,kwno3_pd,kwno3_copd,kwno3_yld,kwno3_com  ! VOC+NO3 mechanism
   USE references, ONLY:mxlcod
@@ -210,6 +210,9 @@ SUBROUTINE no3_voc(idnam,chem,bond,group,brch,cut_off)
 
 ! write reaction rate for SAR assessment
     IF (losar) WRITE(no3u,'(1PE12.2,2x,a)') smk298, TRIM(chem)
+
+! Write k298 in the kicovj dataset
+    WRITE(kno3u,'(a,2x,1pe10.2)') idnam, smk298
 
 ! remove pathways below cutoff 
     WHERE (k298(:) < cut_off*smk298) flag(:)=0

@@ -5,7 +5,8 @@ MODULE keyparameter
   INTEGER, PARAMETER :: mxlco=6    ! maximum length of species names (code)
   INTEGER, PARAMETER :: mxlfo=120  ! maximum length of a formula
   INTEGER, PARAMETER :: mxlfl=15   ! maximum length of functionality list (string)
-  INTEGER, PARAMETER :: mxldi=146  ! string length in the dictionnary
+  !INTEGER, PARAMETER :: mxldi=146  ! string length in the dictionary
+  INTEGER, PARAMETER :: mxldi=150  ! string length in the dictionary - GEN#
   INTEGER, PARAMETER :: mxnode=35  ! maximum number of nodes allowed
   INTEGER, PARAMETER :: mxlgr=21   ! maximum length of a string in a group
   INTEGER, PARAMETER :: mxring=4   ! maximum rings allowed
@@ -29,6 +30,7 @@ MODULE keyparameter
   INTEGER, PARAMETER :: mecu=17    ! mechanism file unit
   INTEGER, PARAMETER :: scru=18    ! file unit to redirect info from screen to file
   INTEGER, PARAMETER :: kohu=19    ! kicovi file unit (reccord k_OH for the various species) 
+  INTEGER, PARAMETER :: kno3u=69   ! kicovj file unit (reccord k_no3 for the various species) 
   INTEGER, PARAMETER :: waru=20    ! warning file unit 
   INTEGER, PARAMETER :: gasu=21    ! gas phase species file unit
   INTEGER, PARAMETER :: prtu=22    ! particle phase species file unit
@@ -71,6 +73,6 @@ MODULE keyparameter
       73, 79, 83, 89, 97,101,103,107,109,113, &
       127,131,137,139,149/)
 
-
+!  LOGICAL,PARAMETER :: debug_nc_fg = .FALSE.
   
 END MODULE keyparameter

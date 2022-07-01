@@ -23,7 +23,7 @@ SUBROUTINE bratio(inchem,brtio,pname,ncom,com)
   USE atomtool, ONLY: cnum, onum
   USE searching, ONLY: srch, srh5
   USE database, ONLY: nspsp, dictsp     ! special species input
-  USE dictstackdb, ONLY: nrec,ninorg,inorglst,dict,namlst,dbrch,diccri
+  USE dictstackdb, ONLY: nrec,ninorg,inorglst,dict,namlst,dbrch,diccri,stabl
   USE namingtool, ONLY: naming
   USE switchisomer, ONLY: isomer  
   USE tempflag, ONLY: iflost
@@ -35,7 +35,8 @@ SUBROUTINE bratio(inchem,brtio,pname,ncom,com)
   INTEGER,INTENT(INOUT) :: ncom          ! # of ref/com in the current list (tpref)
   CHARACTER(LEN=*), INTENT(INOUT) :: com(:)  ! list of references/comments
 
-  CHARACTER(LEN=mxlfl) :: fgrp
+  CHARACTER(LEN=2)           :: cgen  ! character version of generation number
+  CHARACTER(LEN=mxlfl)       :: fgrp
   CHARACTER(LEN=LEN(inchem)) :: pchem
   INTEGER :: dicptr,namptr,nca,chg,i,ipos,ierr
   INTEGER :: tabinfo(SIZE(diccri,2))
@@ -44,6 +45,7 @@ SUBROUTINE bratio(inchem,brtio,pname,ncom,com)
   INTEGER, PARAMETER :: mx1c=15                  ! size of the C1 stack
   CHARACTER(LEN=LEN(inchem)) :: c1stack(mx1c)    ! C1 stack 
   INTEGER :: nstck                               ! # of element in C1 stack
+  INTEGER :: tpstabl                             ! generation # of product
   
 
   CHARACTER(LEN=7)  :: progname='bratio'
@@ -209,7 +211,7 @@ SUBROUTINE bratio(inchem,brtio,pname,ncom,com)
   dicptr = ABS(dicptr) + 1
   dict(dicptr+1:nrec+1)=dict(dicptr:nrec)
   dbrch(dicptr+1:nrec+1)=dbrch(dicptr:nrec)
-  WRITE(dict(dicptr),'(a6,3x,a120,2x,a15)') pname, pchem, fgrp
+!  WRITE(dict(dicptr),'(a6,3x,a120,2x,a15)') pname, pchem, fgrp
   dbrch(dicptr)  = brtio
 
 ! store information required to search for an isomer (info saved in tabinfo)
@@ -218,8 +220,13 @@ SUBROUTINE bratio(inchem,brtio,pname,ncom,com)
     diccri(dicptr,:)=tabinfo(:)
   ENDIF
 
-  CALL loader(pchem,pname)
-    
+  CALL loader(pchem,pname,tpstabl)
+
+! assign character version of generation number IN LOADER
+  WRITE(cgen,'(i2)')tpstabl
+  WRITE(dict(dicptr),'(a6,3x,a120,2x,a15,a2)') pname, pchem, fgrp, cgen
+! END NEW SECTION
+
 END SUBROUTINE bratio
 
 !=======================================================================
@@ -264,11 +271,11 @@ END SUBROUTINE add_topvocstack
 ! New species are added to the botton of the stack (first in first out) 
 ! as the default situation.
 !                                                                     
-! Information loaded in the stack contain (holdvoc & holdrad):                                
+! Information loaded in the stack comprises (holdvoc & holdrad):
 !   holdvoc(1:6) = short name of the chemical                       
 !   holdvoc(7:126) = chemical formula                               
-!   holdvoc(127:129) = # of stable generation    
-!   holdvoc(130:132) = # of level (including radicals)                    
+!   holdvoc(127:129) = # of stable generations
+!   holdvoc(130:132) = # of levels (including radicals)
 !                                                                     
 ! INPUT from module dictstackdb:
 !  - level      : # of level (stable+radical) needed to produce "chem"
@@ -280,7 +287,7 @@ END SUBROUTINE add_topvocstack
 !  - nhldrad    : number of radical in the stack
 !  - holdrad(i) : list of the radicals in the stack
 !=======================================================================
-SUBROUTINE loader(chem,idnam)
+SUBROUTINE loader(chem,idnam,tpstabl)
   USE dictstackdb, ONLY: nhldvoc,holdvoc,nhldrad,holdrad,stabl, &
                          level,lotopstack
   IMPLICIT NONE
@@ -1054,6 +1061,7 @@ SUBROUTINE addc1dict(pchem,pname,fgrp)
   INTEGER :: dicptr,namptr
   CHARACTER(LEN=10) :: progname='addc1dict'
   CHARACTER(LEN=70) :: mesg
+  CHARACTER(LEN=2)  :: cgen  ! character version of generation number
 
 ! get pointer to add the species in namlst and dict
   dicptr=srch(nrec,pchem,dict)

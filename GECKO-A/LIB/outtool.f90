@@ -79,12 +79,12 @@ SUBROUTINE wrt_dict()
 
 ! write number of records in the dictionary
   ndic=ninorg+nrec-1
-  WRITE(dctu,'(i7,a)') ndic, "   ! number of record in the dictionary"
+  WRITE(dctu,'(i7,a)') ndic, "   ! number of records in the dictionary"
 
 ! write inorganic species
   DO i=1,ninorg
-    WRITE(dctu,'(a, f5.1,9(i3))') inorglst(i),wmass, (i0,j=1,9)
     WRITE(gasu,'(A1,A6,10X,A4)') "G",inorglst(i),"/1./"
+    WRITE(dctu,'(a,f5.1,9(i3))') inorglst(i),wmass, (i0,j=1,9)
   ENDDO
 
   recloop: DO i=2, nrec
@@ -92,12 +92,15 @@ SUBROUTINE wrt_dict()
 ! write C1 species
     IF (dctatom(i,2) < 2) THEN
       WRITE(gasu,'(A1,A6,10X,A1,F6.1,A1)') "G",dict(i),"/",dctmw(i) ,"/" 
-      WRITE(dctu,'(a, f5.1,9(i3))') dict(i),dctmw(i), (dctatom(i,j),j=1,9)
+! generation number INCLUDED AS PART OF DICT
+      WRITE(dctu,'(a,f5.1,9(i3))') dict(i),dctmw(i),(dctatom(i,j),j=1,9)
+
       CYCLE recloop   
     ENDIF
     
 ! write the species in the dictionary
     WRITE(gasu,'(A1,A6,10X,A1,F6.1,A1)') "G",dict(i),"/",dctmw(i) ,"/"
+! generation number IS INCLUDED AS PART OF DICT
     WRITE(dctu,'(a,f5.1,9(i3))') dict(i),dctmw(i),(dctatom(i,j),j=1,9)
 
   ENDDO recloop
@@ -580,6 +583,60 @@ SUBROUTINE wrt_Tg()
   CLOSE(tfu1)
   
 END SUBROUTINE wrt_Tg
+
+! ======================================================================
+! PURPOSE: compute and write the diffusion volume
+! for the partitioning species in the dictionary.
+! Atomic diffusion volumes for C,H,O,N units=(none):
+! Reference: Reid, Prausnitzs & Poling, The properties of liquids and gases,
+! McGraw-Hill inc., New York (1987)
+! ======================================================================
+SUBROUTINE wrt_difvol()
+  USE keyparameter, ONLY: mxlfo,mxlgr,mxnode,tfu1,dirout
+  USE dictstackdb, ONLY: nrec,dict,dctatom,dctmw
+  USE stdgrbond, ONLY: grbond
+  USE atomtool, ONLY: getatoms
+  IMPLICIT NONE
+
+  CHARACTER(LEN=mxlgr) :: group(mxnode)
+  CHARACTER(LEN=mxlfo) :: chem
+  INTEGER :: bond(mxnode,mxnode)
+  INTEGER :: i,ic,ih,in,io,ir,is,ifl,ibr,icl
+  INTEGER :: dbflg, nring
+  REAL    :: vdmol ! diffusion volumn of molecule
+  REAL,PARAMETER :: vdatom(4) =[15.9,2.31,6.11,4.54]
+
+! open file
+  OPEN(tfu1, FILE=dirout//'difvol.dat')
+
+! scroll the dictionary
+  recloop: DO i=2, nrec
+    IF (dctatom(i,1) /= 0) CYCLE recloop   ! rm radicals
+    IF (dctatom(i,2) < 2) CYCLE recloop    ! rm C1
+    IF (dctmw(i) ==0. ) CYCLE recloop      ! rm special species
+    chem=dict(i)(10:129)
+
+    IF (chem(1:1)/='C'.AND.chem(1:1)/='c'.AND.chem(1:2)/='-O' ) THEN
+      IF      (chem(1:3)=='#mm') THEN ; chem(1:)=chem(4:)
+      ELSE IF (chem(1:1)=='#'  ) THEN ; chem(1:)=chem(2:)
+      ENDIF
+    ENDIF
+
+  ! calculate vdmol for chem
+   CALL getatoms(chem,ic,ih,in,io,ir,is,ifl,ibr,icl)
+   vdmol = ic*vdatom(1) + ih*vdatom(2) + io*vdatom(3) + in*vdatom(4)
+
+! if chem = aromatic or heteroyclic ring, subtract 18.3
+   CALL grbond(chem,group,bond,dbflg,nring)
+    IF((nring.GT.0).AND.  &
+      (INDEX(chem,'c').GT.0.OR.INDEX(chem,'-O').GT.0)) THEN
+       vdmol = vdmol - 18.3
+    ENDIF
+
+    WRITE(tfu1,'(A1,A6,2x,f10.2)') 'G',dict(i)(1:6),vdmol
+  ENDDO recloop
+  WRITE(tfu1,'(a4)') 'END '  ;  CLOSE(tfu1)
+END SUBROUTINE wrt_difvol
 
 ! ======================================================================
 ! PURPOSE: Write size of the mechanism
