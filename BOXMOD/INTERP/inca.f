@@ -52,7 +52,8 @@ c      REAL stoicf(maxre,maxstoi,2)
       REAL hvcf(maxhv), hvfact(maxhv), cvarcf(maxcvar)
       REAL wmol(maxsp)
 ! note that AIN reactions do not have additional coeffs, so AINCF not needed.
-      REAL aoucf(2,maxt),woucf(3,maxt),wincf(3,maxt)
+! DITTO AOU
+      REAL woucf(1,maxt),wincf(1,maxt)
 
       CHARACTER*(maxlsp)  chrsp(maxsp)
       CHARACTER*(lenline) line
@@ -150,11 +151,11 @@ c      REAL stoicf(maxre,maxstoi,2)
 * below. Old keyword "SRI" (iidaux=3) and "LT" (iidaux=4) are not
 * used anymore (and number are free if additional keyword are required).
 
-* keyword  LOW   (iidaux=1)
-      nauxpar(1)=3
+* keyword  FALLOFF (previously LOW and TROE)   (iidaux=1)
+      nauxpar(1)=7
 
-* keyword  TROE  (iidaux=2)
-      nauxpar(2)=4
+* keyword  (previously TROE used 2 lines)
+      nauxpar(2)=0
 
 * a virer apres debuggage
       nauxpar(3)=5
@@ -170,46 +171,70 @@ c      REAL stoicf(maxre,maxstoi,2)
       nauxpar(7)=1
 
 * keyword  AOU  (iidaux=8)
-      nauxpar(8)=2
+      nauxpar(8)=0
 
 * keyword  WOU  (iidaux=9)
-      nauxpar(9)=3
+      nauxpar(9)=1
 
 * keyword  WIN  (iidaux=10)
-      nauxpar(10)=3
+      nauxpar(10)=1
 
 * keyword  ISOM (iidaux=11)
       nauxpar(11)=5
 
 * ---------------------------
-* OPEN INPUT AND OUTPUT FILE
+* OPEN INPUT AND OUTPUT FILES
 * ---------------------------
 
-      OPEN(lin  ,file='indat.mech',status='OLD')
       OPEN(lout ,file='outdat.akoi')
 
-* ---------------------------
-* READ THE LIST OF SPECIES
-* ---------------------------
-
-* search for word 'SPECIES'
-1000  CONTINUE
+* ----------------------------------
+* READ THE LISTS OF SPECIES & MASSES
+* ----------------------------------
+      DO i=1,3
       line=' '
+
+      !------------------------------
+      SELECT CASE (i)
+
+        CASE (1)
+          OPEN(lin  ,file='indat.sp_gas',status='OLD')
+        CASE (2)
+          OPEN(lin  ,file='indat.sp_part',status='OLD')
+        CASE (3)
+          OPEN(lin  ,file='indat.sp_wall',status='OLD')
+      END SELECT
+
+* search for 'PHASE' - first occurrence
+1000  CONTINUE
       READ(lin,'(a)',end=9100)inline
       IF (loreply) WRITE(lout,'(a)')inline
       CALL cleanline(inline,outline(1),lenread)
-      IF (lenstr(line,lenline).eq.0) GOTO 1000
-      ipos=index(line,'SPEC')
-      IF (ipos.ne.1) GOTO 9210
+
+      IF (lenstr(line,lenline).EQ.0) GOTO 1000
+      IF (index(line,"!").EQ.1) GOTO 1000
+      IF (index(line,"SPECIES").NE.0) GOTO 1000
+      IF (index(line,"PHASE").NE.1) GOTO 9210
 
 * read species list => When all species read => jump to 1300
-      WRITE(6,*) 'reading the species ...'
+      SELECT CASE (i)
+        CASE (1)
+          WRITE(6,*) 'reading gas species ...'
+        CASE (2)
+          WRITE(6,*) 'reading particle species ...'
+        CASE (3)
+          WRITE(6,*) 'reading wall species ...'
+      END SELECT
+
 1110  CONTINUE
       line=' '
       READ(lin,'(a)',END=9220) inline
       IF (loreply) WRITE(lout,'(a)') inline
       CALL cleanline(inline,outline(1),lenread)
-      ipos=index(line,'END')
+
+* search for 'PHASE' - 2nd occurrence
+      !ipos=index(line,'END')
+      ipos=index(line,'PHASE')
       IF (ipos.eq.1) GOTO 1300
 
 * get species names
@@ -220,9 +245,10 @@ c      REAL stoicf(maxre,maxstoi,2)
      4   wmol, chrsp)
       GOTO 1110
 
-
-
 1300  CONTINUE
+      CLOSE(lin)
+      ENDDO
+
       ! created sorted index of species array
       write(6,*) 'sort the list of species ...'
       call sort_species(chrsp)
@@ -242,7 +268,6 @@ c      REAL stoicf(maxre,maxstoi,2)
         WRITE(lout,*)
         WRITE(lout,*)' -- error exit --  before reading reaction data'
         WRITE(lout,*)
-        CLOSE(lin)
         CLOSE(lout)
         STOP ' ERROR : in the list of species => check file '
       ENDIF
@@ -250,6 +275,7 @@ c      REAL stoicf(maxre,maxstoi,2)
 * ---------------------------
 * READ THE LIST OF REACTIONS
 * ---------------------------
+      OPEN(lin  ,file='indat.mech',status='OLD')
 
 * set all locheck(i) to .false.
       DO i=1,maxre
@@ -263,8 +289,9 @@ c      REAL stoicf(maxre,maxstoi,2)
       IF (loreply) WRITE(lout,'(a)') inline
       CALL cleanline(inline,outline(1),lenread)
       IF (lenstr(line,lenline).eq.0) GOTO 1999
-      ipos=index(line,'REAC')
-      IF (ipos.ne.1) GOTO 9410
+      IF (index(line,"!").EQ.1) GOTO 1999
+      IF (index(line,"SPECIES").NE.0) GOTO 1999
+      IF (index(line,'REACTIONS').NE.1) GOTO 9410
       WRITE(6,*) 'reading the reactions ...'
 
 * read reactions. Label 2000 is the reentry point to read next reaction
@@ -275,8 +302,10 @@ c      WRITE(6,*) numre
       nlines=1
       READ(lin,'(a)',end=9420) inline
       CALL cleanline(inline,outline(nlines),lenread)
+! DEBUG
+      !PRINT*,outline(nlines)
 
-* if keyword end found => goto 5000 (check first the last reaction)
+* if keyword END found => goto 5000 (check first the last reaction)
       ipos=index(line,'END')
       IF (ipos.eq.1) THEN
          CALL chkaux(
@@ -293,7 +322,7 @@ c      WRITE(6,*) numre
      9      idain,idaou,idwin,idwou,
      9      cvarcf, extracf,isocf,
      8      focf, hvcf, hvfact,
-     8      aoucf,woucf,wincf,
+     8      woucf,wincf,
      &      nrpero,idreacro2,
      &      nrdimer,idreacdimer,
      7      lostop, locheck, lo_m, lofo,lo_iso,
@@ -372,7 +401,7 @@ c      WRITE(6,*) numre
      9      idain,idaou,idwin,idwou,
      9      cvarcf, extracf,isocf,
      8      focf, hvcf, hvfact,
-     8      aoucf,woucf,wincf,
+     8      woucf,wincf,
      &      nrpero,idreacro2,
      &      nrdimer,idreacdimer,
      7      lostop, locheck, lo_m, lofo,lo_iso,
@@ -534,7 +563,7 @@ c      ENDDO
 * WRITE-TO-LINK USED TO BE HERE!
 * -------------------------------
 ! DEBUG !
-!      GOTO 81
+      GOTO 81
 ! END DEBUG !
         CALL wrtlinkbin(llink,numsp,numre,num_n,num_m,
      &            numfo,numhv,numcvar,numextra,numo2,nummeo2,
@@ -545,7 +574,7 @@ c      ENDDO
      &            idiso,idain,idaou,idwin,idwou,
      &            idrestoi,restoicf,idpdstoi,pdstoicf,
      &            arrhcf,focf,hvcf,hvfact,cvarcf,extracf,
-     &            isocf,aoucf,woucf,wincf,
+     &            isocf,woucf,wincf,
      &            nrpero,idreacro2,nrdimer,idreacdimer,wmol)
 
 81    CONTINUE
@@ -562,7 +591,7 @@ c      ENDDO
      &             idiso,idain,idaou,idwin,idwou,
      &             idrestoi,restoicf,idpdstoi,pdstoicf,
      &             arrhcf,focf,hvcf,hvfact,cvarcf,extracf,
-     &             isocf,aoucf,woucf,wincf,
+     &             isocf,woucf,wincf,
      &             nrpero,idreacro2,nrdimer,idreacdimer,wmol)
       ENDIF ! (iofmt_fg.EQ.0.OR.iofmt_fg.EQ.2) THEN
 

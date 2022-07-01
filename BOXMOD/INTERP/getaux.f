@@ -103,7 +103,7 @@
 * to the keyword. If keyword not found (lenmin=0) then error.
 *
 * REMEMBER : link between keywords and number in xauxcf
-*     1 = LOW        |   2 = TROE 
+*     1 = FALLOFF    |   2 = not used
 *     3 = not used   |   4 = not used
 *     5 = HV         |   6 = EXTRA
 *     7 = CVAR       |   8 = AOU
@@ -123,11 +123,8 @@
       ELSE IF (line(ii:ii+3).eq.'CVAR') THEN
         lenmin=4
         iidaux=7
-      ELSE IF (line(ii:ii+3).eq.'TROE') THEN
-        lenmin=4
-        iidaux=2
-      ELSE IF (line(ii:ii+2).eq.'LOW') THEN
-        lenmin=3
+      ELSE IF (line(ii:ii+6).eq.'FALLOFF') THEN
+        lenmin=7
         iidaux=1
       ELSE IF (line(ii:ii+2).eq.'AOU') THEN
         lenmin=3
@@ -160,7 +157,7 @@
       IF (xauxcf(0,iidaux).ne.0.0)THEN
         CALL errline(lout,line,1,iterm,ii)
         WRITE(lout,*)'   --error--   the key-words EXTRA, CVAR,',
-     &               '               TROE, LOW, or HV can only be'
+     &               '               FALLOFF, or HV can only be'
         WRITE(lout,*)'               given once for each reaction'
         WRITE(lout,*)
         lostop=.true.

@@ -11,7 +11,7 @@ module link_ncdf
                   idiso,idain,idaou, idwin,idwou, &
                   idrestoi,restoicf,idpdstoi,pdstoicf, &
                   arrhcf,focf,hvcf,hvfact,cvarcf,extracf, &
-                  isocf,aoucf,woucf,wincf, &
+                  isocf,woucf,wincf, &
                   nrpero,idreacro2,nrdimer,idreacdimer,wmol)
 
 !===================================================================
@@ -72,7 +72,7 @@ module link_ncdf
       REAL arrhcf(maxre,3)
       REAL hvcf(maxhv), hvfact(maxhv), cvarcf(maxcvar)
       REAL wmol(maxsp)
-      REAL aoucf(2,maxt),woucf(3,maxt),wincf(3,maxt)
+      REAL woucf(1,maxt),wincf(1,maxt)
 
       CHARACTER(LEN=maxlsp)  chrsp(maxsp)
 
@@ -607,9 +607,8 @@ module link_ncdf
       CALL eznc_def_localatt(ncid,"extracf","title","extracf(j,i) = jth coefficient for the ith EXTRA rxn")
 
       CALL eznc_def_2Dreal(ncid,"isocf","maxaux","maxiso")
-      CALL eznc_def_2Dreal(ncid,"aoucf","mxleft","maxt")
-      CALL eznc_def_2Dreal(ncid,"woucf","dim3","maxt")
-      CALL eznc_def_2Dreal(ncid,"wincf","dim3","maxt")
+      CALL eznc_def_2Dreal(ncid,"woucf","dim1","maxt")
+      CALL eznc_def_2Dreal(ncid,"wincf","dim1","maxt")
 
       CALL eznc_def_1Dint(ncid,"nrpero","maxro2")
       CALL eznc_def_localatt(ncid,"nrpero","title","actual number of reactions involving ith PERO")
@@ -929,14 +928,11 @@ module link_ncdf
 
       CALL eznc_put_2Dreal(ncid,"arrhcf",arrhcf(1:numre,1:3),1,numre,1,3)
 
-!--WRITE(llink)((wincf(i,k),i=1,3),k=1,numwin)
-      CALL eznc_put_2Dreal(ncid,"wincf",wincf(1:3,1:numwin),1,3,1,numwin)
+!--WRITE(llink)((wincf(i,k),i=1,1),k=1,numwin)
+      CALL eznc_put_2Dreal(ncid,"wincf",wincf(1:1,1:numwin),1,1,1,numwin)
 
-!--WRITE(llink)((woucf(i,k),i=1,3),k=1,numwou)
-      CALL eznc_put_2Dreal(ncid,"woucf",woucf(1:3,1:numwou),1,3,1,numwou)
-
-!--WRITE(llink)((aoucf(i,k),i=1,2),k=1,numaou)
-      CALL eznc_put_2Dreal(ncid,"aoucf",aoucf(1:2,1:numaou),1,2,1,numaou)
+!--WRITE(llink)((woucf(i,k),i=1,1),k=1,numwou)
+      CALL eznc_put_2Dreal(ncid,"woucf",woucf(1:1,1:numwou),1,1,1,numwou)
 
 !--WRITE(llink)((focf(i,k),i=1,maxaux+3),k=1,numfo)
       CALL eznc_put_2Dreal(ncid,"focf",focf(1:maxaux3,1:numfo),1,maxaux3,1,numfo)

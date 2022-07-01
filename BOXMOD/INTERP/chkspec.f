@@ -129,12 +129,11 @@
       WRITE(6,*) '        .... search if species=keyword'
       DO i=1,numsp
         loerr=.false.
-        IF (chrsp(i)(1:2).eq.'M ')    loerr=.true.
-        IF (chrsp(i)(1:3).eq.'HV ')   loerr=.true.
-        IF (chrsp(i)(1:4).eq.'LOW ')  loerr=.true.
-        IF (chrsp(i)(1:5).eq.'TROE ') loerr=.true.
-        IF (chrsp(i)(1:5).eq.'CVAR ') loerr=.true.
-        IF (chrsp(i)(1:6).eq.'EXTRA ')loerr=.true.
+        IF (chrsp(i)(1:6).eq.'TBODY ')   loerr=.true.
+        IF (chrsp(i)(1:3).eq.'HV ')      loerr=.true.
+        IF (chrsp(i)(1:8).eq.'FALLOFF ') loerr=.true.
+        IF (chrsp(i)(1:5).eq.'CVAR ')    loerr=.true.
+        IF (chrsp(i)(1:6).eq.'EXTRA ')   loerr=.true.
 
         IF (loerr) THEN
           WRITE(lout,*)

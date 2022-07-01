@@ -68,21 +68,16 @@
 ! input
       INTEGER lenline, lout
       INTEGER numre, numsp
-!      INTEGER isortsp(maxsp)
       CHARACTER*(*) line
       CHARACTER*(*) chrsp(maxsp)
-!      INTEGER isortlk(maxsp)
-!      CHARACTER*(*)  sortsp(maxsp)
 
 ! input/output
       INTEGER mx12stoi,mx1stoi,mx2stoi,mx3stoi
       INTEGER itype(maxre)
       INTEGER numstoi(maxre,2)
-!      INTEGER idstoi(maxre,maxstoi,2)
       INTEGER idrestoi(maxre,mxleft)
       INTEGER idpdstoi(maxre,mxright)
       REAL arrhcf(maxre,3)
-!      REAL stoicf(maxre,maxstoi,2)
       REAL restoicf(maxre,mxleft)
       REAL pdstoicf(maxre,mxright)
       LOGICAL lostop,locheck(maxre)
@@ -110,6 +105,7 @@
       REAL    coefsp(mxright,3), cpcoefsp(mxright,3)
       INTEGER minsp, nspe(3), ipos(2)
 
+      !print*,"-----------getreac----------"
 ! initialize
       lo_m =.false.
       lofo =.false.
@@ -136,14 +132,6 @@
       ncoef=0
       ipero=-1
       idimer=-1
-      !DO i=1,3
-      !  DO j=1,mxright
-      !    iholdsp(j,i)=0
-      !    cpiholdsp(j,i)=0
-      !    coefsp(j,i)=0.
-      !    cpcoefsp(j,i)=0.
-      !  ENDDO
-      !ENDDO
       iholdsp=0
       cpiholdsp=0
       coefsp=0.
@@ -220,6 +208,8 @@
 3300  CONTINUE
 
       ii=ii+1
+      !print*,'3300',ii, line(ii:ii)
+
       IF (ii.ge.iterm) THEN
         WRITE(lout,*) line
         CALL errline(lout,line,1,iterm,ii)
@@ -261,7 +251,7 @@
 
       ELSE
         CALL errline(lout,line,1,iterm,ii)
-        WRITE(lout,*)'   --error--   unexpected character',
+        WRITE(lout,*)'   --error1--   unexpected character',
      &               ' in reaction equation'
         WRITE(lout,*)
         locheck(numre)=.true.
@@ -276,6 +266,7 @@
 3400  CONTINUE
       tempsp=' '
       DO jj=ii+1,iterm
+        !print*,'3400', jj, line(jj:jj)
         IF ( (line(jj:jj).eq.' ') .or.
      &       (line(jj:jj).eq.'+') .or.
      &       (line(jj:jj).eq.'-'.AND.lco.NE.8) .or.
@@ -294,8 +285,9 @@
         ENDIF
       ENDDO
 3410  CONTINUE
+      !print*,'3410: tempsp = ', tempsp(1:maxlsp)
 
-! check is keyword. Length of the keyword is used to identify it in
+! check if keyword. Length of the keyword is used to identify it in
 ! the next section (should be changed in a futur version of the program) 
       lenmin=0
       idpero=-1
@@ -336,10 +328,10 @@
          lenmin=4
       ELSE IF (tempsp(1:5).eq.'ISOM ') THEN
          lenmin=4
-      ELSE IF (tempsp(1:2).eq.'M ') THEN
-         lenmin=1
-      ELSE IF (tempsp(1:2).eq.'M)') THEN
-         lenmin=1
+      ELSE IF (tempsp(1:6).eq.'TBODY ') THEN
+         lenmin=5
+      ELSE IF (tempsp(1:8).eq.'FALLOFF ') THEN
+         lenmin=7
       ELSE IF (tempsp(1:4).eq.'AIN ') THEN
          lenmin=3
       ELSE IF (tempsp(1:4).eq.'AOU ') THEN
@@ -363,27 +355,32 @@
           lostop=.true.
         ENDIF
 
+! lenmin=7 can be due to keyword 'NOTHING' or 'FALLOFF' => check which
         IF (lenmin.eq.7) THEN
-          IF (lopar) THEN
-            CALL errline(lout,line,1,iterm,ib)
-            WRITE(lout,*)'   --error--   the key-word NOTHING can',
-     &                   ' not be used as a "fall-off" species'
-            WRITE(lout,*)
-            locheck(numre)=.true.
-            lostop=.true.
-          ELSE IF (iside.eq.1) THEN
-            CALL errline(lout,line,1,iterm,ib)
-            WRITE(lout,*)'   --error--   the key-word NOTHING can',
-     &                   ' not be used on the left side'
-            WRITE(lout,*)'               of the reaction'
-            WRITE(lout,*)
-            locheck(numre)=.true.
-            lostop=.true.
+          IF (INDEX(line,"FALLOFF").NE.0) THEN
+            lofo=.true.
           ELSE
-            lonothing=.true.
+            IF (lopar) THEN
+              CALL errline(lout,line,1,iterm,ib)
+              WRITE(lout,*)'   --error--   the key-word NOTHING can',
+     &                     ' not be used as a "fall-off" species'
+              WRITE(lout,*)
+              locheck(numre)=.true.
+              lostop=.true.
+            ELSE IF (iside.eq.1) THEN
+              CALL errline(lout,line,1,iterm,ib)
+              WRITE(lout,*)'   --error--   the key-word NOTHING can',
+     &                     ' not be used on the left side'
+              WRITE(lout,*)'               of the reaction'
+              WRITE(lout,*)
+              locheck(numre)=.true.
+              lostop=.true.
+            ELSE
+              lonothing=.true.
+            ENDIF
           ENDIF
 
-! lenmin=6 cant be due to keyword 'MEPERO' or 'OXYGEN' => check which
+! lenmin=6 can be due to keyword 'MEPERO' or 'OXYGEN' => check which
 ! keyword is ok. temporary version, must be changed in the futur.
         ELSE IF (lenmin.eq.6) THEN 
           IF (tempsp(1:6).eq.'MEPERO') THEN
@@ -410,6 +407,7 @@
             ENDIF
           ENDIF
 
+! lenmin=5 can be due to keyword 'EXTRA', 'PEROx' or 'TBODY' => check which
         ELSE IF (lenmin.eq.5) THEN
           IF ((idpero.eq.-1).AND.(iddimer.eq.-1)) THEN
             IF (lopar) THEN
@@ -419,7 +417,7 @@
               WRITE(lout,*)
               locheck(numre)=.true.
               lostop=.true.
-            ELSE
+            ELSE IF (INDEX(line,'EXTRA').NE.0) THEN
               loextra=.true.
             ENDIF
           ELSE IF (iddimer.eq.-1) THEN
@@ -531,7 +529,7 @@
       ELSE
         iloc = find_species_index(tempsp,chrsp)
         if (iloc > 4456016) then
-          print*, tempsp, chrsp(iloc)
+          !print*, tempsp, chrsp(iloc)
           stop
         endif
         IF (iloc.le.0) THEN
@@ -558,7 +556,7 @@
           RETURN
         ENDIF
 
-! read stoechiometric coefficient
+! read stoichiometric coefficient
         IF (lonumber) THEN
           lonumber=.false.
           xcoeff=r_val(line,ib,ii-1,1,ierr)*xcoeff
@@ -593,7 +591,6 @@
 
 ! get the next species in the reaction line 
 ! ==========================================
-
 ! if a parenthesis is open (that does not belong to the name of 
 ! the species), then search for the closing parenthesis. If not found
 ! then exit
@@ -601,6 +598,7 @@
         lopar=.false.
 3470    CONTINUE
         ii=ii+1
+        !print*,'3470',ii, line(ii:ii)
         IF (ii.gt.iterm) THEN
           CALL errline(lout,line,1,iterm,ii)
           WRITE(lout,*)'   --error--   reaction not properly completed'
@@ -610,7 +608,8 @@
           RETURN
         ELSE IF (line(ii:ii).eq.' ') THEN
           GOTO 3470
-        ELSE IF (line(ii:ii).ne.')') THEN
+        !ELSE IF (line(ii:ii).ne.')') THEN
+        ELSE IF (line(ii:ii+1).ne.'F )') THEN
           CALL errline(lout,line,1,iterm,ii)
           WRITE(lout,*)'   --error--   reaction not properly completed'
           WRITE(lout,*)
@@ -621,11 +620,13 @@
       ENDIF
 
 ! At that point, a species and the corresponding stoi coef has been
-! found => found the next delimiter (i.e. "+","-","(","=>") and go
+! found => find the next delimiter (i.e. "+","-","(","=>") and go
 ! back to 3300 to read the next species. If end of the reaction line
 ! is reached (iterm), then goto 3550 for final check
 3500  CONTINUE
       ii=ii+1
+      !print*,'3500', ii, line(ii:ii)
+      
       IF (ii.gt.iterm) THEN
         GOTO 3550
       ELSE IF (line(ii:ii).eq.' ') THEN
@@ -644,6 +645,7 @@
         ENDIF
         lopar=.true.
         lofo=.true.
+      !print*,'3500', ii, line(ii:ii)," lofo"
         GOTO 3500
       ELSE IF (line(ii:ii).eq.'+') THEN
         xcoeff=+1.
@@ -667,8 +669,14 @@
         GOTO 3300
        ELSE
         CALL errline(lout,line,1,iterm,ii)
-        WRITE(lout,*)'   --error--   unexpected character',
+          PRINT*,'   --error2--   unexpected character',
      &               ' in reaction equation'
+          PRINT*,' ii,iterm = ',ii,iterm
+          STOP !DEBUG
+
+        WRITE(lout,*)'   --error2--   unexpected character',
+     &               ' in reaction equation'
+        WRITE(lout,*)' ii,iterm = ',ii,iterm
         WRITE(lout,*)
         locheck(numre)=.true.
         lostop=.true.
@@ -680,6 +688,7 @@
 ! -----------------------------------------------
 
 3550  CONTINUE
+      !print*,'3550'
 
 
 ! npse(i) is the number of species in the reaction at side i

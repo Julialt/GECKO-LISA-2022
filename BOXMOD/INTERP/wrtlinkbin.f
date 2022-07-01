@@ -7,8 +7,7 @@
      &            idiso,idain,idaou,idwin,idwou,
      &            idrestoi,restoicf,idpdstoi,pdstoicf,
      &            arrhcf,focf,hvcf,hvfact,cvarcf,extracf, 
-!     &            isocf,aincf,aoucf,woucf,wincf,
-     &            isocf,aoucf,woucf,wincf,
+     &            isocf,woucf,wincf,
      &            nrpero,idreacro2,nrdimer,idreacdimer,wmol)
 
       USE akparameter_module
@@ -48,7 +47,7 @@
       REAL arrhcf(maxre,3)
       REAL hvcf(maxhv), hvfact(maxhv), cvarcf(maxcvar)
       REAL wmol(maxsp)
-      REAL aoucf(2,maxt),woucf(3,maxt),wincf(3,maxt)
+      REAL woucf(1,maxt),wincf(1,maxt)
 
       CHARACTER*(maxlsp)  chrsp(maxsp)
 
@@ -59,7 +58,7 @@
 * CREATING LINK-FILE
 * ----------------------
 
-      WRITE(6,*) 'in subroutine and writing the output ...'
+      WRITE(6,*) 'in subroutine wrtlinkbin and writing the output ...'
 
       OPEN(llink,file='outdat.akli',form='UNFORMATTED')
 
@@ -105,9 +104,8 @@
       WRITE(llink)((isocf(i,k),i=1,maxaux),k=1,numiso)
 
 !      WRITE(llink)((aincf(i,k),i=1,3),k=1,numain)
-      WRITE(llink)((aoucf(i,k),i=1,2),k=1,numaou)
-      WRITE(llink)((woucf(i,k),i=1,3),k=1,numwou)
-      WRITE(llink)((wincf(i,k),i=1,3),k=1,numwin)
+      WRITE(llink)((woucf(i,k),i=1,1),k=1,numwou)
+      WRITE(llink)((wincf(i,k),i=1,1),k=1,numwin)
 
       WRITE(llink) (nrpero(k),k=1,maxro2)
       WRITE(llink) ((idreacro2(i,k),i=1,nrpero(k)),k=1,maxro2)

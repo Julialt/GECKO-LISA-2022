@@ -11,7 +11,7 @@
 *  maxre     : maximum number of reactions
 *  maxextra  : maximum number of extra reactions
 *  maxcvar   : maximum number of cvar reactions
-*  max_m     : maximum number of +M reactions
+*  max_m     : maximum number of TBODY (formerly '+M') reactions
 *  maxhv     : maximum number of hv reactions
 *  numre     : total number of reactions
 *  xauxcf(i,j): jth data for the ith keyword 
@@ -19,7 +19,7 @@
 * INPUT/OUTPUT
 *  numfo     : number of fo reactions
 *  numcvar   : number of cvar reactions
-*  num_m     : number of +M reactions
+*  num_m     : number of TBODY ('+M') reactions
 *  numextra  : number of EXTRA reactions
 *  numhv     : number of HV reactions
 *  numo2     : number of O2 reaction
@@ -28,7 +28,7 @@
 *  idhv(i)   : reaction number of the ith hv reaction
 *  idextra(i): reaction number of the ith extra reaction
 *  idcvar(i) : reaction number of the ith cvar reaction
-*  id_m(i)   : reaction number of the ith +M reaction
+*  id_m(i)   : reaction number of the ith TBODY ('+M') reaction
 *  ido2(i)   : reaction number of
 *  cvarcf(i) : label for the ith cvar reaction
 *  extracf(j,i): jth data for the ith extra reaction
@@ -37,7 +37,7 @@
 *  hvcf(i)   : label for the ith hv reaction
 *  hvfact(i) : coefficient for the ith hv reaction
 *  locheck(i): logical check for the ith reaction
-*  lo_m      : logical for +M reaction
+*  lo_m      : logical for TBODY ('+M') reaction
 *  lofo      : logical for fall off reaction
 *  lohv      : logical for hv reaction
 *  loaux     : logical for auxiliary information (if true=>data read)
@@ -69,8 +69,7 @@
      9   idain,idaou,idwin,idwou,
      9   cvarcf, extracf,isocf,
      8   focf, hvcf, hvfact,
-!     8   aincf,aoucf,woucf,wincf,
-     8   aoucf,woucf,wincf,
+     8   woucf,wincf,
      &   nrpero,idreacro2,
      &   nrdimer,idreacdimer,
      7   lostop, locheck, lo_m, lofo,lo_iso,
@@ -111,8 +110,7 @@
       REAL focf(maxaux+3,maxfo)
       REAL hvcf(maxhv)
       REAL hvfact(maxhv)
-!      REAL aincf(3,maxt),aoucf(3,maxt),woucf(3,maxt),wincf(3,maxt)
-      REAL aoucf(2,maxt),woucf(3,maxt),wincf(3,maxt)
+      REAL woucf(1,maxt),wincf(1,maxt)
       LOGICAL loaux,lofo,lohv,locvar,loextra,lo_o2,lopero,lo_meo2
       LOGICAL lo_iso,lodimer
       INTEGER ipero,idimer
@@ -130,7 +128,7 @@
 * If auxiliary information was not provided (loaux=false) then the
 * reaction cannot be a falloff, hv, cvar, extra reaction or 
 * isomerisation. Case
-* allowed is only a regular +M reaction or the reaction with oxygene.
+* allowed is only a regular TBODY ('+M') reaction or the reaction with oxygen.
 * If simple thermal reaction then exit 8000. Note that this point is 
 * not checked.
 * ===================================================================
@@ -259,18 +257,6 @@
             GOTO 8000
           ENDIF
 
-!        ELSE IF (loain) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   a "AIN" reaction must have',
-!     &                 ' auxiliary information'
-!          GOTO 9000        
-
-        ELSE IF (loaou) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   a "AOU" reaction must have',
-     &                 ' auxiliary information'
-          GOTO 9000        
-
         ELSE IF (lowin) THEN
             WRITE(lout,*)
             WRITE(lout,*)'  --error--   a "WIN" reaction must have',
@@ -293,7 +279,7 @@
 * of the information provided and update the table.
 * 
 * REMEMBER : link between keywords and number in xauxcf
-*     1 = LOW        |   2 = TROE 
+*     1 = FALLOFF    |   2 = not used
 *     3 = not used   |   4 = not used
 *     5 = HV         |   6 = EXTRA
 *     7 = CVAR       |   8 = AOU
@@ -314,7 +300,12 @@
         STOP
       ENDIF
 
-* keyword SRI (3) and LT (4) cannot be used anymore
+* keyword LOW (2), SRI (3) and LT (4) cannot be used anymore
+      IF (xauxcf(0,2).NE.0.0) THEN
+        WRITE(lout,*)
+        WRITE(lout,*)'   --error--   keyword LOW (2) cannot be used'
+        STOP
+      ENDIF
       IF (xauxcf(0,3).NE.0.0) THEN
         WRITE(lout,*)
         WRITE(lout,*)'   --error--   keyword SRI (3) cannot be used'
@@ -341,33 +332,19 @@
         STOP
       ENDIF
 
-* keyword LOW can not be used alone
+* -----------------------------
+* FALL OFF REACTION (formerly LOW, TROE)
+* -----------------------------
+
       IF (xauxcf(0,1).EQ.1.0.AND.xauxcf(0,2).EQ.0.0.AND.
-     &    xauxcf(0,5).EQ.0.0.AND.xauxcf(0,6).EQ.0.0.AND.
-     &    xauxcf(0,7).EQ.0.0.AND.xauxcf(0,8).EQ.0.0.AND.
-     &    xauxcf(0,9).EQ.0.0.AND.xauxcf(0,10).EQ.0.0.AND.
-     &    xauxcf(0,11).EQ.0.0)THEN
-!     &    xauxcf(0,11).EQ.0.0.AND.xauxcf(0,12).EQ.0.0)THEN
-
-        WRITE(lout,*)
-        WRITE(lout,*)'   --error--   key-word "LOW" can only',
-     &                 ' be used in connection with the key "TROE"'
-        STOP
-      ENDIF
-
-* -----------------------------
-* FALL OFF REACTION (LOW, TROE)
-* -----------------------------
-
-      IF (xauxcf(0,1).EQ.1.0.AND.xauxcf(0,2).EQ.1.0.AND.
      &          xauxcf(0,5).EQ.0.0.AND.xauxcf(0,6).EQ.0.0.AND.
      &          xauxcf(0,7).EQ.0.0)THEN
 
-* check that the only keyword found in the reaction is (+M). Number
-* of fo reaction must not exceed maxfo. If any problem => goto 9000
+* check that the only keyword in the reaction is FALLOFF (previously '(+M)').
+* Number of fo reactions must not exceed maxfo. If any problem => goto 9000
         IF (.not.lofo) THEN
           WRITE(lout,*)
-          WRITE(lout,*)'   --error--   key-words "low" and "troe"',
+          WRITE(lout,*)'   --error--   key-word "FALLOFF"',
      &                 '        can only be used in a fall-off reaction'
           GOTO 9000
         ELSE IF (lohv) THEN
@@ -577,162 +554,13 @@
 
 !* -----------------------------
 !* AIN REACTION (xauxcf=11,itype=10)
-!* -----------------------------
 ! mass transfer to wall or aerosols 
-!* ===================================================================
-!* REMEMBER : link between keywords and number in xauxcf
-!*     1 = LOW        |   2 = TROE 
-!*     3 = not used   |   4 = AIN
-!*     5 = HV         |   6 = EXTRA
-!*     7 = CVAR       |   8 = AOU
-!*     9 = WOU        |  10 = WIN
-!*    11 = AIN        !  12 = ISOM
-
-!      ELSE IF (xauxcf(0,1).EQ.0.0.AND.xauxcf(0,2).EQ.0.0.AND.
-!     &         xauxcf(0,5).EQ.0.0.AND.xauxcf(0,6).EQ.0.0.AND.
-!     &         xauxcf(0,7).EQ.0.0.AND.xauxcf(0,8).EQ.0.0.AND.
-!     &         xauxcf(0,9).EQ.0.0.AND.xauxcf(0,10).EQ.0.0.AND.
-!     &         xauxcf(0,11).EQ.1.0.AND.xauxcf(0,12).EQ.0.0)THEN
-!
-!        IF (lofo) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   "AIN" can not be used within',
-!     &                 '                a fall-off reaction'
-!          GOTO 9000
-!        ELSE IF (lohv) THEN
-!          WRITE(lout,*)'   --error--   "AIN" can not be used within',
-!     &                 '                a fall-off reaction'
-!          GOTO 9000
-!        ELSE IF (locvar) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   "CVAR" and "AIN" can not be',
-!     &                 '                used in the same reaction'
-!          GOTO 9000
-!        ELSE IF (loextra) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   "EXTRA" and "AIN" can not be',
-!     &                 '                used in the same reaction'
-!          GOTO 9000
-!        ELSE IF (lo_m) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   "M" and "AIN" can not be used',
-!     &                 '                in the same reaction'
-!          GOTO 9000
-!
-!        ELSE IF (lowin) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   "WIN" and "AIN" can not be used',
-!     &                 '                in the same reaction'
-!          GOTO 9000
-!        ELSE IF (lowou) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   "WOU" and "AIN" can not be used',
-!     &                 '                in the same reaction'
-!          GOTO 9000
-!        ELSE IF (loaou) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   "AOU" and "AIN" can not be used',
-!     &                 '                in the same reaction'
-!          GOTO 9000
-!        ELSE IF (.not.loain) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   reaction must have a "AIN"',
-!     &                 '               in order to include "AIN" in the'
-!          WRITE(lout,*)'               auxiliary information'
-!          GOTO 9000
-!        ELSE IF (numain.ge.maxt) THEN
-!          WRITE(lout,*)
-!          WRITE(lout,*)'   --error--   number of "AIN" equations',
-!     &                 '               is greater than maxt=',maxt
-!          GOTO 9000
-!
-! remember the "type" table : 
-!  itype(i)  : type for the ith reaction (1=M,3=FO,4=O2,5=PERO,6=HV,
-!              7=EXTRA,8=CVAR,9=AOU,10=AIN,11=WOU,12=WIN)
-!        ELSE
-!          WRITE(6,*) numre
-!          itype(numre)=10
-!          numain=numain+1
-!          idain(numain)=numre
-!          DO i=1,3
-!            aincf(i,numain)=xauxcf(i,11)
-!          ENDDO
-!          GOTO 8000
-!        ENDIF
-
+* NO LONGER HAS COEFFICIENTS
 * -----------------------------
 * AOU REACTION (xauxcf = 8,itype = 9)
-* -----------------------------
 ! mass transfer to wall or aerosols 
-* REMEMBER : link between keywords and number in xauxcf
-*     1 = LOW        |   2 = TROE 
-*     3 = not used   |   4 = not used
-*     5 = HV         |   6 = EXTRA
-*     7 = CVAR       |   8 = AOU
-*     9 = WOU        |  10 = WIN
-*    11 = ISOM  
-
-      ELSE IF (xauxcf(0,1).EQ.0.0.AND.xauxcf(0,2).EQ.0.0.AND.
-     &         xauxcf(0,5).EQ.0.0.AND.xauxcf(0,6).EQ.0.0.AND.
-     &         xauxcf(0,7).EQ.0.0.AND.xauxcf(0,8).EQ.1.0.AND.
-     &         xauxcf(0,9).EQ.0.0.AND.xauxcf(0,10).EQ.0.0.AND.
-     &         xauxcf(0,11).EQ.0.0) THEN
-!     &         xauxcf(0,11).EQ.0.0.AND.xauxcf(0,12).EQ.0.0) THEN
-!
-        IF (lofo) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   "AOU" can not be used within',
-     &                 '                a fall-off reaction'
-          GOTO 9000
-        ELSE IF (lohv) THEN
-          WRITE(lout,*)'   --error--   "AOU" can not be used within',
-     &                 '                a fall-off reaction'
-          GOTO 9000
-        ELSE IF (locvar) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   "CVAR" and "AOU" can not be',
-     &                 '                used in the same reaction'
-          GOTO 9000
-        ELSE IF (loextra) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   "EXTRA" and "AOU" can not be',
-     &                 '                used in the same reaction'
-          GOTO 9000
-        ELSE IF (lo_m) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   "M" and "AOU" can not be used',
-     &                 '                in the same reaction'
-          GOTO 9000
-        ELSE IF (lowou) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   "WOU" and "AOU" can not be used',
-     &                 '                in the same reaction'
-          GOTO 9000
-        ELSE IF (.not.loaou) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   reaction must have a "AOU"',
-     &                 '               in order to include "AOU" in the'
-          WRITE(lout,*)'               auxiliary information'
-          GOTO 9000
-        ELSE IF (numaou.ge.maxt) THEN
-          WRITE(lout,*)
-          WRITE(lout,*)'   --error--   number of "AOU" equations',
-     &                 '               is greater than maxt=',maxt
-          GOTO 9000
-
-! remember the "type" table : 
-!  itype(i)  : type for the ith reaction (1=M,3=FO,4=O2,5=PERO,6=HV,
-!              7=EXTRA,8=CVAR,9=AOU,10=AIN,11=WOU,12=WIN)
-        ELSE
-!          WRITE(6,*) numre
-          itype(numre)=9
-          numaou=numaou+1
-          idaou(numaou)=numre
-          DO i=1,2
-            aoucf(i,numaou)=xauxcf(i,8)
-          ENDDO
-          GOTO 8000
-        ENDIF
+* NO LONGER HAS COEFFICIENTS
+* -----------------------------
 
 * -----------------------------
 * WOU REACTION (xauxcf = 9, itype = 11)
@@ -780,7 +608,7 @@
           GOTO 9000
         ELSE IF (numwou.ge.maxt) THEN
           WRITE(lout,*)
-          WRITE(lout,*)'   --error--   number of "AOU" equations',
+          WRITE(lout,*)'   --error--   number of "WOU" equations',
      &                 '               is greater than maxt=',maxt
           GOTO 9000
 
@@ -794,9 +622,7 @@
           itype(numre)=11
           numwou=numwou+1
           idwou(numwou)=numre
-          DO i=1,3
-            woucf(i,numwou)=xauxcf(i,9)
-          ENDDO
+          woucf(1,numwou)=xauxcf(1,9)
           GOTO 8000
         ENDIF
 
@@ -866,8 +692,6 @@
           numwin=numwin+1
           idwin(numwin)=numre
           wincf(1,numwin)=xauxcf(1,10)
-          wincf(2,numwin)=xauxcf(2,10)
-          wincf(3,numwin)=xauxcf(3,10)
           GOTO 8000
         ENDIF
 

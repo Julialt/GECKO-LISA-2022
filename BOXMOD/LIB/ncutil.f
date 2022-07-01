@@ -522,6 +522,8 @@
       INTEGER status
       CHARACTER(40) text
 
+      IF(debug_nc_fg)print*,"eznc_def_globalatt: ",AttName
+
       text   ="NF90_PUT_ATT "//AttName
       status = NF90_PUT_ATT(ncid,NF90_GLOBAL,AttName,AttTxt)
 
@@ -555,6 +557,8 @@
       CHARACTER(60) AttTxt
       CHARACTER(60) text
       CHARACTER(60) SysCall
+
+      IF(debug_nc_fg)print*,"eznc_def_sysglobalatt: ",AttName
 
       SysCall = 'echo '//Command//' > dummy.99'
       CALL SYSTEM(SysCall)
@@ -595,6 +599,7 @@
       CHARACTER(40) text
 
 ! need a checker to make sure variable exists...
+      IF(debug_nc_fg)print*,"eznc_copy_globalatt: ",AttName
 
       text   ="NF90_COPY_ATT "//AttName
       status = NF90_COPY_ATT(ncid_in,NF90_GLOBAL,AttName,
@@ -629,6 +634,9 @@
 ! INTERNAL VARIABLES
       INTEGER status
       CHARACTER(40) text
+
+      IF(debug_nc_fg)print*,"eznc_rename_globalatt: "
+     &                     ,OldName," ",NewName
 
 10    CONTINUE
 
@@ -666,6 +674,8 @@
       INTEGER status
       CHARACTER(40) text
 
+      IF(debug_nc_fg)print*,"eznc_del_globalatt: ",AttName
+
       text   ="NF90_DEL_ATT "//AttName
       status = NF90_DEL_ATT(ncid,NF90_GLOBAL,AttName)
 
@@ -698,6 +708,8 @@
       INTEGER status
       INTEGER varid
       CHARACTER(40) text
+
+      !IF(debug_nc_fg)print*,"eznc_def_localatt: ",AttName
 
 ! find variable ID from its name
       text   ="NF90_INQ_VARID "//VarName
@@ -739,12 +751,13 @@
       INTEGER dimval
       CHARACTER(25) text
 
+      IF(debug_nc_fg) print*,"eznc_def_dim:",DimName,dim_in
+
       IF(dim_in.EQ.0) THEN
          dimval = 1
       ELSE
          dimval = dim_in
       ENDIF
-      IF(debug_nc_fg) print*,"eznc_def_dim:",DimName,DimVal
 
 ! write dimension
       text   ="NF90_DEF_DIM "//DimName
@@ -2327,9 +2340,7 @@
       INTEGER varid
       CHARACTER(40) text
 
-      IF(debug_nc_fg)THEN
-       print*,"eznc_get_localatt : ",VarName," ",AttName,ncid
-      ENDIF
+      IF(debug_nc_fg) print*,"eznc_get_localatt : ",VarName," ",AttName
 
 ! find variable ID from its name
       text   ="NF90_INQ_VARID "//VarName
@@ -2363,6 +2374,8 @@
       INTEGER :: dimid
       CHARACTER(40) :: text
 
+      IF(debug_nc_fg) print*,"eznc_get_dimension: ",DimName
+
       text   ="NF90_INQ_DIMID "//DimName
       status = NF90_INQ_DIMID(ncid,DimName,dimid)
       IF (status/=NF90_NOERR) call eznc_handle_err(status,text)
@@ -2394,6 +2407,7 @@
       INTEGER :: status
       CHARACTER(40) :: text
 
+      IF(debug_nc_fg) print*,"eznc_get_dimid: ",DimName
 
       text   ="NF90_INQ_DIMID "//DimName
       status = NF90_INQ_DIMID(ncid,DimName,dimid)
