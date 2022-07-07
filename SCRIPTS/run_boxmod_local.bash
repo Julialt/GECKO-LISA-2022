@@ -360,7 +360,7 @@ if [ ! -d .git ]; then
 # GitHub branch, commit:
   echo "** creating gitinfo file **"
   echo `git rev-parse --abbrev-ref HEAD` > ${boxmod_wkdir}/indat.gitinfo
-  echo `git describe`   >> ${boxmod_wkdir}/indat.gitinfo
+  echo `git rev-parse HEAD`   >> ${boxmod_wkdir}/indat.gitinfo
 else
 # IF NOT WITHIN A GIT REPOSITORY READ INFO FROM VERSION_NOTES DIRECTORY
   echo "** copying gitinfo file **"
@@ -485,7 +485,7 @@ cd ${home_dir}
  echo 'machine       = '$HOSTNAME        >> $boxmod_wkdir/outdat.README
  echo 'model version :'                  >> $boxmod_wkdir/outdat.README
  echo 'GitHub branch = '`git rev-parse --abbrev-ref HEAD` >> $boxmod_wkdir/outdat.README
- echo 'GitHub commit = '`git describe`   >> $boxmod_wkdir/outdat.README
+ echo 'GitHub commit = '`git rev-parse HEAD`   >> $boxmod_wkdir/outdat.README
  echo 'model inputs  = indat_'$keyfile'.key' >> $boxmod_wkdir/outdat.README
  if [ ${#confile} -ne 0 ] ; then
  echo 'constraints   = '$confile         >> $boxmod_wkdir/outdat.README

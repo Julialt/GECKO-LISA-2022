@@ -49,18 +49,22 @@ echo 'interp dir = ' $interp_dir
 # check for existence of mechanism, shared files
 
 if [ ! -e $work_dir'/'$mech_name'.mech' ] ; then
-	echo 'error, could not find file '$work_dir/$mech_name
+	echo 'error, could not find file '$work_dir'/'$mech_name'.mech'
 	exit ; fi
 
 if [ ! -e $work_dir'/akparameter_module.f90' ] ; then
-	echo 'error, could not find file '$work_dir/$mech_name
+	echo 'error, could not find file '$work_dir'/akparameter_module.f90'
 	exit ; fi
+
+#if [ ! -e $boxmod_dir'/keyparameter.f90' ] ; then
+#	echo 'error, could not find file keyparameter.f90'
+#	exit ; fi
 
 if [ ! -e $boxmod_dir'/general.h' ] ; then
-	echo 'error, could not find file general.h'
+        echo 'error, could not find file general.h'
 	exit ; fi
 
-if [ ! -e $gecko_source'/common.h' ] ; then
+if [ ! -e $boxmod_dir'/common.h' ] ; then
         echo 'error, could not find file common.h'
 	exit ; fi
 
@@ -76,9 +80,11 @@ if [ -e ${work_dir}/WORK_INTERP ] ; then
 mkdir ${work_dir}/WORK_INTERP
 
 ln -s ${work_dir}/akparameter_module.f90 ${work_dir}/WORK_INTERP/akparameter_module.f90
+ln -s ${work_dir}/userdat.settings ${work_dir}/WORK_INTERP/keyflag.f90
 ln -s ${boxmod_dir}/sorting_module.f90 ${work_dir}/WORK_INTERP/sorting_module.f90
 ln -s ${boxmod_dir}/general.h ${work_dir}/WORK_INTERP/general.h
-ln -s ${gecko_source}/common.h ${work_dir}/WORK_INTERP/common.h
+ln -s ${boxmod_dir}/common.h ${work_dir}/WORK_INTERP/common.h
+ln -s ${gecko_source}/keyparameter.f90 ${work_dir}/WORK_INTERP/keyparameter.f90
 ln -s ${interp_dir}/*.f* ${work_dir}/WORK_INTERP/
 ln -s ${interp_dir}/template.mk ${work_dir}/WORK_INTERP/template.mk
 ln -s ${interp_dir}/Makefile ${work_dir}/WORK_INTERP/Makefile
@@ -94,7 +100,7 @@ ln -s ${interp_dir}/Makefile ${work_dir}/WORK_INTERP/Makefile
 cd ${work_dir}/WORK_INTERP
 make all
 
-interp_exe="inca"
+interp_exe=inca
 
 if [ ! -e ${work_dir}/WORK_INTERP/${interp_exe} ] ; then
 	echo error, could not find interpreter
@@ -117,23 +123,27 @@ ln -sf ${mech_name}.prec ${work_dir}/indat.prec
 ln -sf ${mech_name}.difv ${work_dir}/indat.difv
 ln -sf ${mech_name}.pnan ${work_dir}/indat.pnan
 ln -sf ${mech_name}.psim ${work_dir}/indat.psim
-ln -sf ${mech_name}.Henry ${work_dir}/indat.Henry
+ln -sf ${mech_name}.pmyr ${work_dir}/indat.pmyr
+ln -sf ${mech_name}.henry ${work_dir}/indat.henry
 ln -sf ${mech_name}.kNO3 ${work_dir}/indat.kNO3
 ln -sf ${mech_name}.kO3 ${work_dir}/indat.kO3
 ln -sf ${mech_name}.kOH ${work_dir}/indat.kOH
+ln -sf ${mech_name}.sp_gas ${work_dir}/indat.sp_gas
+ln -sf ${mech_name}.sp_part ${work_dir}/indat.sp_part
+ln -sf ${mech_name}.sp_wall ${work_dir}/indat.sp_wall
 ln -sf ${mech_name}.gitinfo ${work_dir}/indat.gitinfo
 ln -sf userdat.settings ${work_dir}/userparams.input
 
 echo linking RO2 files...
-ln -sf ${work_dir}/XP1O2 ${work_dir}/indat1.ro2
-ln -sf ${work_dir}/XP2O2 ${work_dir}/indat2.ro2
-ln -sf ${work_dir}/XP3O2 ${work_dir}/indat3.ro2
-ln -sf ${work_dir}/XS1O2 ${work_dir}/indat4.ro2
-ln -sf ${work_dir}/XS2O2 ${work_dir}/indat5.ro2
-ln -sf ${work_dir}/XS3O2 ${work_dir}/indat6.ro2
-ln -sf ${work_dir}/XT1O2 ${work_dir}/indat7.ro2
-ln -sf ${work_dir}/XT2O2 ${work_dir}/indat8.ro2
-ln -sf ${work_dir}/XACO3 ${work_dir}/indat9.ro2
+ln -sf ${work_dir}/${mech_name}.pero1 ${work_dir}/indat1.ro2
+ln -sf ${work_dir}/${mech_name}.pero2 ${work_dir}/indat2.ro2
+ln -sf ${work_dir}/${mech_name}.pero3 ${work_dir}/indat3.ro2
+ln -sf ${work_dir}/${mech_name}.pero4 ${work_dir}/indat4.ro2
+ln -sf ${work_dir}/${mech_name}.pero5 ${work_dir}/indat5.ro2
+ln -sf ${work_dir}/${mech_name}.pero6 ${work_dir}/indat6.ro2
+ln -sf ${work_dir}/${mech_name}.pero7 ${work_dir}/indat7.ro2
+ln -sf ${work_dir}/${mech_name}.pero8 ${work_dir}/indat8.ro2
+ln -sf ${work_dir}/${mech_name}.pero9 ${work_dir}/indat9.ro2
 echo
 
 cd ${work_dir}
@@ -145,7 +155,7 @@ pwd
 echo ------------------------------------------
 
 ## free up memory to avoid initial segfaults:
-ulimit -s unlimited
+#ulimit -s unlimited
 
 ## run interpreter
 ./intp.exe

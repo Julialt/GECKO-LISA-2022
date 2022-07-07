@@ -6,6 +6,7 @@
 #Process a completed GECKO-A mechanism and return information on:
 # - mechanism and dictionary size => for akparameter.h file setup
 # - names of precursors => helps interpretation of boxmodel results
+# COMPATIBLE WITH PARIS 2022 CODE
 #INPUTS:
 # - (where {file} is the name of the mechanism)
 # - cheminput.dat
@@ -13,7 +14,7 @@
 # - {file}.dict
 # - {file}.prec
 # - {file}.pvap
-# - {file}.Henry
+# - {file}.henry
 # - X* files
 # - (all files should be located in the same directory)
 #OUTPUT:
@@ -45,14 +46,17 @@ echo 'work dir = ' $work_dir
 #--------------------------------------------------
 infile=${work_dir}'/cheminput.dat'
 dictfile=${work_dir}'/'${mech}'.dict'
+gasfile=${work_dir}'/'${mech}'.sp_gas'
+partfile=${work_dir}'/'${mech}'.sp_part'
+wallfile=${work_dir}'/'${mech}'.sp_wall'
 mechfile=${work_dir}'/'${mech}'.mech'
 kOHfile=${work_dir}'/'${mech}'.kOH'
 kO3file=${work_dir}'/'${mech}'.kO3'
 kNO3file=${work_dir}'/'${mech}'.kNO3'
 precfile=${work_dir}'/'${mech}'.prec'
 pvapfile=${work_dir}'/'${mech}'.pnan'
-Henryfile=${work_dir}'/'${mech}'.Henry'
-generalfile=${work_dir}'/general.h'
+Henryfile=${work_dir}'/'${mech}'.henry'
+generalfile=${work_dir}'/keyparameter.f90'
 
 echo linking RO2 files...
 ln -sf ${work_dir}/XP1O2 ${work_dir}/indat1.ro2
@@ -65,7 +69,7 @@ ln -sf ${work_dir}/XT1O2 ${work_dir}/indat7.ro2
 ln -sf ${work_dir}/XT2O2 ${work_dir}/indat8.ro2
 ln -sf ${work_dir}/XACO3 ${work_dir}/indat9.ro2
 
-ln -sf  ${home_dir}/GECKO-A/LIB/general.h ${generalfile}
+ln -sf  ${home_dir}/GECKO-A/LIB/keyparameter.f90 ${generalfile}
 
 ifill='INTEGER,PARAMETER ::'
 lfill='LOGICAL,PARAMETER ::'
@@ -85,8 +89,10 @@ echo '                               ' >> $work_dir'/akparameter_module.f90'
 #maxlsp=10
 # read line with lco from general.h
 # EXCLUDE lines deactivated with !PARAMETER
-maxlsp=`grep -v "\!P" ${generalfile} | grep lco= |cut -d= -f2 | cut -d\) -f1`
+#maxlsp=`grep -v "\!P" ${generalfile} | grep mxlco= |cut -d= -f2 | cut -d\) -f1`
+maxlsp=`grep 'mxlco' ${generalfile} |cut -d= -f2 | cut -d \!  -f1`
 let "maxlsp = maxlsp +2"
+echo '! max length of species names' 
 echo '! max length of species names' >> $work_dir'/akparameter.h'
 echo '      '$ifill' maxlsp = '${maxlsp} >> $work_dir'/akparameter.h'
 
@@ -94,11 +100,11 @@ maxreac_char=90
 echo '! max length of a printed reaction' >> $work_dir'/akparameter.h'
 echo '      '$ifill' maxreac_char = ' ${maxreac_char} >> $work_dir'/akparameter.h'
 
-#maxsp=`wc -l ${dictfile} | awk '{print $1}'`
-#get the first occurence of END, this corresponds to the end of the species list
-maxsp=`grep -n END ${mechfile} -m1 | cut -d: -f1`
+maxspg=`wc -l ${gasfile} | awk '{print $1}'`
+maxspp=`wc -l ${partfile} | awk '{print $1}'`
+maxspw=`wc -l ${wallfile} | awk '{print $1}'`
 # remove 2 to account for SPECIES and END
-let "maxsp = maxsp -2"
+let "maxsp = maxspg -3 + maxspp -2 + maxspw -2"
 echo '! max number of species' >> $work_dir'/akparameter.h'
 echo '      '$ifill' maxsp = '${maxsp} >> $work_dir'/akparameter.h'
 
@@ -114,17 +120,15 @@ maxre=`grep -c '=>' ${mechfile} | awk '{print $1}'`
 echo '! max number of reactions' >> $work_dir'/akparameter.h'
 echo '      '$ifill' maxre = '${maxre} >> $work_dir'/akparameter.h'
 
-max_m=`grep -c '+ M' ${mechfile} | awk '{print $1}'`
-echo '! max number of reactions with "M"' >> $work_dir'/akparameter.h'
+max_m=`grep -c 'TBODY' ${mechfile} | awk '{print $1}'`
+echo '! max number of 3rd-body reactions ' >> $work_dir'/akparameter.h'
 echo '      '$ifill' max_m = '${max_m} >> $work_dir'/akparameter.h'
 
-maxfo=`grep -c 'TROE' ${mechfile} | awk '{print $1}'`
+maxfo=`grep -c 'FALLOFF' ${mechfile} | awk '{print $1}'`
 echo '! max number of fall-off reactions ' >> $work_dir'/akparameter.h'
 echo '      '$ifill' maxfo = '${maxfo} >> $work_dir'/akparameter.h'
 
-nrhvorg=$(grep -c '+HV' ${mechfile} | awk '{VAR =+ $1} {print VAR}')
-nrhvinorg=$(grep -c '+ HV' ${mechfile} | awk '{VAR =+ $1} {print VAR}')
-let maxhv=$((nrhvorg+nrhvinorg))
+maxhv=$(grep -c '+ HV' ${mechfile} | awk '{VAR =+ $1} {print VAR}')
 echo '! max number of reactions with "HV"' >> $work_dir'/akparameter.h'
 echo '      '$ifill' maxhv = '${maxhv} >> $work_dir'/akparameter.h'
 
@@ -173,15 +177,25 @@ echo '      '$ifill' maxro2 = '${maxro2} >> $work_dir'/akparameter.h'
 # defining mxro2cl as maximum n(PEROx) + 1 in 'X' files
 echo '! max number of PEROx in a class' >> $work_dir'/akparameter.h'
 mxro2cl=1
-np=$(wc -l ${work_dir}'/indat1.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat2.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat3.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat4.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat5.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat6.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat7.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat8.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
-np=$(wc -l ${work_dir}'/indat9.ro2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero1' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+echo '      '$ifill' np1 = '${np} 
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero3' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero4' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero5' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero6' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero7' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero8' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+np=$(grep 'number' ${work_dir}'/'${mech}'.pero9' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero1' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero2' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero3' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero4' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero5' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero6' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero7' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero8' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
+#np=$(grep 'number of record' ${mech}'.pero9' | awk '{VAR =+ $1} {print VAR}') ; mxro2cl=$(( np > mxro2cl ? np : mxro2cl ))
 echo '      '$ifill' mxro2cl = '${mxro2cl} >> $work_dir'/akparameter.h'
 
 # defining mxrpero as maximum n(PEROx) in mech file +1 (end-of-file marker)
@@ -233,8 +247,7 @@ echo '      '$ifill' maxang = '${maxang} >> $work_dir'/akparameter.h'
 
 echo '! -------------------------- DATA FOR CHROMOPHORE ---------------' >> $work_dir'/akparameter.h'
 
-grep "HV/" ${mechfile} > grep.txt
-grep "HV /" ${mechfile} >> grep.txt
+grep "HV /" ${mechfile} > grep.txt
 cat grep.txt | cut -d'/' -f 2 | sort -n | uniq > uniq.txt
 mchromo=`wc -l uniq.txt | awk '{print $1}'`
 rm grep.txt

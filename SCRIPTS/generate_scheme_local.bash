@@ -45,7 +45,7 @@ do
     m ) mech=$OPTARG ;;
 # generator-specific files
     i ) cheminput=$OPTARG ;;
-    s ) settings=$OPTARG ;;
+    s ) settingsfile=$OPTARG ;;
     x ) existing=$OPTARG ;;
 # boxmodel-specific files
     c ) echo "ERROR! -c is a boxmod-specific flag!"; exit ;;
@@ -131,14 +131,21 @@ if [ ! -e ${gecko_inputs}/${cheminput} ]; then
 #===========================================
 # RUN THE GENERATOR
 #===========================================
+# make link to settings file BEFORE compiling
+echo linking to settings file...
+cd ${gecko_dir}/LIB
+ln -s ${gecko_dir}/INPUTS/$settingsfile keyflag.f90
 
+# PARIS version compiles in OBJ and doesn't require executable name
+cd ${gecko_source}/OBJ
+#echo NOT Compiling GECKO-A...
 echo Compiling GECKO-A...
-cd ${gecko_source}
 echo .... in directory ...... ; pwd
-make cm
+#make clean
+make 
 
 #== directory for generated output ==
-
+#== make links to executable and PARIS structure ==
 gecko_wkdir=${gecko_outdir}/${mech}
 
 if [ "$prevflag" == "y" ] ; then
@@ -158,15 +165,17 @@ elif [ -e ${gecko_wkdir} ] ; then
 #  mv ${gecko_wkdir} ${gecko_outdir}/tmp
 fi
 mkdir ${gecko_wkdir} 
+# Build temporary working dir structure mirroring PARIS RUN dir structure 
+mkdir ${gecko_wkdir}/OUT
 
 cd ${gecko_wkdir}
 echo ------------------------------------------
 echo We are now in directory ...... ; pwd
 echo ------------------------------------------
 #-------------------------------------------------------------------------
-if [ ! -d .git ]; then 
 # Create reference file git_info.txt in output directory, to be read by codes.
 # GitHub branch, commit:
+if [ ! -d .git ]; then 
   echo "** creating gitinfo file **"
   echo `git rev-parse --abbrev-ref HEAD` > ${mech}.gitinfo
   echo `git describe`   >> ${mech}.gitinfo
@@ -231,14 +240,14 @@ until [ $counter -eq $numpre ]; do
   else
     echo "     prevflag = 1" >> manage.input
     # make sure existing dict and mech are available
-    if [ -e fort.7 ] ; then
-      mv fort.7 existing.dict
+    if [ -e OUT/dictionary.out ] ; then
+      mv OUT/dictionary.out existing.dict
     fi
     if [ ! -e existing.dict ] ; then
       echo "no previous dictionary available => exiting"
       exit
     fi
-    if [ ! -e existing.rxns ] ; then
+    if [ ! -e $mech.mech ] ; then
       echo "no previous reaction list available => exiting"
       exit
     fi
@@ -263,8 +272,9 @@ until [ $counter -eq $numpre ]; do
   ./cm 
 #  nohup ./cm 
 
+
 # check that a temporary dictionary file generated in this iteration
-  if [ -e fort.7 ] ; then
+  if [ -e OUT/dictionary.out ] ; then
 	echo generator has run successfully
   else
 	echo Mechanism generation failed
@@ -274,114 +284,143 @@ until [ $counter -eq $numpre ]; do
 # create continuation files for next iteration
 #-- existing.rxns
 
-  if [ ! -e existing.rxns ] ; then
-    mv fort.17 existing.rxns
+  if [ ! -e $mech.mech ] ; then
+    echo "no existing rxns"
+    cp OUT/reactions.dum existing.rxns
+    #--
+    cp OUT/reactionswithcom.dum existing.rxns.notes
   else
+    echo "yes existing rxns"
 
 #== if existing.rxns ends with 'END', strip the last line
 #-- (except for the last time around)
-#  if [ $counter -ne $numpre ] ; then
-    nend=$(grep -c END ${gecko_wkdir}/existing.rxns | awk '{ VAR += $1} END {print VAR}')
-    if [ $nend > 0 ] ; then
-      head -n -1  ${gecko_wkdir}/existing.rxns > tmp.txt
-      mv tmp.txt ${gecko_wkdir}/existing.rxns
-      rm 0
+
+    if [ $counter -ne $numpre ] ; then
+      nend=$(grep -c END ${gecko_wkdir}/existing.rxns | awk '{ VAR += $1} END {print VAR}')
+      if [ $nend > 0 ] ; then
+        head -n -1  ${gecko_wkdir}/existing.rxns > tmp.txt
+        mv tmp.txt ${gecko_wkdir}/existing.rxns
+        rm 0
+      fi
+      #--
+      nend=$(grep -c END ${gecko_wkdir}/existing.rxns.notes | awk '{ VAR += $1} END {print VAR}')
+      if [ $nend > 0 ] ; then
+        head -n -1  ${gecko_wkdir}/existing.rxns.notes > tmp.txt
+        mv tmp.txt ${gecko_wkdir}/existing.rxns.notes
+        rm 0
+      fi
+#== and strip header 4 lines 
+#== and concatenate reactions.dum onto existing.rxns
+#-- (except for the first time around)
+      if [ $counter -ne 1 ] ; then
+        tail -n -4  ${gecko_wkdir}/OUT/reactions.dum > tmp.txt
+        mv tmp.txt ${gecko_wkdir}/OUT/reactions.dum
+        cat existing.rxns OUT/reactions.dum > tmp.txt ; mv tmp.txt existing.rxns
+        #--
+        tail -n -4  ${gecko_wkdir}/OUT/reactionswithcom.dum > tmp.txt
+        mv tmp.txt ${gecko_wkdir}/OUT/reactionswithcom.dum
+        cat existing.rxns.notes OUT/reactionswithcom.dum > tmp.txt ; mv tmp.txt existing.rxns.notes
+      fi
     fi
-#  fi
-
-    cat existing.rxns fort.17 > tmp.txt ; mv tmp.txt existing.rxns
   fi
-
-  cat fort.21 existing.rxns > ${mech}.mech
+  
+  mv existing.rxns $mech.mech
+  mv existing.rxns.notes $mech.mech.notes
 
 #================================================#
 # concatenate and rename some output files:
-# list of lumped species
+#-------------------------
+# list of lumped species (not in current PARIS output)
   if [ -e fort.48 ] ; then
     if [ -e $mech.lump ] ; then
       cat $mech.lump fort.48 > tmp.txt ; mv tmp.txt $mech.lump
     else
-      mv fort.48 $mech.lump ; fi
-  fi
-
-# net reaction rates
-  fns=(70 71 72)
-  for n in ${!fns[*]}; do
-   fn=${fns[n]}
-   case "$fn" in 
-    70) 
-       ksp=kO3 ;;
-    71) 
-       ksp=kNO3 ;;
-    72) 
-       ksp=kOH ;;
-   esac
-
-   if [ -e fort.$fn ] ; then
-    if [ -e $mech'.'$ksp ] ; then
-      nlin=$(wc -l $mech'.'$ksp |awk '{ VAR =+ $1} END {print VAR}')
-      nend=$(grep -nm1 END $mech'.'$ksp |awk '{ VAR =+ $1} END {print VAR}')
-      if [ $nend > 0 ] ; then
-      let nlin=$nend-1
-      fi
-      head -n $nlin $mech'.'$ksp > $mech'.tmp'
-      cat $mech'.tmp' 'fort.'$fn > tmp.txt ; mv tmp.txt $mech'.'$ksp
-    else
-      mv 'fort.'$fn $mech'.'$ksp ; fi
-   fi
-  done
-
-  if [ -e warnings.out ] ; then
-    if [ -e fort.50 ] ; then
-      if [ -e $mech.warnings ] ; then
-        cat $mech.warnings warnings.out fort.50 > tmp.out 
-        mv tmp.out $mech.warnings
-      else
-        cat warnings.out fort.50 >  $mech.warnings
-      fi
-    else
-      if [ -e $mech.warnings ] ; then
-        cat $mech.warnings warnings.out > tmp.out 
-        mv tmp.out $mech.warnings
-      else
-        mv warnings.out $mech.warnings
-      fi
+      mv fort.48 $mech.lump 
     fi
   fi
 
+#-------------------------
+# net reaction rates
+# (new format)
+  if [ -e OUT/kicovi.dat ] ; then
+    cp OUT/kicovi.dat $mech.kOH
+  fi
+  if [ -e OUT/kicovj.dat ] ; then
+    cp OUT/kicovj.dat $mech.kNO3
+  fi
+
+#-------------------------
+# warnings log
+  if [ -e OUT/warning.out ] ; then
+    if [ -e $mech.warnings ] ; then
+      cat $mech.warnings OUT/warning.out > tmp.out 
+      mv tmp.out $mech.warnings
+    else
+      cp OUT/warning.out $mech.warnings
+    fi
+  fi
+
+#-------------------------
 #-- end run loop
   echo done $counter:$numpre
   echo ---------------------------------------
 done
 
 #================================================#
+# step into mech dir to rearrange files
+#cd ${gecko_wkdir}
+#---------------------------------------
 
 if [ -e existing.cheminput ] ; then
   echo '  --precursors from previously existing mechanism--' 
   echo '  --precursors from previously existing mechanism--' > tmp.txt
-  cat scheme.log tmp.txt existing.cheminput > tmp.log
+  cat OUT/scheme.log tmp.txt existing.cheminput > tmp.log
   mv tmp.log scheme.log
   rm tmp.txt
 fi
 
-cd ${gecko_wkdir}
+
+# NB: may (later) wish to retain OUT directory to keep things neater in $mech
 echo ''
 echo '------------------------'
-echo rename output files  ...
+echo  rename output files  ...
 echo '------------------------'
 
-mv difvol.dat  $mech.difv
-mv pnan.dat    $mech.pnan
-mv psim.dat    $mech.psim
-mv dHeatf.dat  $mech.dHeatf
-mv henry.dat   $mech.Henry
-mv scheme.log  $mech.log
-mv fort.7 $mech.dict
-if [ -e fort.48 ] ; then
-  mv fort.48 $mech.lump ; fi
+cp OUT/dictionary.out $mech.dict
+cp OUT/dHeatf.dat     $mech.dHeatf
+cp OUT/difvol.dat     $mech.difv
+# question: do we want henry.dat or henry.dep?
+cp OUT/henry.dat      $mech.henry
+cp OUT/henry_gromhe.dat $mech.henry_gromhe
+cp OUT/maxyield.dat   $mech.maxyield
+cp OUT/pvap.myr.dat   $mech.pmyr
+cp OUT/pvap.nan.dat   $mech.pnan
+cp OUT/pvap.sim.dat   $mech.psim
+cp OUT/scheme.log     $mech.log
+cp OUT/size.dum       $mech.size
+cp OUT/Tg.dat         $mech.Tg
+cp OUT/gasspe.dum     $mech.sp_gas
+cp OUT/partspe.dum    $mech.sp_part
+cp OUT/wallspe.dum    $mech.sp_wall
+cp OUT/pero1.dat      $mech.pero1
+cp OUT/pero2.dat      $mech.pero2
+cp OUT/pero3.dat      $mech.pero3
+cp OUT/pero4.dat      $mech.pero4
+cp OUT/pero5.dat      $mech.pero5
+cp OUT/pero6.dat      $mech.pero6
+cp OUT/pero7.dat      $mech.pero7
+cp OUT/pero8.dat      $mech.pero8
+cp OUT/pero9.dat      $mech.pero9
 
-mv lstprim.out      userdat.cheminput
+if [ -e fort.48 ] ; then
+  cp fort.48 $mech.lump ; fi
+
+cat OUT/listprimary.dat $mech.prec > tmp.txt
+mv tmp.txt  $mech.prec
+
+# move inputs to "userdat" files
 mv userparams.input userdat.settings
+mv cheminput.dat    userdat.cheminput
 
 # remove END statement  and blank lines from existing.cheminput
 sed -i 's/^END//g' existing.cheminput
@@ -395,34 +434,19 @@ mv tmp.txt userdat.cheminput
 sed 's/^ *//g' -i userdat.cheminput
 sed 's/ $*//g' -i userdat.cheminput
 
-# add 'END' to some output files
-echo 'END' >> $mech.kOH 
-echo 'END' >> $mech.kO3 
-echo 'END' >> $mech.kNO3 
-echo 'END' >> userdat.cheminput
-
 echo ''
 echo '------------------------'
 echo tidy up ...
 echo '------------------------'
+
 rm cm
+rm manage.input
+rm ${gecko_outdir}/DATA
 
 ## Optional for testing
 #echo 'package disabled: edit script to reinstate'
 #exit
 ## End Optional
-
-rm fort.*
-rm sortlist.*
-rm manage.input
-#rm existing.*
-rm cheminput.dat # has been copied to userdat.cheminput
-if [ -e chaname.dat ] ; then 
- rm chaname.dat ; fi
-rm ${gecko_outdir}/DATA
-if [ -e warnings.out ] ; then 
- rm warnings.out  # has been copied to ${mech}.warnings
-fi
 
 #===========================================
 # INVOKE GENERATOR PACKAGING ROUTINES

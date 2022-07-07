@@ -2,8 +2,8 @@
      ==SET UP GECKO VERSION AND PATHS==
 !! this is a searchable TEXT FILE - RETAIN SPACES IN EACH LINE !!
 #===========================================
-home_dir = /ur/julial/GECKO/GIT_COPY/GECKO-A
-scratch_dir = /ur/julial/GECKO/GIT_COPY/GECKO-A
+home_dir = /ur/julial/GECKO/GIT_NCAR_PARIS/GECKO-LISA-2022
+scratch_dir = /ur/julial/GECKO/GIT_NCAR_PARIS/GECKO-LISA-2022
 gecko_version = GECKO-A
 gecko_inp_dir = GECKO-A/INPUTS
 gecko_run_dir = GECKO_SCRATCH

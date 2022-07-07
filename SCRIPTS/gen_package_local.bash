@@ -41,56 +41,6 @@ gecko_outdir=$scratch_dir/$gecko_run_dir
 gecko_wkdir=${gecko_outdir}/${mech}
 
 #===========================================
-# CREATE & COLLECT X-FILES & INTERP INPUT
-#===========================================
-
-echo ''
-echo '------------------------'
-echo Linking input files
-echo '------------------------'
-
-if [ ! -e ${gecko_wkdir}/fort.7 ] ; then
-  ln -s ${gecko_wkdir}/${mech}'.dict' ${gecko_wkdir}/fort.7 ; fi
-
-echo ''
-echo '------------------------'
-echo Finding Precursor Names
-echo '------------------------'
-
-ln -s ${gecko_source}/RUN/findname_cmv ${gecko_wkdir}/findname_cmv
-
-let nlin=`wc -l ${gecko_wkdir}/'userdat.cheminput' | awk '{print $1}'`-1
-head -n $nlin ${gecko_wkdir}/'userdat.cheminput' > ${gecko_wkdir}/lstprim.out
-
-cd ${gecko_wkdir}
-./findname_cmv > findname.out
-rm findname_cmv
-rm lstprim.out
-
-# remove lines resulting from duplicate precursors
-sed -i '/^ : /d' findname.out
-mv findname.out ${mech}'.prec'
-echo 'output => '${mech}'.prec'
-
-echo ''
-echo '------------------------'
-echo Counting RO2s...
-echo '------------------------'
-
-if [ -e ${gecko_source}/RUN/COMPTEUR/compteur ] ; then
-  rm ${gecko_source}/RUN/COMPTEUR/compteur ; fi
-
-cd ${gecko_source}
-make compteur
-ln -s ${gecko_source}/RUN/COMPTEUR/compteur ${gecko_wkdir}/compteur
-
-cd ${gecko_wkdir}
-./compteur
-
-rm compteur
-rm fort*
-
-#===========================================
 # RUN AKPARAMETER SCRIPT in SCRIPTS > $gecko_wkdir
 #===========================================
 
@@ -133,7 +83,7 @@ echo '------------------------'
 
 cd ${home_dir}/SCRIPTS
 ./run_interp_local.bash -m ${mech}
-
+exit
 #===========================================
 # tidy up
 #===========================================
