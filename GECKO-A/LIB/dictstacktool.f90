@@ -1061,7 +1061,6 @@ SUBROUTINE addc1dict(pchem,pname,fgrp)
   INTEGER :: dicptr,namptr
   CHARACTER(LEN=10) :: progname='addc1dict'
   CHARACTER(LEN=70) :: mesg
-  CHARACTER(LEN=2)  :: cgen  ! character version of generation number
 
 ! get pointer to add the species in namlst and dict
   dicptr=srch(nrec,pchem,dict)
