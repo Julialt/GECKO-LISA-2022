@@ -4,18 +4,20 @@
 ! PURPOSE: Generate the oxidation mechanism for organic compounds under
 ! tropospheric conditions.
 !
-! DEVELOPPERS:
+! DEVELOPERS:
 !
 ! COPYRIGHTS: All rights reserved.
 !
 ! DISCLAIMER:
 !=======================================================================
 PROGRAM main
-  USE keyparameter, ONLY:mxring,mxlgr,mxlfo,mxlco,mxps,mxnode,dirout,&
+  USE keyparameter, ONLY:mxring,mxlgr,mxlfo,mxlco,mxps,mxnode,dirin,dirout,&
                          logu,mecu,scru,kohu,kno3u,waru,gasu,prtu,walu,&
-                         tfu1,ohu,no3u,o3u,dhfu,saru,refu,prmu
-  USE keyflag,    ONLY: dhffg,g2pfg,g2wfg,&
-                        critvp,losar,wrtdhf,wrtpvap,wrthenry,wrttg,sar_info 
+                         tfu1,ohu,no3u,o3u,dhfu,saru,refu,prmu,useu
+  USE keyuser,    ONLY: maxgen,critvp,pvap_sar,g2pfg,g2wfg,&
+                        OFRfg,ofrfg,highnox,rx_ro2oh,isomerfg,dhffg,chafg,&
+                        wtopefg,sar_info,wrtref,screenfg
+  USE keyflag,    ONLY: losar,wrtdhf,wrtpvap,wrthenry,wrttg
   USE rjtool,     ONLY: rjgrm
   USE stdgrbond,  ONLY: grbond
   USE searching,  ONLY: srch
@@ -27,13 +29,12 @@ PROGRAM main
   USE dictstackdb,ONLY: nrec,dict,namlst,dbrch, &                      !  dictionary data
                         nhldvoc,holdvoc,nhldrad,holdrad,stabl,level, & ! stack data
                         lotopstack                                     ! fifo (default) or lifo
-!                        lotopstack,igen                                ! fifo (default) or lifo
   USE loadchemin, ONLY: rdchemin,in1chm  ! to load the input (primary) species
   USE tempflag,   ONLY: iflost
   USE masstranstool, ONLY:changephase
   USE outtool,    ONLY: dictelement,wrt_henry,wrt_depo,wrt_heatf,wrt_Tg,&
                         wrt_dict,wrt_psat,wrt_mxyield,wrt_ro2,&
-                        wrt_size,wrt_difvol
+                        wrt_size,diffusion_vol
   USE rochem,     ONLY: ro
   USE hochem,     ONLY: ho_voc
   USE no3chem,    ONLY: no3_voc
@@ -75,6 +76,30 @@ PROGRAM main
   REAL :: cut_off,cut_default,cut_OH,cut_O3,cut_NO3,cut_PAN
   REAL :: cut_HV,cut_RO,cut_RO2,cut_RCOO2
 
+!-----------------------------------------
+! Get default user-set parameters & flags
+!-----------------------------------------
+!  CALL define_defaults
+
+!-------------------------------------------------------------------
+! Declare namelists to be used for user-settable parameters & flags
+! Must precede any executable statments!
+!-------------------------------------------------------------------
+  NAMELIST /userparams/  maxgen,pvap_sar,critvp
+
+  NAMELIST /userflags/ OFRfg,ofrfg,highnox,rx_ro2oh,isomerfg,dhffg,chafg,&
+                   g2pfg,g2wfg,wtopefg,sar_info,wrtref,screenfg
+
+! read default values for user input
+  CALL define_defaults
+
+! read user parameter in namelists userparams, userflags
+  OPEN(useu,FILE='userparams.input')
+  READ(useu,nml = userparams)
+  READ(useu,nml = userflags)
+  CLOSE(useu)
+
+! ----------------------------------------------
 ! initialize data in the dictionaries and stacks
 ! ----------------------------------------------
   CALL initdictstack()
@@ -86,8 +111,8 @@ PROGRAM main
   OPEN(logu,FILE=dirout//'scheme.log')  ;  CALL wrtlog() ! operating conditions and flags
   OPEN(prmu,FILE=dirout//'listprimary.dat')
   OPEN(scru,FILE=dirout//'screeninfo.out')               !
-  OPEN(kohu,FILE=dirout//'kicovi.dat')                   !
-  OPEN(kno3u,FILE=dirout//'kicovj.dat')                   !
+  OPEN(kohu,FILE=dirout//'kivoci.dat')                   !
+  OPEN(kno3u,FILE=dirout//'kjvocj.dat')                   !
   OPEN(waru,FILE=dirout//'warning.out')                  !
   OPEN(mecu,FILE=dirout//'reactions.dum')                ! 
   OPEN(refu,FILE=dirout//'reactionswithcom.dum')                ! 
@@ -100,12 +125,12 @@ PROGRAM main
     OPEN(no3u,FILE=dirout//'rateno3.dat')               ! NO3 rate constant
   ENDIF
   IF (dhffg) OPEN(dhfu,FILE=dirout//'dhfrx.dat')
-  IF (sar_info/=0) OPEN(saru,FILE=dirout//'sar_info.dat')
+  IF (sar_info) OPEN(saru,FILE=dirout//'sar_info.dat')
 
 ! ------------------------------------------
 ! READ ALL DATA
 ! ------------------------------------------
-! read comment/references dictionnary and relate code
+! read comment/references dictionary and relate code
   CALL rdtweet()
 
 ! Read the dictionaries and mechanisms for C1, inorg ... and sort
@@ -315,9 +340,9 @@ PROGRAM main
     ENDIF
   ENDDO
 
-! close files - kicovi, kicovj
+! close files - kivoci, kjvocj
   WRITE(kohu,'(a)') "END   "  ; CLOSE (kohu)
-  WRITE(kno3u,'(a)') "END   " ; CLOSE (kno3u)
+  WRITE(kno3u,'(a)') "END   "  ; CLOSE (kno3u)
   IF (losar) THEN ; CLOSE(ohu) ; CLOSE(o3u) ; CLOSE(no3u) ; ENDIF
       
 ! compute molar mass and atoms for species (stored in dctmw & dctatom)
@@ -346,6 +371,9 @@ PROGRAM main
   WRITE(prtu,'(a)') "PHASE: END PART."  ;  CLOSE(prtu)
   WRITE(walu,'(a)') "PHASE: END WALL"   ;  CLOSE(walu)
 
+! write diffusion volume
+  IF (g2pfg) CALL diffusion_vol()
+
 ! write the vapor pressure of the species in dict.
   IF (wrtpvap) THEN
     PRINT*, '... compute data for Psat evaluation'
@@ -370,12 +398,6 @@ PROGRAM main
     PRINT*, '... compute Tg'
     CALL wrt_Tg()
   ENDIF
-
-! Write diffusion volume for partitioning
-!  IF (wrttg) THEN
-    PRINT*, '... compute difvol'
-    CALL wrt_difvol()
-!  ENDIF
 
 ! write numbers providing mechanism size (species, numbers ...)
   CALL wrt_size()

@@ -10,8 +10,7 @@ MODULE dictstackdb
   INTEGER,SAVE               :: nrec            ! # of species recorded in dict      
   INTEGER,SAVE               :: ninorg          ! # of inorganic species
   INTEGER,SAVE               :: nwpspe          ! # of species recorded in the condensed (wall,part.) phase
-  !CHARACTER(LEN=mxldi),SAVE  :: dict(mxspe)     ! dictionary line (code+formula+fg)
-  CHARACTER(LEN=mxldi),SAVE  :: dict(mxspe)     ! dictionary line (code+formula+fg+gen)
+  CHARACTER(LEN=mxldi),SAVE  :: dict(mxspe)     ! dictionary line (code+formula+fg)
   CHARACTER(LEN=mxlco),SAVE  :: namlst(mxspe)   ! name (lco=6 characters) of the species used
   CHARACTER(LEN=mxldi),SAVE  :: inorglst(mxc1)  ! list of inorganic species (code+formula+fg)
   REAL,SAVE                  :: dbrch(mxspe)    ! yield attach to a formula in dict

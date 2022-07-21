@@ -218,17 +218,16 @@ SUBROUTINE in1chm(chem,xname)
   dicptr = ABS(dicptr) + 1
   dict(dicptr+1:nrec+1)=dict(dicptr:nrec)
   dbrch(dicptr+1:nrec+1)=dbrch(dicptr:nrec)
+  cgen(1:2) = " 0"
+  WRITE(dict(dicptr),'(a6,3x,a120,2x,a15,a2,2x)')  xname, chem, fgrp, cgen
   dbrch(dicptr)  = 1.   ! initialize dbrch for the parent
 
 ! load species in the stack
-  level = -1                              ! loader adds 1 to level
-  IF (INDEX(chem,'.')== 0)THEN ; stabl=-1 ! loader adds 1 for non radical ...
+  level = -1                              ! loader add 1 to level
+  IF (INDEX(chem,'.')== 0)THEN ; stabl=-1 ! loader add 1 for non radical ...
   ELSE                         ; stabl=0  ! ... but 0 to radicals
   ENDIF
   CALL loader(chem,xname,stabl)
-
-  cgen(1:2) = " 0"
-  WRITE(dict(dicptr),'(a6,3x,a120,2x,a15,a2,2x)')  xname, chem, fgrp, cgen
 
   WRITE(6,*) '::cheminput added to dictionary::',TRIM(chem)
 END SUBROUTINE in1chm

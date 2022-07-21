@@ -251,7 +251,7 @@ END SUBROUTINE switchenol
 ! If there is more than one group on the double bond, treat first the
 ! -OH next the -OOH and at last the -ONO2
 ! Note: the routine is similar the switchenol routine above. This 
-! alkcheck is called after adding the enol to the dictionnary and 
+! alkcheck is called after adding the enol to the dictionary and 
 ! often act as a "patch" for treating enol structure. Must progressively
 ! be avoid with the progressive development of gecko.
 !=======================================================================

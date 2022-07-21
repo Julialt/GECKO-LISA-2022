@@ -8,7 +8,7 @@
 SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
       USE keyparameter, ONLY: mxnode,mxlco,mxlfo,mxlgr,mxnr,mxpd,mecu,waru
       USE references, ONLY:mxlcod
-      USE keyflag, ONLY: wtopeflag
+      USE keyuser, ONLY: wtopefg
       USE cdtool, ONLY: alkcheck
       USE rjtool
       USE atomtool
@@ -856,7 +856,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
               CALL addrx(progname,chem,nr,flag)
 !              CALL addreac(nr,progname,rdct(lco+1:lcf),flag)
 
-! FUR is furanone - species should be "hand written" in dictionnary
+! FUR is furanone - species should be "hand written" in dictionary
               IF (tgroup(icarb)(1:3).EQ.'CHO') THEN
                 pchem(nr,1)='#mm-O1-COCdH=CdHC1H2'
                 jid(nr)=23000
@@ -2204,7 +2204,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 ! FIRST CHANNEL : MAKE FURANONE
 ! -----------------------------
 
-! FUR is furanone - species should be "hand written" in dictionnary
+! FUR is furanone - species should be "hand written" in dictionary
                   IF (tgroup(icarb)(1:3).EQ.'CHO') THEN
                     CALL addrx(progname,chem,nr,flag)
 !                    CALL addreac(nr,progname,rdct(lco+1:lcf),flag)
@@ -3536,7 +3536,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
       DO 300 i=1,mnr
          IF (flag(i).EQ.0) GO TO 300
       
-      IF (wtopeflag.EQ.1) & !Write information required for operator&
+      IF (wtopefg) & !Write information required for operator&
        WRITE(10,'(A15,A1,A6,A4,1X,a5,i5,a3,f4.2,a1)')'**** INIT HV + '&
       ,'G',idnam,'*****',' HV /',jid(i),'   ',yield(i),'/'
          
@@ -3561,7 +3561,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !c           brtio = brch
            CALL bratio(pchem(i,1),brtio,p(np),nrxref(i),rxref(i,:))
 
-           IF (wtopeflag.EQ.1)&
+           IF (wtopefg)&
                 WRITE(10,'(f5.3,2X,A1,A6)') s(np),'G', p(np)
      
            IF (flag_del(i,1).NE.0) THEN
@@ -3576,7 +3576,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !             CALL addcoprod(np,progname,rdct(lco+1:lcf))
              s(np) = rdtcopchem
              p(np) = copchem
-             IF (wtopeflag.EQ.1)&
+             IF (wtopefg)&
                   WRITE(10,'(f5.3,2X,A1,A6)') s(np),'G', p(np)
            ENDIF
 
@@ -3588,7 +3588,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !               CALL addprod(np,progname,rdct(lco+1:lcf))
                s(np) = ss(j)
                p(np) = pp(j)
-               IF (wtopeflag.EQ.1)&
+               IF (wtopefg)&
                     WRITE(10,'(f5.3,2X,A1,A6)') s(np),'G', p(np)
              ENDIF
            ENDDO
@@ -3598,7 +3598,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !            CALL addprod(np,progname,rdct(lco+1:lcf))
             s(np) = 1.
             CALL bratio(pchem(i,2),brtio,p(np),nrxref(i),rxref(i,:))
-            IF (wtopeflag.EQ.1)&
+            IF (wtopefg)&
                  WRITE(10,'(f5.3,2X,A1,A6)') s(np),'G', p(np)
             IF (flag_del(i,2).NE.0) THEN
               CALL add1tonp(progname,chem,np)
@@ -3612,7 +3612,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !              CALL addcoprod(np,progname,rdct(lco+1:lcf))
               s(np) = rdtcopchem
               p(np) = copchem
-              IF (wtopeflag.EQ.1)&
+              IF (wtopefg)&
                    WRITE(10,'(f5.3,2X,A1,A6)') s(np),'G', p(np)
             ENDIF
          ENDIF
@@ -3624,7 +3624,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 ! following test on coef. sto. added because of criegee above
                IF (s(np).eq. 0.) s(np)=1.
                p(np) = coprod(i,1,j)
-               IF (wtopeflag.EQ.1)&
+               IF (wtopefg)&
                     WRITE(10,'(f5.3,2X,A1,A6)') s(np),'G', p(np)
             ENDIF
             IF (coprod(i,2,j)(1:1).NE.' ') THEN
@@ -3632,7 +3632,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !                CALL addcoprod(np,progname,rdct(lco+1:lcf))
                s(np) = 1.
                p(np) = coprod(i,2,j)
-               IF (wtopeflag.EQ.1)&
+               IF (wtopefg)&
                     WRITE(10,'(f5.3,2X,A1,A6)')s(np),'G',p(np)
             ENDIF
             IF ((coprod_del(i,1,j)(1:1).NE.' ').AND.&
@@ -3641,7 +3641,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !               CALL addcoprod(np,progname,rdct(lco+1:lcf))
                s(np) = sc_del(i,2)
                p(np) = coprod_del(i,1,j)
-               IF (wtopeflag.EQ.1) &
+               IF (wtopefg) &
                     WRITE(10,'(f5.3,2X,A1,A6)')s(np),'G',p(np)
             ENDIF
             IF ((coprod_del(i,2,j)(1:1).NE.' ').AND.&
@@ -3650,7 +3650,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
 !               CALL addcoprod(np,progname,rdct(lco+1:lcf))
                s(np) = 1.
                p(np) = coprod_del(i,2,j)
-               IF (wtopeflag.EQ.1) &
+               IF (wtopefg) &
                     WRITE(10,'(f5.3,2X,A1,A6)')s(np),'G',p(np)
             ENDIF
          ENDDO
@@ -3673,7 +3673,7 @@ SUBROUTINE hvdiss2(idnam,chem,bond,group,nring,brch,cut_off)
          CALL rxwrit(mecu,r,s,p,arrh,idreac,nlabel,xlabel,folow,fotroe,rxref(nr,:))
 
 
-      IF (wtopeflag.EQ.1) WRITE(10,*)'end'
+      IF (wtopefg) WRITE(10,*)'end'
 300   CONTINUE
 !      IF(wtflag.NE.0) WRITE(*,*) '----  end of hvdiss2'
 !* end of hvdiss

@@ -9,7 +9,7 @@ CONTAINS
 !=======================================================================
 SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
   USE keyparameter, ONLY: mxcp,mxlfo,saru
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   USE ho_aromtool, ONLY: arom_data
   USE ringtool, ONLY: ring_data
   IMPLICIT NONE
@@ -37,7 +37,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
   nca=COUNT(tgroup/=' ')
   IF (ig>nca) STOP "ig > nca in rabsoh" 
       
-  IF (sar_info==1) THEN
+  IF (sar_info) THEN
     WRITE(saru,*) '   '                                  !! debug
     WRITE(saru,*) '============= RABSOH ======'          !! debug
     DO i=1,nca ;  WRITE(saru,*) i,tgroup(i) ; ENDDO      !! debug
@@ -64,13 +64,13 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
     DO i=1,nca
       IF (tbond(ig,i)==3) THEN                     ! -O-CHO group
         arrhc(1)=1.70E-12 ; arrhc(3)=910.
-        IF (sar_info==1) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
+        IF (sar_info) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
       ELSE IF (tbond(ig,i)==1) THEN
         DO j=1,nca
           IF ((tbond(j,i)==1).AND.(j/=ig)) THEN    ! C(OH)-C(polar)-CHO
             IF ((INDEX(tgroup(i),'O')==0).AND.(INDEX(tgroup(j),'(OH)')/=0)) THEN   
               arrhc(1)=11.7E-12 ; arrhc(3)=78.
-              IF (sar_info==1) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
+              IF (sar_info) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
             ENDIF
           ENDIF
         ENDDO
@@ -101,7 +101,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
           WRITE(6,*) 'No constant found in rabsoh for group: ', tgroup(i)
           STOP "in rabsoh, expected reaction not found"
         ENDIF
-        IF (sar_info==1) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
+        IF (sar_info) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
       ENDIF
     ENDDO
     
@@ -126,14 +126,14 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
 
       IF (tgroup(ig)(1:3)=='CH3') THEN
         arrhc(1)=2.22E-12 ; arrhc(3)=160.         ! -O-CH3
-        IF (sar_info==1) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
+        IF (sar_info) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
       ELSE IF (tgroup(ig)(1:2)=='CH') THEN        ! -O-CH<
         DO j=1,nca
           IF (tbond(ig,j)==1) THEN
             DO k=1,nca
               IF ((tbond(j,k)==3).AND.(nring==0)) THEN  ! -O-CH-C-O- 
                 arrhc(1)=1.17E-12 ;  arrhc(3)=-760.    
-                IF (sar_info==1) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
+                IF (sar_info) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
               ENDIF
             ENDDO
           ENDIF
@@ -143,7 +143,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
           CALL ringfac(ig,nca,tbond,tgroup,mult)
           arrhc(3)=arrhc(3)-298.*log(mult)   
         ENDIF
-        IF (sar_info==1) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
+        IF (sar_info) CALL wrtkabs(saru,tgroup(ig),arrhc) ; RETURN !--- Out
       ENDIF
     ENDIF
   ENDDO eloop
@@ -171,7 +171,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
     ENDIF
   ENDDO aloop
       
-  IF (sar_info==1) WRITE(saru,*) ' 1) rate constant =',arrhc(1:3)
+  IF (sar_info) WRITE(saru,*) ' 1) rate constant =',arrhc(1:3)
 
       
 ! -----------------------
@@ -186,7 +186,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
   IF (INDEX(tgroup(ig),'(OOOH)')/=0) mult=mult*3.6 
   IF (mult/=1.) arrhc(3)=arrhc(3)-298.*LOG(mult)
 
-  IF (sar_info==1) THEN
+  IF (sar_info) THEN
     WRITE(saru,*) ' 2) fact on carbon bearing leaving H:',mult !! debug
     WRITE(saru,*) ' 3) Substituents factors:'                  !! debug
   ENDIF
@@ -231,7 +231,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
     mult=1. ; nbF=0 
     IF (tbond(ig,i)/=0) THEN
 
-      IF (sar_info==1) THEN
+      IF (sar_info) THEN
         WRITE(saru,*) ' 3.1) alpha group factors'           !! debug
         WRITE(saru,*) '  >>> group_neighbor=',i,tgroup(i)   !! debug
       ENDIF
@@ -379,7 +379,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
       IF (nbF>1) mult=mult**(1./nbF)
       arrhc(3)=arrhc(3)-298.*LOG(mult)
 
-      IF (sar_info==1) THEN
+      IF (sar_info) THEN
         IF (nCd>0) WRITE(saru,*) 'nCd=',nCd              !! debug
         IF (nCd>0) WRITE(saru,*) 'Cdtable=',Cdtable(:)   !! debug
         IF (nbF>1) WRITE(saru,*) ' nbF=',nbF             !! debug
@@ -394,7 +394,7 @@ SUBROUTINE rabsoh(tbond,tgroup,ig,arrhc,nring)
     arrhc(3)=arrhc(3)-298.*log(mult)   
   ENDIF
 
-  IF (sar_info==1) CALL wrtkabs(saru,tgroup(ig),arrhc)
+  IF (sar_info) CALL wrtkabs(saru,tgroup(ig),arrhc)
 
 END SUBROUTINE rabsoh
 
@@ -405,7 +405,7 @@ END SUBROUTINE rabsoh
 SUBROUTINE ringfac(ig,nca,tbond,tgroup,mfac)
   USE keyparameter, ONLY: saru
   USE ringtool, ONLY: ring_data
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   IMPLICIT NONE
 
   INTEGER,INTENT(IN)         :: ig         ! group bearing the leaving H 
@@ -425,7 +425,7 @@ SUBROUTINE ringfac(ig,nca,tbond,tgroup,mfac)
   mfac=1.
 !nring_ind,ring_ind,trackrg) 
   CALL ring_data(ig,nca,tbond,tgroup,nring_ind,ring_ind,trackrg) 
-  IF (sar_info==1) WRITE(saru,*) '# of distinct cycles:',nring_ind
+  IF (sar_info) WRITE(saru,*) '# of distinct cycles:',nring_ind
   ringloop: DO i=1,nring_ind
     mult=1.
     rgord=COUNT(ring_ind(i,:).EQV..TRUE.)   ! get ring size                    
@@ -488,7 +488,7 @@ SUBROUTINE ringfac(ig,nca,tbond,tgroup,mfac)
         mult=1.
     END SELECT
     
-    IF (sar_info==1) THEN
+    IF (sar_info) THEN
       WRITE(saru,*) 'CYCLE of size:',rgord
       WRITE(saru,*) 'Fring=',mult
     ENDIF

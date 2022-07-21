@@ -1,12 +1,19 @@
-! Set the list of key parameters for gecko
+!---------------------------------------------------!
+! JMLT suggestion for user/developer parameter split!
+
+! Set the list of internally-defined key parameters for GECKO-A
+! Directory GECKO-A/LIB: accessible to developers
+!---------------------------------------------------!
 MODULE keyparameter
   IMPLICIT NONE
 
+! manage length of strings in the dictionary
   INTEGER, PARAMETER :: mxlco=6    ! maximum length of species names (code)
   INTEGER, PARAMETER :: mxlfo=120  ! maximum length of a formula
-  INTEGER, PARAMETER :: mxlfl=15   ! maximum length of functionality list (string)
-  !INTEGER, PARAMETER :: mxldi=146  ! string length in the dictionary
-  INTEGER, PARAMETER :: mxldi=150  ! string length in the dictionary - GEN#
+  INTEGER, PARAMETER :: mxlfl=15   ! maximum length of functionality list
+  INTEGER, PARAMETER :: mxldi=150  ! string length in the dictionary 
+                                   ! (includes a2 generation number string)
+
   INTEGER, PARAMETER :: mxnode=35  ! maximum number of nodes allowed
   INTEGER, PARAMETER :: mxlgr=21   ! maximum length of a string in a group
   INTEGER, PARAMETER :: mxring=4   ! maximum rings allowed
@@ -23,14 +30,15 @@ MODULE keyparameter
   INTEGER, PARAMETER :: mxlest=6   ! maximum length of an ester track (current max is 6: CO-O-CO-O-CO-O)
   
 ! file unit
+  INTEGER, PARAMETER :: useu=73    ! user input file
   INTEGER, PARAMETER :: dctu=7     ! dictionary file unit
   INTEGER, PARAMETER :: prmu=14    ! list of primary species used (for findname)
   INTEGER, PARAMETER :: logu=15    ! log file unit
   INTEGER, PARAMETER :: refu=16    ! mechanism with reference file unit
   INTEGER, PARAMETER :: mecu=17    ! mechanism file unit
   INTEGER, PARAMETER :: scru=18    ! file unit to redirect info from screen to file
-  INTEGER, PARAMETER :: kohu=19    ! kicovi file unit (reccord k_OH for the various species) 
-  INTEGER, PARAMETER :: kno3u=69   ! kicovj file unit (reccord k_no3 for the various species) 
+  INTEGER, PARAMETER :: kohu=19    ! kivoci file unit (record k_OH for the various species) 
+  INTEGER, PARAMETER :: kno3u=59   ! kjvocj file unit (record k_NO3 for the various species) 
   INTEGER, PARAMETER :: waru=20    ! warning file unit 
   INTEGER, PARAMETER :: gasu=21    ! gas phase species file unit
   INTEGER, PARAMETER :: prtu=22    ! particle phase species file unit
@@ -54,8 +62,10 @@ MODULE keyparameter
   INTEGER, PARAMETER :: pfu7=47    ! peroxy file unit 7
   INTEGER, PARAMETER :: pfu8=48    ! peroxy file unit 8
   INTEGER, PARAMETER :: pfu9=49    ! peroxy file unit 9
-  INTEGER, PARAMETER :: webu=50    ! web output file unit
   
+! directory for the user input files
+  CHARACTER(LEN=10),PARAMETER :: dirin="../INPUTS/"  
+
 ! directory for the output files
   CHARACTER(LEN=6),PARAMETER :: dirout="./OUT/"  
 
@@ -73,6 +83,4 @@ MODULE keyparameter
       73, 79, 83, 89, 97,101,103,107,109,113, &
       127,131,137,139,149/)
 
-!  LOGICAL,PARAMETER :: debug_nc_fg = .FALSE.
-  
 END MODULE keyparameter

@@ -12,14 +12,14 @@ SUBROUTINE no3_voc(idnam,chem,bond,group,brch,cut_off)
   USE database, ONLY:nkno3db,kno3db_chem,kno3db_arr,kno3db_com, &         ! K_NO3 database
       nkwno3,nkwno3_pd,kwno3_rct,kwno3_pd,kwno3_copd,kwno3_yld,kwno3_com  ! VOC+NO3 mechanism
   USE references, ONLY:mxlcod
-  USE keyflag, ONLY: wtopeflag,losar
+  USE keyuser, ONLY: wtopefg
   USE searching, ONLY: srh5
   USE reactool, ONLY: swap,rebond
   USE normchem, ONLY: stdchm
   USE dictstacktool, ONLY: bratio
   USE rxwrttool, ONLY:rxwrit,rxinit
   USE radchktool, ONLY: radchk
-  USE keyflag, ONLY: dT                            ! default temperature 
+  USE keyflag, ONLY: dT,losar                       ! default temperature 
   USE toolbox, ONLY: stoperr,add1tonp,addrx,addref
   IMPLICIT NONE
 
@@ -328,7 +328,7 @@ SUBROUTINE no3_voc(idnam,chem,bond,group,brch,cut_off)
 ! =================================
 ! WRITE INFORMATION REQUIRED FOR OPERATOR
 ! =================================
-  IF (wtopeflag==1) THEN !#Write information required for operator
+  IF (wtopefg) THEN !#Write information required for operator
     nt2=0. ; ae3=0. ; a1=0. 
     opeloop2: DO i=1,nr
       IF (flag(i)/=0) THEN

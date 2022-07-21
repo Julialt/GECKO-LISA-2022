@@ -1,0 +1,13 @@
+======================================
+ README for GECKO-A/INPUTS/settings*
+======================================
+Author: Julia Lee-Taylor, NCAR, July 2022
+
+The settings file allows the user to set some conditions for the mechanism generation
+
+REFERENCE FILE: settings_user
+ - is a list of recommended values for the input flags and parameters
+ - is commented to explain the purpose of the various flags and parameters
+
+USER INPUT FILE: settings.{name}
+ - the user is advised to make their own copies and edit them for specific purposes

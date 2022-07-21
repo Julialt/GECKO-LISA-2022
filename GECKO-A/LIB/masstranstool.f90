@@ -15,7 +15,7 @@ CONTAINS
 SUBROUTINE changephase()
   USE keyparameter, ONLY: mxlfo,mxlco,mecu,prtu,walu,tfu1,dirout
   USE dictstackdb, ONLY: ncha,chatab,nwpspe
-  USE keyflag, ONLY: g2pfg,g2wfg,locha
+  USE keyuser, ONLY: g2pfg,g2wfg,chafg
   USE dictstackdb, ONLY: nrec,dict
   USE atomtool, ONLY: cnum, molweight  
   IMPLICIT NONE
@@ -25,7 +25,7 @@ SUBROUTINE changephase()
   CHARACTER(LEN=mxlco) :: idnam
   REAL :: molmass
   
-  IF (locha) OPEN(tfu1, FILE=dirout//'chaname.dat')
+  IF (chafg) OPEN(tfu1, FILE=dirout//'chaname.dat')
   
 ! scroll the dictionary
   recloop: DO i=2,nrec
@@ -48,8 +48,8 @@ SUBROUTINE changephase()
     CALL molweight(chem,molmass)
     idnam=dict(i)(1:mxlco)
 
-! manage CHA species (assumed non volatile if locha true: write dict only) 
-    IF (locha) THEN  
+! manage CHA species (assumed non volatile if chafg true: write dict only) 
+    IF (chafg) THEN  
       DO j=1,ncha
         IF (idnam==chatab(j)) THEN 
           WRITE(tfu1,'(A1,A6)') "G",chatab(j)  ! saved here for info only
@@ -71,7 +71,7 @@ SUBROUTINE changephase()
     IF (g2wfg) CALL gas2wall(mecu,walu,chem,idnam,molmass)
     
   ENDDO recloop
-  IF (locha) CLOSE(tfu1)
+  IF (chafg) CLOSE(tfu1)
 
 END SUBROUTINE changephase
 

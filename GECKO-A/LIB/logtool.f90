@@ -7,6 +7,7 @@ CONTAINS
 SUBROUTINE wrtlog()
   USE keyparameter, ONLY: logu
   USE keyflag
+  USE keyuser
   IMPLICIT NONE
   
 ! write mechanism parameters to stdout, for logging
@@ -42,9 +43,9 @@ SUBROUTINE wrtlog()
   WRITE(logu,*) ' ---------------------------- '
   WRITE(logu,*) '    --------- SAR -------- '
   WRITE(logu,*) ' ---------------------------- '
-  IF     (pvapfg==1) THEN; WRITE(logu,*) ' vapor pressure scheme=M&Y '
-  ELSEIF (pvapfg==2) THEN; WRITE(logu,*) ' vapor pressure scheme=Nannoolal '
-  ELSEIF (pvapfg==3) THEN; WRITE(logu,*) ' vapor pressure scheme=SIMPOL-1 '
+  IF     (pvap_sar==1) THEN; WRITE(logu,*) ' vapor pressure scheme=M&Y '
+  ELSEIF (pvap_sar==2) THEN; WRITE(logu,*) ' vapor pressure scheme=Nannoolal '
+  ELSEIF (pvap_sar==3) THEN; WRITE(logu,*) ' vapor pressure scheme=SIMPOL-1 '
   ENDIF  
 
   IF     (kohaddfg==1) THEN; WRITE(logu,*) ' OH addition SAR =Peeters 1997 '
@@ -66,7 +67,7 @@ SUBROUTINE wrtlog()
   WRITE(logu,*) '    ----- Reductions ----- '
   WRITE(logu,*) ' ---------------------------- '
   WRITE(logu,*) ' critical vapor pressure=', critvp
-  IF (isomerfg==1) THEN; WRITE(logu,*) ' isomerisation allowed '
+  IF (isomerfg) THEN; WRITE(logu,*) ' isomerisation allowed '
   ELSE                 ; WRITE(logu,*) ' no isomerisation '
   ENDIF
   WRITE(logu,*) ' high-NOx flag:',highnox

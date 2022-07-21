@@ -1,0 +1,299 @@
+* REFERENCE LIST of primary species
+* includes AIRCRAFT, DIESEL, GASOLINE, BIOBURNING_Alma emissions
+* ----------------------------------
+*
+* this file is read up to the keyword END.
+* Comment lines (* as first character) can be placed
+* anywhere in the file.
+*
+* the chemical formula must start with a "C,c,-O" in the first column
+* (or a # for special formula), and end with a space.
+*
+* If many primary VOCs, its better to sort the list of primary VOC,
+* starting with the species having the lowest carbon chain length,
+* For species having the same chain length, sort from more oxidized
+* species to more reduced species.
+***********************************************************************
+* numbers refer to # carbons (not 'nodes')
+************************************
+*
+CH3OH     * 1: methanol
+CH2O      * 1: formaldehyde (is automatically included)
+*-----------------
+CH3CH3       * 2: ethane
+CdH2=CdH2    * 2: ethene
+#ethyne      * 2: acetylene
+CH3CHO       * 2: acetaldehyde
+CH3CH2(OH)   * 2: ethanol
+*-----------------
+CH3CH2CH3    * 3: propane
+CH3CdH=CdH2  * 3: propene
+#propyne     * 3: propyne
+CH3CH(OH)CH3 * 3: i-propanol
+CH3CH2CHO    * 3: propanal
+CH3COCH3     * 3: acetone
+CHOCdH=CdH2  * 3: acrolein
+*-----------------
+CH3CH2CH2CH3     * 4: n-butane
+CH3CH(CH3)CH3    * 4: i-butane (methylpropane)
+CH3CH2CdH=CdH2   * 4: 1-butene
+CH3CdH=CdHCH3    * 4: 2-butene
+CH3Cd(CH3)=CdH2  * 4: i-butene (methylpropene)
+CdH2=CdHCdH=CdH2 * 4: 1,3-butadiene
+CH3CH2CH2CHO     * 4: butanal
+CH3CH2COCH3      * 4: methylethylketone
+CH3COCdH=CdH2    * 4: methyl vinyl ketone
+CH3CdH=CdHCHO    * 4: 2-butenal (crotonaldhyde)
+CH3Cd(CHO)=CdH2  * 4: methacrolein
+CH3CH2-O-COCH3   * 4: ethyl acetate
+#bb-O1-CdH=CdHCdH=Cd1H  * 4: furan
+*-----------------
+CH3CH2CH2CH2CH3      * 5: n-pentane
+CH3CH2CH(CH3)CH3     * 5: i-pentane (2-methyl butane)
+C1H2CH2CH2CH2C1H2    * 5: cyclopentane
+CH3C(CH3)(CH3)CH3    * 5: 2,2-dimethylpropane
+CH3CH2CH2CdH=CdH2    * 5: 1-pentene
+CH3CH2CdH=CdHCH3     * 5: 2-pentene
+C1H2CH2CdH=CdHC1H2   * 5: cyclo-pentene
+CH3CH2Cd(CH3)=CdH2   * 5: 2-methyl-1-butene
+CH3CH(CH3)CdH=CdH2   * 5: 3-methyl-1-butene
+CH3CdH=Cd(CH3)CH3    * 5: 2-methyl-2-butene
+CH3CdH=CdHCdH=CdH2   * 5: 1,3-pentadiene
+#CH3Cd(=CdH2)CdH=CdH2 * 5: 2-methyl-1,3-butadiene (isoprene)
+C1H2CdH=CdHCdH=Cd1H  * 5: 1,3-cyclopentadiene
+CH3CH2CH2CH2CHO      * 5: valeraldehyde (pentanal)
+CH3C(OH)(CH3)CdH=CdH2 * 5: 3-methyl-3-buten-2-ol (MBO)
+CH3-O-C(CH3)(CH3)CH3       * 5: methyl-tert-butyl-ether
+CH3C(OOH)(CH2(OH))CdH=CdH2 * 5: 1,2-ISOPOOH
+CH2(OH)CH(OOH)Cd(CH3)=CdH2 * 5: 4,3-ISOPOOH
+#bb-O1-CdH=CdHCdH=Cd1CH3      * 5: 2-methyl furan
+#bb-O1-CdH=CdHCd(=Cd1H)CH3    * 5: 3-methyl furan
+#bb-O1-CdH=CdHCdH=Cd1CHO      * 5: furfural
+#bb-O1-CdH=CdHCd(=Cd1H)CHO    * 5: 3-furaldehyde
+#bb-O1-CdH=CdHCdH=Cd1CH2(OH)  * 5: 2-furan methanol
+*-------------------
+CH3CH2CH2CH2CH2CH3      * 6: n-hexane
+C1H2CH2CH2CH2CH2C1H2    * 6: cyclohexane
+CH3CH(CH3)CH2CH2CH3     * 6: 2-methylpentane
+CH3CH2CH(CH3)CH2CH3     * 6: 3-methylpentane
+C1H2CH2CH2CH2C1HCH3     * 6: methyl-cyclopentane
+CH3CH2C(CH3)(CH3)CH3    * 6: 2,2-dimethylbutane
+CH3CH(CH3)CH(CH3)CH3    * 6: 2,3-dimethylbutane
+CH3CH2CH2CH2CdH=CdH2    * 6: 1-hexene
+CH3CH2CdH=CdHCH2CH3     * 6: 2-hexene
+CH3CH2CH2CdH=CdHCH3     * 6: 3-hexene
+C1H2CH2CdH=CdHCH2C1H2   * 6: cyclohexene
+CH3CH2CH2Cd(CH3)=CdH2   * 6: 2-methyl-1-pentene
+CH3CH2CH(CH3)CdH=CdH2   * 6: 3-methyl-1-pentene
+CH3CH(CH3)CH2CdH=CdH2   * 6: 4-methyl-1-pentene
+CH3CH2CdH=Cd(CH3)CH3    * 6: 2-methyl-2-pentene
+CH3CH2Cd(CH3)=CdHCH3    * 6: 3-methyl-2-pentene
+CH3CdH=CdHCH(CH3)CH3    * 6: 4-methyl-2-pentene
+C1H2CH2CH2CdH=Cd1CH3    * 6: 1-methylcyclopentene
+C1H2CH2CdH=CdHC1HCH3    * 6: 3-methylcyclopentene
+CH3CH(CH3)Cd(CH3)=CdH2  * 6: 2,3-dimethyl-1-butene
+CH3C(CH3)(CH3)CdH=CdH2  * 6: 3,3-dimethyl-1-butene
+CH3CH2CdH=CdHCdH=CdH2   * 6: 1,3-hexadiene
+C1H2CdH=CdHCdH=CdHC1H2  * 6: 1,3-cyclohexadiene
+C1H2CdH=CdHCd(=Cd1H)CH3 * 6: 1-methyl,1,3-cyclopentadiene
+CH3CH2CH2CH2CH2CHO      * 6: hexanal
+CH3CH2CH2CH2CH2CH2(OH)     * 6: 1-hexanol
+CH3CH2-O-C(CH3)(CH3)CH3    * 6: 1-ethyl-tert-butyl-ether
+-O1-CdH=CdHCdH=Cd1CH2CH3   * 6: 2-ethyl furan
+-O1-Cd(CH3)=CdHCdH=Cd1CH 3 * 6: 2,5-dimethyl furan
+#mmc1HcHcHcHcHc1H          * 6: benzene : AR0002
+#mmc1HcHcHc(OH)cHc1H       * 6: phenol : AR0005
+#mmc1HcHc(OH)c(OH)cHc1H    * 6: catechol : AR0015
+*-------------------
+CH3CH2CH2CH2CH2CH2CH3      * 7: n-heptane
+CH3CH2CH2CH2CH(CH3)CH3     * 7: 2-methylhexane
+CH3CH2CH2CH(CH3)CH2CH3     * 7: 3-methylhexane
+C1H2CH2CH2CH2CH2C1HCH3     * 7: methylcyclohexane
+CH3CH2CH(CH2CH3)CH2CH3     * 7: 3-ethylpentane
+C1H2CH2CH2CH2C1HCH2CH3     * 7: ethylcyclopentane
+CH3CH2CH2C(CH3)(CH3)CH3    * 7: 2,2-dimethylpentane
+CH3CH2CH(CH3)CH(CH3)CH3    * 7: 2,3-dimethylpentane
+CH3CH(CH3)CH2CH(CH3)CH3    * 7: 2,4-dimethylpentane
+CH3CH2C(CH3)(CH3)CH2CH3    * 7: 3,3-dimethylpentane
+CH3C1HCH2CH2CH2C1HCH3      * 7: 1,2-dimethylcyclopentane
+C1H2CH(CH3)CH2CH2C1HCH3    * 7: 1,3-dimethylcyclopentane
+CH3CH(CH3)C(CH3)(CH3)CH3   * 7: 2,2,3-trimethylbutane
+CH3CH2CH2CH2CH2CdH=CdH2    * 7: 1-heptene
+CH3CH2CH2CH2CdH=CdHCH3     * 7: 2-heptene
+CH3CH2CH2CdH=CdHCH2CH3     * 7: 3-heptene
+CH3CH2CH2CH(CH3)CdH=CdH2   * 7: 3-methyl-1-hexene
+CH3CH2CH2CdH=Cd(CH3)CH3    * 7: 2-methyl-2-hexene
+CH3CH2CH2Cd(CH3)=CdHCH3    * 7: 3-methyl-2-hexene
+CH3CdH=CdHCH(CH3)CH2CH3    * 7: 4-methyl-2-hexene
+CH3CH2CdH=CdHCH(CH3)CH3    * 7: 2-methyl-3-hexene
+CH3CH2CdH=Cd(CH3)CH2CH3    * 7: 3-methyl-3-hexene
+CH3CH2Cd(CH2CH3)=CdHCH3    * 7: 3-ethyl-2-pentene
+CH3CH(CH3)CH2Cd(CH3)=CdH2  * 7: 2,4-dimethyl-1-pentene
+CH3CH(CH3)CH(CH3)CdH=CdH2  * 7: 3,4-dimethyl-1-pentene
+CH3CH2Cd(CH3)=Cd(CH3)CH3   * 7: 2,3-dimethyl-2-pentene
+CH3CH(CH3)CdH=Cd(CH3)CH3   * 7: 2,4-dimethyl-2-pentene
+#mmc1HcHcHcHcHc1CH3        * 7: toluene : AR0084
+#mmc1HcHcHcHcHc1CHO        * 7: benzaldehyde : AR0102
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH3      * 8: n-octane
+CH3CH2CH2CH2CH2CH(CH3)CH3     * 8: 2-methylheptane
+CH3CH2CH2CH2CH(CH3)CH2CH3     * 8: 3-methylheptane
+CH3CH2CH2CH(CH3)CH2CH2CH3     * 8: 4-methylheptane
+C1H2CH2CH2CH2CH2CH2C1HCH3     * 8: ethylcyclohexane
+CH3CH2CH2CH2C(CH3)(CH3)CH3    * 8: 2,2-dimethylhexane
+CH3CH2CH2CH(CH3)CH(CH3)CH3    * 8: 2,3-dimethylhexane
+CH3CH2CH(CH3)CH2CH(CH3)CH3    * 8: 2,4-dimethylhexane
+CH3CH(CH3)CH2CH2CH(CH3)CH3    * 8: 2,5-dimethylhexane
+CH3CH2CH2C(CH3)(CH3)CH2CH3    * 8: 3,3-dimethylhexane
+CH3CH2CH(CH3)CH(CH3)CH2CH3    * 8: 3,4-dimethylhexane
+CH3C1HCH2CH2CH2CH2C1HCH3      * 8: 1,2-dimethylcyclohexane
+C1H2CH(CH3)CH2CH2CH2C1HCH3    * 8: 1,3-dimethylcyclohexane
+C1H2CH2CH(CH3)CH2CH2C1HCH3    * 8: 1,4-dimethylcyclohexane
+CH3CH(CH3)CH2C(CH3)(CH3)CH3   * 8: 2,2,4-trimethylpentane
+CH3CH2C(CH3)(CH3)CH(CH3)CH3   * 8: 2,3,3-trimethylpentane
+CH3CH(CH3)CH(CH3)CH(CH3)CH3   * 8: 2,3,4-trimethylpentane
+C1H2CH2CH(CH3)CH2C1HCH2CH3    * 8: 1-methyl-3-ethylcyclopentane
+CH3C1HCH2CH2CH(CH3)C1HCH3     * 8: 1,2,3-trimethylcyclopentane
+CH3C1HCH2CH(CH3)CH2C1HCH3     * 8: 1,2,4-trimethylcyclopentane
+CH3CH2CH2CH2CH2CH2CdH=CdH2    * 8: 1-octene
+CH3CH2CH2CH2CH2CdH=CdHCH3     * 8: 2-octene
+CH3CH2CH2CdH=CdHCH2CH2CH3     * 8: 4-octene
+CH3C(CH3)(CH3)CH2Cd(CH3)=CdH2 * 8: 2,4,4-trimethyl-1-pentene
+CH3Cd(CH3)=CdHC(CH3)(CH3)CH3  * 8: 2,4,4-trimethyl-2-pentene
+CH3CH2CH2CH2CH2CH2CH2CH2(OH)  * 8: 1-octanol
+* DGBE = 2-(2-Butoxyethoxy)ethanol aka butyl carbitol
+CH3CH2CH2CH2-O-CH2CH2-O-CH2CH2(OH)  * 8: DEG monobutyl ether (DGBE), C8_O3
+#mmc1HcHcHcHcHc1CH2CH3        * 8: ethylbenzene : AR0403
+#mmCH3c1cHcHcHcHc1CH3         * 8: o-xylene : AR0167
+#mmc1Hc(CH3)cHcHcHc1CH3       * 8: m-xylene : AR0245
+#mmc1HcHc(CH3)cHcHc1CH3       * 8: p-xylene : AR0332
+#mmc1HcHcHcHcHc1CdH=CdH2      * 8: styrene : AR0486
+#mmCH3c1cHcHc(CHO)cHc1H       * 8: m-tolualdehyde : AR0363
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH2CH3      * 9: n-nonane
+CH3CH2CH2CH2CH2CH2CH(CH3)CH3     * 9: 2-methyloctane
+CH3CH2CH2CH2CH2CH(CH3)CH2CH3     * 9: 3-methyloctane
+CH3CH2CH2CH2CH(CH3)CH2CH2CH3     * 9: 4-methyloctane
+CH3CH2CH2CH2CH(CH3)CH(CH3)CH3    * 9: 2,3-dimethylheptane
+CH3CH2CH2CH(CH3)CH2CH(CH3)CH3    * 9: 2,4-dimethylheptane
+CH3CH(CH3)CH2CH2CH2CH(CH3)CH3    * 9: 2,6-dimethylheptane
+CH3CH2CH(CH3)CH2CH(CH3)CH2CH3    * 9: 3,5-dimethylheptane
+CH3CH2CH(CH3)CH2C(CH3)(CH3)CH3   * 9: 2,2,4-trimethylhexane
+CH3CH(CH3)CH2CH2C(CH3)(CH3)CH3   * 9: 2,2,5-trimethylhexane
+CH3CH(CH3)CH2CH(CH3)CH(CH3)CH3   * 9: 2,3,5-trimethylhexane
+CH3CH2C(CH3)(CH3)CH2CH(CH3)CH3   * 9: 2,4,4-trimethylhexane
+C1H2CH2CH(CH3)CH2CH2C1HCH2CH3    * 9: 1,3,5-trimethylcyclohexane
+C1H2CH(CH3)CH2CH(CH3)CH2C1HCH3   * 9: 1-methyl-4-ethylcyclohexane
+CH3CH2CH2CH2CH2CH2CH2CdH=CdH2    * 9: 1-nonene
+CH3CH2CH2CH2CH2CH2CH2CH2CH2(OH)  * 9: 1-nonanol
+#mmc1HcHcHcHcHc1CH2CH2CH3        * 9: n-propylbenzene : AR0497
+#mmc1HcHcHcHcHc1CH(CH3)CH3       * 9: i-propylbenzene (1-methylethylbenzene) : AR0583
+#mmCH3c1cHcHcHcHc1CH2CH3         * 9: 1-methyl-2-ethylbenzene (o-ethyltoluene) : AR0790
+#mmc1Hc(CH3)cHcHcHc1CH2CH3       * 9: 1-methyl-3-ethylbenzene (m-ethyltoluene) : AR0860
+#mmc1HcHc(CH3)cHcHc1CH2CH3       * 9: 1-methyl-4-ethylbenzene (p-ethyltoluene) : AR0916
+#mmCH3c1cHcHcHc(CH3)c1CH3        * 9: 1,2,3-trimethylbenzene : AR0971
+#mmCH3c1cHcHc(CH3)cHc1CH3        * 9: 1,2,4-trimethylbenzene : AR0666
+#mmc1Hc(CH3)cHc(CH3)cHc1CH3      * 9: 1,3,5-trimethylbenzene : AR0745
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH3      * 10: n-decane
+CH3CH2CH2CH2CH2CH2CH2CH(CH3)CH3     * 10: 2-methylnonane
+CH3CH2CH2CH2CH2CH2C(CH3)(CH3)CH3    * 10: 2,2-dimethyloctane
+CH3CH2CH2CH2CH2CH(CH3)CH(CH3)CH3    * 10: 2,3-dimethyloctane
+CH3CH2CH2CH2CH(CH3)CH2CH(CH3)CH3    * 10: 2,4-dimethyloctane
+CH3CH2CH2CH(CH3)CH2CH2CH(CH3)CH3    * 10: 2,5-dimethyloctane
+CH3CH2CH(CH3)CH2CH2CH2CH(CH3)CH3    * 10: 2,6-dimethyloctane
+CH3CH2CH2CH2CH2C(CH3)(CH3)CH2CH3    * 10: 3,3-dimethyloctane
+CH3CH2CH2CH(CH3)CH2C(CH3)(CH3)CH3   * 10: 2,2,4-trimethylheptane
+CH3CH2CH(CH3)CH2CH2C(CH3)(CH3)CH3   * 10: 2,2,5-trimethylheptane
+C12HCH2CH(C1(CH3)CH3)CH2CdH=Cd2CH3      * 10: a-pinene
+*CH3C1(CH3)CH(CH2C12H)CH2CH2Cd2=CdH2     * 10: b-pinene (non-standard)
+C12HCH2CH(C1(CH3)CH3)CH2CH2Cd2=CdH2     * 10: b-pinene
+C1H2CH2Cd(CH3)=CdHCH2C1HCd(CH3)=CdH2    * 10: limonene
+#CH3Cd(CH3)=CdHCH2CH2Cd(=CdH2)CdH=CdH2  * 10: b-myrcene
+#CH3Cd(CH3)=CdHCH2CdH=Cd(CH3)CdH=CdH2    * 10: b-ocimene
+*CH3C1(CH3)C2HCH2CdH=Cd(CH3)CH2C12H      * 10: carene (non-standard)
+C12HCH2Cd(CH3)=CdHCH2C2HC1(CH3)CH3      * 10: carene
+CH3C1(CH3)Cd(=CdH2)CH(C2H2)CH2CH2C12H   * 10: camphene
+C1H2CH2Cd(CH3)=CdHCH2Cd1=Cd(CH3)CH3     * 10: terpinolene
+C1H2CdH=Cd(CH3)CH2CdH=Cd1CH(CH3)CH3     * 10: g-terpinene
+C12HCH2C1(CH(CH3)CH3)CdH=CdHC2HCH3      * 10: b-thujene
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2(OH)      * 10: 1-decanol
+#mmc1Hc(CH3)cHc(CH3)cHc1CH2CH3          * 10: 1,3-dimethyl-5-ethylbenzene : AR1037
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CH3       * 11: n-undecane
+#mmCH3CH2c(c1H)cHc(CH3)cHc1CH2CH3       * 11: 1,3-diethyl-5-methylbenzene : AR1076
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH3     * 12: n-dodecane 
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CdH=CdH2   * 12: 1-dodecene 
+CdH2=CdHCH2CH2CH2CH2CH2CH2CH2CH2CdH=CdH2 * 12: 1,11-dodecene 
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2(OH) * 12: 1-dodecanol
+* Texanol = 2.2.4-trimethyl-1.3-pentanediol monoisobutyrate
+CH3CH(CH3)CO-O-CH2C(CH3)(CH3)CH(OH)CH(CH3)CH3    * 12: texanol, C12_H24_O3
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH3 * 13: n-tridecane
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH3  * 14: n-tetradecane
+*-------------------
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH3  * 15: n-pentadecane
+CH3CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CH2CdH=CdH2  * 15: 1-pentadecene
+*-------------------
+END
+
+*-------------------
+* oxidised species:
+*-------------------
+CH3COCH3                * 3: acetone : K03000
+CHOCdH=CdH2             * 3: acrolein : UD3000
+CH3Cd(CHO)=CdH2         * 4: methacrolein : UD4000
+CH3COCdH=CdH2           * 4: MVK : UK4000
+CH3CdH=CdHCHO           * 4: 2-butenal : UD4003(?)
+C1H2COCdH=CdHC1H2     * 5: 2-cyclopenten-1-one
+
+
+*-------------------
+* species we can't handle yet:
+*-------------------
+* 1: Carbon tetrachloride (CCl4)
+* 1: CFC-11 (CF2Cl2)
+* 2: CFC-113 (C2F3Cl3)
+* 2: acetonitrile (C2H3N)
+* 3: acrylonitrile (C3H3N)
+CdH2=Cd=CdH2   * 3: 1,2-propadiene (allene)
+CH3CdH=Cd=CdH2 * 4: 1,2-butadiene
+CH3CH2Ct≡CtH   * 4: 1-butyne
+CH3Ct≡CtCH3    * 4: 2-butyne
+CdH2=CdHCt≡CtH * 4: 1-buten-3-yne
+CtH≡CtCt≡CtH   * 4: 1,3-butadiyne (diacetylene)
+#__c2HcHcHcHc1CH2CH2CH2c12     * 9: 2,3-dihydroindene (benzocyclopentane, indan)
+* 10: b-caryophyllene
+* 10: cymene (4-i-propyltoluene)
+#__c1HcHcHcHcHc1CH2CH2CH2CH3   * 10: n-butylbenzene
+#__c1HcHcHcHcHc1CH(CH3)CH2CH3  * 10: sec-butylbenzene
+#__c1HcHcHcHcHc1CH(CH3)CH2CH3  * 10: (1-methylpropyl)benzene
+#__c1HcHcHcHcHc1CH2CH(CH3)CH3  * 10: (2-methylpropyl)benzene
+#__CH3CH2c1cHcHcHcHc1CH2CH3    * 10: 1,2-diethylbenzene
+#__c1Hc(CH2CH3)cHcHcHc1CH2CH3  * 10: 1,3-diethylbenzene
+#__c1HcHc(CH2CH3)cHcHc1CH2CH3  * 10: 1,4-diethylbenzene
+* 10: 1-methyl-2-n-propylbenzene
+* 10: 1-methyl-3-n-propylbenzene
+* 10: 1-methyl-4-n-propylbenzene
+* 10: 1-methyl-2-(1-methylethyl)benzene
+* 10: 1-methyl-3-(1-methylethyl)benzene
+* 10: 1-methyl-4-(1-methylethyl)benzene
+* 10: 1,2-dimethyl-3-ethylbenzene
+* 10: 1,2-dimethyl-4-ethylbenzene
+* 10: 1,3-dimethyl-2-ethylbenzene
+* 10: 1,3-dimethyl-4-ethylbenzene
+* 10: 1,4-dimethyl-2-ethylbenzene
+* 10: 1,2,3,4-tetramethylbenzene
+#__CH3c1cHc(CH3)c(CH3)cHc1CH3 * 10: 1,2,4,5-tetramethylbenzene
+* 10: 2-, 4- & 5-methylindan
+* 10: naphthalene
+* 11: n-pentylbenzene
+* 11: 1-methyl-2-n-butylbenzene
+* 11: 1-ethyl-2-n-propylbenzene
+* 11: 1-(1,1-dimethylethyl)-2-methylbenzene
+* 12: 1,3-di-n-propylbenzene
+* 12: 1-(1,1-dimethylethyl)-3,5-dimethylbenzene
+#__c1HcHcHcHcHc1CH2CH2CH2CH2CH2CH3 * 12: hexylbenzene
+

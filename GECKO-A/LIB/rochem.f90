@@ -17,7 +17,8 @@ CONTAINS
 SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
   USE keyparameter, ONLY: mxpd,mxring,mecu,refu,mxcopd
   USE references, ONLY:mxlcod
-  USE keyflag, ONLY: wtopeflag,kisomfg,wrtref         ! select SAR for reaction rate  
+  USE keyflag, ONLY: kisomfg         ! select SAR for reaction rate  
+  USE keyuser, ONLY: wtopefg,wrtref 
   USE database, ONLY: nkwro, kwro_arrh,kwro_stoi,kwro_rct,kwro_prd,kwro_com
   USE dictstacktool, ONLY: bratio
   USE rxwrttool, ONLY:rxwrit,rxinit
@@ -257,7 +258,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
                       arrhest,arrho2,arrhiso,FSD,arrhdec,&
                       flest,flo2,niso,fliso,ndec,fldec,&
                       ksum,kest,ko2,kiso,kdec)
-  IF (wtopeflag==1) WRITE(10,*)'***********! alkoxy ','G',idnam,'********'
+  IF (wtopefg) WRITE(10,*)'***********! alkoxy ','G',idnam,'********'
      
 ! -------------------
 ! WRITE ALL REACTIONS
@@ -273,7 +274,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
 ! 1st & 2nd products 
     s(1)=1.  ;  CALL bratio(pdest(1),brtio,p(1),nrfest,rfest)
     s(2)=1.  ;  CALL bratio(pdest(2),brtio,p(2),nrfest,rfest)
-    IF (wtopeflag==1)  WRITE(10,21)  'ester rearrgt /',brch,'G',p(1),' + ','G',p(2)
+    IF (wtopefg)  WRITE(10,21)  'ester rearrgt /',brch,'G',p(1),' + ','G',p(2)
 
 ! other products
     np=2
@@ -281,7 +282,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
       IF (copdest(j)(1:1)/=' ') THEN
         CALL add1tonp(progname,chem,np)  
         s(np)=1.  ;  p(np)=copdest(j)
-        IF (wtopeflag==1) WRITE(10,'(20X,A1,A6)') 'G',p(np)
+        IF (wtopefg) WRITE(10,'(20X,A1,A6)') 'G',p(np)
       ENDIF
     ENDDO
 
@@ -302,7 +303,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
     !c        brtio = brch*ko2/ksum
     brtio = brch*ypo2(1)
     CALL bratio(po2(1),brtio,p(np),nrfo2,rfo2)
-    IF (wtopeflag==1) WRITE(10,22)'O2 -> HO2 /',ko2/ksum,'G',p(1)
+    IF (wtopefg) WRITE(10,22)'O2 -> HO2 /',ko2/ksum,'G',p(1)
 
     ! add the second product (if any)
     IF (po2(2)/=' ') THEN
@@ -319,7 +320,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
       IF (copdo2(j)==' ') EXIT copdloop
       CALL add1tonp(progname,chem,np)  
       s(np)=ycopdo2(j)  ;  p(np)=copdo2(j)
-      IF (wtopeflag==1) WRITE(10,'(20X,A1,A6)') 'G',p(np)
+      IF (wtopefg) WRITE(10,'(20X,A1,A6)') 'G',p(np)
     ENDDO copdloop
 
     r(1)=idnam  ;  r(2)='OXYGEN'
@@ -339,7 +340,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
 !c        brtio = brch*kiso(i)/ksum
     brtio=brch
     CALL bratio(piso(i),brtio,p(1),nrfiso(i),rfiso(i,:))
-    IF (wtopeflag==1)  WRITE(10,22) 'isomerisa° /',kiso(i)/ksum,'G',p(1)
+    IF (wtopefg)  WRITE(10,22) 'isomerisa° /',kiso(i)/ksum,'G',p(1)
 
 ! second product (if delocalisation allowed)
     np=1
@@ -354,7 +355,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
       IF (copiso(i,j)(1:1)/=' ') THEN
         CALL add1tonp(progname,chem,np)  
         s(np)=1.  ;  p(np)=copiso(i,j)
-        IF (wtopeflag==1) WRITE(10,'(20X,A1,A6)') 'G',p(np)
+        IF (wtopefg) WRITE(10,'(20X,A1,A6)') 'G',p(np)
       ENDIF
     ENDDO
 
@@ -386,10 +387,10 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
     IF (INDEX(pdec(i,2),' ')>1) THEN  ! 2nd pdct
       np=np+1  ;  s(np)=1.
       CALL bratio(pdec(i,2),brtio,p(np),nrfdec(i),rfdec(i,:))
-      IF (wtopeflag==1) &
+      IF (wtopefg) &
         WRITE(10,21)'decomp /      ',kdec(i)/ksum,'G',p(1),' + ','G',p(2)
     ELSE
-      IF (wtopeflag==1) &
+      IF (wtopefg) &
         WRITE(10,21)'decomp /      ',kdec(i)/ksum,'G',p(1)
     ENDIF
 
@@ -406,14 +407,14 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
       IF (copdec(i,j)(1:1)/=' ') THEN
         CALL add1tonp(progname,chem,np)  
         s(np)=sdec(i,1)  ;  p(np)=copdec(i,j)
-        IF (wtopeflag==1) WRITE(10,'(20X,A1,A6)') 'G',p(np)
+        IF (wtopefg) WRITE(10,'(20X,A1,A6)') 'G',p(np)
       ENDIF
     ENDDO
     DO j=1,mxcopd
       IF ((copdec2(i,j)(1:1)/=' ').AND.(fldec2(i)/=0)) THEN
         CALL add1tonp(progname,chem,np)  
         s(np)=sdec(i,2)  ;  p(np)=copdec2(i,j)
-        IF (wtopeflag==1) WRITE(10,'(20X,A1,A6)') 'G',p(np)
+        IF (wtopefg) WRITE(10,'(20X,A1,A6)') 'G',p(np)
       ENDIF
     ENDDO
 
@@ -423,7 +424,7 @@ SUBROUTINE ro(idnam,chem,bond,group,nring,rjg,brch,cut_off)
 
   ENDDO drxloop
   
-  IF (wtopeflag==1) WRITE(6,*)'end of ro'
+  IF (wtopefg) WRITE(6,*)'end of ro'
 
 21  FORMAT(A15,5X,f5.3,2X,A1,A6,A3,A1,A6)         
 22  FORMAT(A14,4X,f5.3,2X,A1,A6)         

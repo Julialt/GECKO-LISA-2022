@@ -222,7 +222,7 @@ SUBROUTINE ro2aro(chem,pname,bond,group,ngr,brch,ip,loaro)
 END SUBROUTINE ro2aro
 
 !=======================================================================
-! PURPOSE: perform ring RO2+NO reactions. Two channels are considered:
+! PURPOSE: perform RO2+NO reactions. Two channels are considered:
 ! - RO2+NO => RO +NO2
 ! - RO2+NO => RONO2 (nitrate)
 !=======================================================================

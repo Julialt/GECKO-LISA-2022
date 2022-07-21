@@ -9,7 +9,7 @@ CONTAINS
 !=======================================================================
 SUBROUTINE pandec(idnam,chem,bond,group,brch)
   USE keyparameter, ONLY: mxpd,mxnr,mecu,mxcopd
-  USE keyflag, ONLY: wtopeflag
+  USE keyuser, ONLY: wtopefg
   USE references, ONLY:mxlcod
   USE atomtool, ONLY: cnum
   USE reactool, ONLY: swap, rebond
@@ -194,7 +194,7 @@ SUBROUTINE pandec(idnam,chem,bond,group,brch)
 ! WRITE INFORMATION REQUIRED FOR OPERATOR
 ! -----------------------------------------
 ! following block needed for "postprocessing" only (operator reduction)
-  IF (wtopeflag==1) THEN  
+  IF (wtopefg) THEN  
     IF (nca/=2) THEN
       aa=0.
       DO i=1,nr

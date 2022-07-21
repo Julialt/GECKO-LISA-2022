@@ -3,7 +3,7 @@ IMPLICIT NONE
 CONTAINS
 !=======================================================================
 ! PURPOSE:  Replace a species by an already existing species in the 
-! dictionnary. The isomer must have the same number of carbon and 
+! dictionary. The isomer must have the same number of carbon and 
 ! fonctional groups. Other criteria, like number of COCO groups, are 
 ! used to select which isomer (if any) best fit the structure of the 
 ! species provided as input.                                                   

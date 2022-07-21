@@ -7,7 +7,7 @@ MODULE o3addtool
 ! (MAGNIFY project) for a non conjugated C=C double-bond. 
 !=======================================================================
 SUBROUTINE o3rate_mono(bond,zebond,group,ngr,cdtable,cdsub,arrhc)
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   USE keyparameter, ONLY: saru
   USE ringtool, ONLY: findring
   IMPLICIT NONE
@@ -28,7 +28,7 @@ SUBROUTINE o3rate_mono(bond,zebond,group,ngr,cdtable,cdsub,arrhc)
   arrhc(:)=0 ; mult=1.0 ; ifct=0 ; Fring=1 ; k298=0.
   cd1=cdtable(1) ; cd2=cdtable(2)
       
-  IF (sar_info==1) THEN
+  IF (sar_info) THEN
     WRITE(saru,*) '  ' ;  WRITE(saru,*) ' ======= O3RATE MONO ====== '
   ENDIF
 
@@ -76,7 +76,7 @@ SUBROUTINE o3rate_mono(bond,zebond,group,ngr,cdtable,cdsub,arrhc)
   arrhc(1)=arrhc(1)*mult*Fring
      
 ! write to debug file
-  IF (sar_info==1) THEN
+  IF (sar_info) THEN
     WRITE(saru,*) '=> Non-conjugated' ;
     WRITE(saru,*) 'mult=',mult
     IF (rngflg==1) WRITE(saru,*) 'Fring=',Fring
@@ -92,7 +92,7 @@ END SUBROUTINE o3rate_mono
 ! (MAGNIFY project) for conjugated C=C-C=C bonds. 
 !=======================================================================
 SUBROUTINE o3rate_conj(bond,group,ngr,cdtable,cdsub,arrhc)
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   USE keyparameter, ONLY: saru
   USE ringtool, ONLY: findring
   IMPLICIT NONE
@@ -110,7 +110,7 @@ SUBROUTINE o3rate_conj(bond,group,ngr,cdtable,cdsub,arrhc)
 
   arrhc(:)=0 ; mult=1.0 ; Fring=1
       
-  IF (sar_info==1) THEN
+  IF (sar_info) THEN
     WRITE(saru,*) '  '
     WRITE(saru,*) ' ====== O3RATE CONJ ====== '
   ENDIF
@@ -159,7 +159,7 @@ SUBROUTINE o3rate_conj(bond,group,ngr,cdtable,cdsub,arrhc)
   arrhc(1)=arrhc(1)*Fring
   
 ! write to debug file
-  IF (sar_info==1) THEN
+  IF (sar_info) THEN
     WRITE(saru,*) '=> conjugated'
     DO i=1,ngr ;  WRITE(saru,*) 'cdsub(',i,')=',cdsub(i) ; ENDDO
     WRITE(saru,*) ' mult =',mult
@@ -178,7 +178,7 @@ END SUBROUTINE o3rate_conj
 !=======================================================================
 SUBROUTINE ref_rate_mono(bond,zebond,group,ngr,cdsub,arrhc,Cf,Ci,ifct)
   USE keyparameter, ONLY: saru,mxcp
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   USE mapping, ONLY: gettrack
   IMPLICIT NONE
   
@@ -315,7 +315,7 @@ SUBROUTINE ref_rate_mono(bond,zebond,group,ngr,cdsub,arrhc,Cf,Ci,ifct)
     
         IF (ncarb>=1) fact=fact+alpha*(ncarb-1)
         
-        IF ((sar_info==1).AND.(ncarb/=0)) THEN
+        IF ((sar_info).AND.(ncarb/=0)) THEN
           WRITE(saru,*) 'group(ifct)= ',group(ifct)
           WRITE(saru,*) 'chain length effect of substituent of Cf:',group(Cf)
           WRITE(saru,*) 'arrhc(1)=',arrhc(1)
@@ -343,7 +343,7 @@ SUBROUTINE ref_rate_mono(bond,zebond,group,ngr,cdsub,arrhc,Cf,Ci,ifct)
     
         IF (ncarb>=1) fact=fact+alpha*(ncarb-1)
         
-        IF ((sar_info==1).AND.(ncarb/=0)) THEN
+        IF ((sar_info).AND.(ncarb/=0)) THEN
           WRITE(saru,*) 'chain length effect of substituent of Ci:',group(Ci)
           WRITE(saru,*) 'fact=',fact
           WRITE(saru,*) 'alpha =',alpha
@@ -372,7 +372,7 @@ SUBROUTINE ref_rate_mono(bond,zebond,group,ngr,cdsub,arrhc,Cf,Ci,ifct)
         IF ((bond(ifct,j)==3).AND.(group(j)(1:3)=='CO ')) ncarb=ncarb-1 ! don't count ester C in chain length
         IF (ncarb>=1) fact=fact+alpha*(ncarb-1)
         
-        IF ((sar_info==1).AND.(ncarb/=0)) THEN
+        IF ((sar_info).AND.(ncarb/=0)) THEN
           WRITE(saru,*) 'chain length effect of substituent of ',group(ifct)
           WRITE(saru,*) 'arrhc(1)=',arrhc(1)
           WRITE(saru,*) 'fact=',fact
@@ -515,7 +515,7 @@ END SUBROUTINE ring_fact_mono
 !=======================================================================
 SUBROUTINE ref_rate_conj(cdtable,cdsub,arrhc)
   USE keyparameter, ONLY: saru,mxcp
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   USE mapping, ONLY: gettrack
   IMPLICIT NONE
   

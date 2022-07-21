@@ -9,7 +9,7 @@ CONTAINS
 !=======================================================================
 SUBROUTINE rooohdec(idnam,chem,bond,group,brch)
   USE keyparameter, ONLY: mxpd,mxnr,mecu
-  USE keyflag, ONLY: wtopeflag
+  USE keyuser, ONLY: wtopefg
   USE references, ONLY:mxlcod
   USE atomtool, ONLY: cnum
   USE reactool, ONLY: swap, rebond

@@ -11,7 +11,7 @@ MODULE searching
 INTEGER FUNCTION srh5(aseek,alist,nlist)
   IMPLICIT NONE
 
-  INTEGER,INTENT(IN)  ::  nlist           ! # of record in alist 
+  INTEGER,INTENT(IN)  ::  nlist           ! # of records in alist 
   CHARACTER(LEN=*),INTENT(IN) :: aseek    ! string to look for in list
   CHARACTER(LEN=*),INTENT(IN) :: alist(:) ! list of strings (e.g. dictionary)
 
@@ -59,7 +59,7 @@ END FUNCTION srh5
 INTEGER FUNCTION srch(nrec,chem,dict)
   IMPLICIT NONE
 
-  INTEGER,INTENT(IN)  ::  nrec           ! # of record in alist 
+  INTEGER,INTENT(IN)  ::  nrec           ! # of records in alist 
   CHARACTER(LEN=*),INTENT(IN) :: chem    ! formula to be searched in dict.
   CHARACTER(LEN=*),INTENT(IN) :: dict(:) ! dictionary lines
 

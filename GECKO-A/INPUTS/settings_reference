@@ -1,0 +1,62 @@
+!---------------------------------------------------!
+ &userparams
+
+! manage mechanism size
+  maxgen = 3  ! maximum # of generations allowed
+
+! select the SAR for critvp vapor pressure: 1=JR-MY; 2=Nannoolal; 3=SIMPOL-1
+  pvap_sar = 2
+  critvp = -13. ! log(Pvap) below which chemistry is ignored
+
+ /
+! -------------------------------------------------
+ &userflags
+
+! ALL FLAGS HAVE VALUE .TRUE. or .FALSE.
+
+! PARTITIONING FLAGS 
+!--------------------
+
+! flag to write for gas/particle partitioning "reactions"
+  g2pfg=.TRUE.
+
+! flag to write for gas/wall partitioning "reactions" (chamber simulations)
+  g2wfg=.FALSE.
+
+! CHEMISTRY FLAGS 
+!-----------------
+
+! "OFR(PAM)" simulations: H chemistry could be considered
+  OFRfg=.FALSE.
+
+! only NO chemistry for RO2 considered
+  highnox=.FALSE.
+
+! add the RO2+OH reaction in RO2 chemistry
+  rx_ro2oh=.FALSE.
+
+! allow isomer substitution (O=no substitution, 1=allow)
+  isomerfg=.TRUE.
+
+! flag to activate DHF formation
+  dhffg=.FALSE.
+
+! consider cyclic hemi acetal (CHA) species as non volatile
+  chafg=.FALSE.
+
+! ADDITIONAL OUTPUT/DOCUMENTATION FLAGS
+!----------------------------------------
+
+! write "operator info" in the output files
+  wtopefg=.FALSE.      
+
+! write info about SAR (groups, ...) in dedicated files
+  sar_info=.FALSE.       
+
+! write the references for the reactions in the mechanism
+  wrtref=.TRUE.    
+
+! write additional info on screen during generation
+  screenfg=.FALSE.  
+
+ /

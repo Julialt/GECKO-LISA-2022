@@ -6,7 +6,7 @@ CONTAINS
 ! PURPOSE: read the list of known 'species' for which the stucture  
 ! can not be handled by the generator (e.g. cyclic molecule like furan 
 ! made by some photolytic reaction). Species are in the database as 
-! dictionnary line (short name, formula, funct. grp).
+! dictionary line (short name, formula, funct. grp).
 ! ======================================================================
 SUBROUTINE rdspsp(filename)
   USE keyparameter, ONLY: tfu1

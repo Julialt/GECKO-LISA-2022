@@ -915,7 +915,7 @@ END SUBROUTINE hoadd_c7
 !=======================================================================
 SUBROUTINE hoadd_rate(bond,group,j0,j1,j2,j3,arrhc)
   USE keyparameter, ONLY: saru
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   USE toolbox, ONLY: stoperr
   IMPLICIT NONE
 
@@ -936,7 +936,7 @@ SUBROUTINE hoadd_rate(bond,group,j0,j1,j2,j3,arrhc)
     IF (group(i)(1:1)/=' ') ngr=ngr+1
   ENDDO
 
-  IF (sar_info==1) THEN                                     ! debug
+  IF (sar_info) THEN                                     ! debug
     WRITE(saru,*) '   '                                     ! debug
     WRITE(saru,*) '=========================='              ! debug
     WRITE(saru,*) '=====   HOADD_RATE   ====='              ! debug
@@ -963,7 +963,7 @@ SUBROUTINE hoadd_rate(bond,group,j0,j1,j2,j3,arrhc)
   ELSE
 
 ! conjugated C=C-C=C
-    IF (sar_info==1) THEN                                 ! debug
+    IF (sar_info) THEN                                 ! debug
       WRITE(saru,*) 'group(j2)=',group(j2)                ! debug
       WRITE(saru,*) 'group(j3)=',group(j3)                ! debug
     ENDIF                                                 ! debug
@@ -981,7 +981,7 @@ SUBROUTINE hoadd_rate(bond,group,j0,j1,j2,j3,arrhc)
     ENDIF 
     arrhc(3)=-445.
   ENDIF       
-  IF (sar_info==1) WRITE(saru,*) 'arrhc(1:3)',arrhc(1:3)  ! debug        
+  IF (sar_info) WRITE(saru,*) 'arrhc(1:3)',arrhc(1:3)  ! debug        
 
 ! Substituent factors
   fact=1.
@@ -1041,14 +1041,14 @@ SUBROUTINE hoadd_rate(bond,group,j0,j1,j2,j3,arrhc)
         ENDDO
       ENDIF
     ENDDO
-    IF (sar_info==1) WRITE(saru,*) 'subst fact=',fact         ! debug
+    IF (sar_info) WRITE(saru,*) 'subst fact=',fact         ! debug
   ENDDO factloop
 
 ! apply substituent factors            
   IF (j3/=0) fact=fact**0.5
   arrhc(1)=arrhc(1)*fact          
 
-  IF (sar_info==1) THEN                                     ! debug 
+  IF (sar_info) THEN                                     ! debug 
 ! chain lenght factors ! need rewriting, only for substituent
 ! but can be optionnal (see Jenkin et al)
 !      arrhc(1)=arrhc(1)*(1.+0.14*(1.-exp(-0.35*(nca-1))))

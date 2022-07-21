@@ -68,9 +68,8 @@ END SUBROUTINE rxinit
 !=======================================================================
 SUBROUTINE rxwrit(lout,r,s,p,arrh,idreac,nlab,xlabel,folow,fotroe,com,phase)
   USE keyparameter, ONLY: refu,mxnp,mxlco 
-  USE keyflag, ONLY: wrtref  ! write reference flag
+  USE keyuser, ONLY: wrtref  ! write reference flag
   USE references, ONLY: mxlcod
-  USE searching, ONLY: srh5          ! to seach in a sorted list
   USE tempflag, ONLY: iflost,xxc     ! rm rx products if "iflost" set to 1
   USE toolbox, ONLY: addref
   IMPLICIT NONE  
@@ -129,6 +128,9 @@ SUBROUTINE rxwrit(lout,r,s,p,arrh,idreac,nlab,xlabel,folow,fotroe,com,phase)
   s1(:) = s(:)   ;  p1(:) = p(:)       ;   xlab = xlabel
   s2(:) = 0.     ;  p2(:) = ' '
 
+! prepare the reaction string (add keyword, sign, etc ...)
+! ------------------------------------------------------- 
+
 ! remove the product if flag to stop chemistry is raised
   IF (iflost==1) THEN
     s1(:) = 0.         ;  p1(:)=' '
@@ -150,8 +152,7 @@ SUBROUTINE rxwrit(lout,r,s,p,arrh,idreac,nlab,xlabel,folow,fotroe,com,phase)
     ENDIF
   ENDDO
 
-! remove blank products and count distinct products. Data are stored
-! in s2 and p2.
+! rm blank and count distinct products. Data are stored in s2 and p2.
   np = 0
   DO i=1,mnp
     IF (p1(i)/=' ') THEN
@@ -159,31 +160,6 @@ SUBROUTINE rxwrit(lout,r,s,p,arrh,idreac,nlab,xlabel,folow,fotroe,com,phase)
     ENDIF
   ENDDO
 
-! In most cases, the number of products is lesser than mxnp. Assume 1st
-! that splitting corrections are not needed and modify if necessary.
-! If keyword EXTRA is used (id=2), then the reaction must hold within
-! mxnp products (or change the program). If keyword HV is used (id=1),
-! then divide the weighting factor accordingly.
-  nsplit=1
-  IF (np > mxnp) THEN
-    nsplit = (np-1)/mxnp + 1
-    s2(1:np)=s2(1:np)*FLOAT(nsplit)
-    IF (idreac==0) rc1 = rc1/FLOAT(nsplit)
-    IF (idreac==1) xlab = xlab/FLOAT(nsplit)
-    IF (idreac > 1) THEN
-      WRITE(6,*) '--error--, in rxwrit. Idreac is equal 2 (EXTRA)'
-      WRITE(6,*) 'but the # of products exceed mxnp. np=',np,'for :'
-      WRITE(6,'(a)') rg(1),c1,rg(2),c2,rg(3),' =>'
-      STOP "in rxwrit"
-    ENDIF
-  ENDIF
-  IF (nsplit/=1) THEN 
-    IF      (nsplit==2) THEN ; CALL addref(progname,'SPLITIN2',nref,ref)
-    ELSE IF (nsplit==3) THEN ; CALL addref(progname,'SPLITIN3',nref,ref)
-    ELSE                     ; CALL addref(progname,'SPLITMANY',nref,ref)
-    ENDIF
-  ENDIF
-      
 ! transcribe stoi. coef. to character string, blanking out unity values
   DO i=1,np
     IF (s2(i)==0.) CYCLE
@@ -242,11 +218,9 @@ SUBROUTINE rxwrit(lout,r,s,p,arrh,idreac,nlab,xlabel,folow,fotroe,com,phase)
       ENDIF
     ENDIF 
   ENDDO
-! ba - 1st sign in each written reaction not set. 
-! Warning, if negative sign then pb
-  DO i=1,nsplit  ;  signc(i*mxnp)=' ' ;   ENDDO 
 
-! write comment
+! write comment line (tweet codes)
+! --------------------------------
   IF (wrtref) THEN
     DO i=1,nref-1  ! kill duplicate tweets
       DO j=i+1,nref
@@ -263,53 +237,89 @@ SUBROUTINE rxwrit(lout,r,s,p,arrh,idreac,nlab,xlabel,folow,fotroe,com,phase)
     DO i=1,nref1
       ipos=13*(i-1)+1
       refline(ipos:)=" ; "//ref1(i)
-!      j=srh5(ref(i),code,ntweet)
-!      WRITE(refu,*) ref(i),' : ',tweet(j)(1:90)
     ENDDO
-    !IF (nref/=0) WRITE(79,*) 'nref1=',nref1,' ',TRIM(refline)
   ENDIF
   
 ! write reaction
-  DO k=1,nsplit
-    j1 = 1 + mxnp*(k-1)
-    j2 = j1 + mxnp - 1
-    CALL count4rxn(idrx)
+! --------------
+  CALL count4rxn(idrx)   ! update reactions counters 
+
+  ! get # "line" required to write the reaction (mxnp pdct per line) 
+  nsplit=1
+  IF (np > mxnp)  nsplit = (np-1)/mxnp + 1
+
+  ! reaction stand in 1 line
+  IF (nsplit==1) THEN
+    j1 = 1  ;  j2 = 4
     WRITE(lout,'(3(A7,1x,A1,1x),A2,4(A6,1X,A7,1X,A1),4X,ES10.3,1X,f4.1,1X,f7.0)') &
       rg(1),c1,rg(2),c2,rg(3),' ','=>',&
       (charstoi(jj),pg(jj),signc(jj),jj=j1,j2),rc1,arrh(2:3) 
     IF (wrtref) THEN
-      WRITE(refu,'(3(A7,1x,A1,1x),A2,4(A6,1X,A7,1X,A1),4X,1PE10.2,1X,0P,f4.1,1X,f7.0,2a)') &
+      WRITE(refu,'(3(A7,1x,A1,1x),A2,4(A6,1X,A7,1X,A1),4X,ES10.3,1X,0P,f4.1,1X,f7.0,2a)') &
       rg(1),c1,rg(2),c2,rg(3),' ','=>',&
       (charstoi(jj),pg(jj),signc(jj),jj=j1,j2),rc1,arrh(2:3),' ',TRIM(refline) 
-!      WRITE(refu,*) '' 
     ENDIF
+
+  ! reaction written using many lines
+  ELSE
+    DO k=1,nsplit
+      j1 = 1 + mxnp*(k-1)
+      j2 = j1 + mxnp - 1
+
+      ! 1st line
+      IF (k==1) THEN
+        WRITE(lout,'(3(A7,1x,A1,1x),A2,4(A6,1X,A7,1X,A1))') &
+          rg(1),c1,rg(2),c2,rg(3),' ','=>',(charstoi(jj),pg(jj),signc(jj),jj=j1,j2) 
+        IF (wrtref) THEN
+          WRITE(refu,'(3(A7,1x,A1,1x),A2,4(A6,1X,A7,1X,A1))') &
+            rg(1),c1,rg(2),c2,rg(3),' ','=>',(charstoi(jj),pg(jj),signc(jj),jj=j1,j2) 
+        ENDIF
+
+      ! last line
+      ELSE IF (k==nsplit) THEN
+        WRITE(lout,'(32X,4(A6,1X,A7,1X,A1),4X,ES10.3,1X,f4.1,1X,f7.0)') &
+          (charstoi(jj),pg(jj),signc(jj),jj=j1,j2),rc1,arrh(2:3) 
+        IF (wrtref) THEN
+          WRITE(refu,'(32X,4(A6,1X,A7,1X,A1),4X,ES10.3,1X,f4.1,1X,f7.0,2a)') &
+            (charstoi(jj),pg(jj),signc(jj),jj=j1,j2),rc1,arrh(2:3),' ',TRIM(refline) 
+        ENDIF
+
+      ! middle line
+      ELSE
+        WRITE(lout,'(32X,4(A6,1X,A7,1X,A1))') &
+          (charstoi(jj),pg(jj),signc(jj),jj=j1,j2)
+        IF (wrtref) THEN
+          WRITE(refu,'(32X,4(A6,1X,A7,1X,A1))') &
+             (charstoi(jj),pg(jj),signc(jj),jj=j1,j2)
+        ENDIF
+
+      ENDIF
+    ENDDO
+  ENDIF
 
 ! write keyword and label if necessary
-    IF (idreac>0) THEN
-      IF (idreac==1) THEN
-        WRITE(lout,'(A7,I5,2x,f6.3,A2)')             "  HV / ",nlab,xlab," /"
-        IF (wrtref) WRITE(refu,'(A7,I5,2x,f6.3,A2)') "  HV / ",nlab,xlab," /"
-
-      ELSE IF (idreac==3) THEN
-        WRITE(lout,'(A11,E9.3,F5.1,F7.0,1X,4(F6.1,1x),a1)') &
-             "  FALLOFF /",folow(1:3),fotroe(1:4),"/"
-        IF (wrtref) WRITE(refu,'(A11,1PE9.2,0P,F5.1,F7.0,1X,4(F6.1,1x),a1)') &
-             "  FALLOFF /",folow(1:3),fotroe(1:4),"/"
-
-      ELSE IF (idreac==2) THEN
-        WRITE(lout,'(A10,I5,A2)')              "  EXTRA / ",nlab," /"
-        IF (wrtref) WRITE(refu,'(A10,I5,A2)')  "  EXTRA / ",nlab," /"
-        
-      ELSE
-        WRITE(6,*) '--error--, in rxwrit. Idreac is > 3, in reaction :'
-        WRITE(6,'(a)') rg(1),c1,rg(2),c2,rg(3),' =>'
-        STOP "in rxwrit"
-      ENDIF
+  IF (idreac>0) THEN
+    IF (idreac==1) THEN
+      WRITE(lout,'(A7,I5,2x,f6.3,A2)')             "  HV / ",nlab,xlab," /"
+      IF (wrtref) WRITE(refu,'(A7,I5,2x,f6.3,A2)') "  HV / ",nlab,xlab," /"
+  
+    ELSE IF (idreac==3) THEN
+      WRITE(lout,'(A11,E9.3,F5.1,F7.0,1X,4(F6.1,1x),a1)') &
+           "  FALLOFF /",folow(1:3),fotroe(1:4),"/"
+      IF (wrtref) WRITE(refu,'(A11,1PE9.2,0P,F5.1,F7.0,1X,4(F6.1,1x),a1)') &
+           "  FALLOFF /",folow(1:3),fotroe(1:4),"/"
+  
+    ELSE IF (idreac==2) THEN
+      WRITE(lout,'(A10,I5,A2)')              "  EXTRA / ",nlab," /"
+      IF (wrtref) WRITE(refu,'(A10,I5,A2)')  "  EXTRA / ",nlab," /"
+      
+    ELSE
+      WRITE(6,*) '--error--, in rxwrit. Idreac is > 3, in reaction :'
+      WRITE(6,'(a)') rg(1),c1,rg(2),c2,rg(3),' =>'
+      STOP "in rxwrit"
     ENDIF
-  ENDDO
+  ENDIF
   DEALLOCATE(ref) ; DEALLOCATE(ref1)
-
-!120   FORMAT(3(A7,1x,A1,1x),A2,4(A6,1X,A7,1X,A1),4X,E10.3,1X,f4.1,1X,f7.0)
             
 END SUBROUTINE rxwrit
 

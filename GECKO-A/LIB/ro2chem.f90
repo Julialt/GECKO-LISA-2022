@@ -12,7 +12,7 @@ CONTAINS
 ! ======================================================================
 SUBROUTINE ro2(idnam,chem,bond,group,nring,brch,cut_off)
   USE keyparameter, ONLY: mxpd,mxnr,mecu,mxcopd
-  USE keyflag, ONLY: rx_ro2oh, highnox
+  USE keyuser, ONLY: rx_ro2oh, highnox
   USE references, ONLY:mxlcod
   USE atomtool, ONLY:getatoms,cnum, onum
   USE normchem, ONLY:stdchm

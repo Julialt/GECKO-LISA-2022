@@ -126,7 +126,7 @@ END FUNCTION nphotogrp
 !=======================================================================
 SUBROUTINE wrtscreen(nrec,nhldvoc,stabl,chem)
   USE keyparameter, ONLY: scru
-  USE keyflag, ONLY: screenfg
+  USE keyuser, ONLY: screenfg
   IMPLICIT NONE
   
   INTEGER,INTENT(IN) :: nrec     ! # of species recorded in dict      
@@ -164,11 +164,11 @@ END SUBROUTINE wrtscreen
 ! PURPOSE: Return the vapor pressure of the species provided as input.
 !=======================================================================
 REAL FUNCTION vaporpressure(chem,bond,group,nring,rjg,sarfg)
-  USE simpoltool, ONLY: simpol          ! for simpol SAR
+  USE keyuser, ONLY: pvap_sar             ! SAR to be used
   USE nannoolaltool, ONLY:nannoolalprop ! for nannoonlal SAR
+  USE simpoltool, ONLY: simpol          ! for simpol SAR
   USE myrdaltool, ONLY: myrdalprop      ! for Myrdal & Yalkowsky SAR
   USE atomtool, ONLY: molweight         ! needed in MY SAR
-  USE keyflag, ONLY: pvapfg             ! SAR to be used
   IMPLICIT NONE
   
   CHARACTER(LEN=*),INTENT(IN) :: chem
@@ -182,7 +182,7 @@ REAL FUNCTION vaporpressure(chem,bond,group,nring,rjg,sarfg)
   INTEGER :: ifg
 
 ! check if SAR is provided
-  IF (PRESENT(sarfg)) THEN; ifg=sarfg ; ELSE ; ifg=pvapfg ; ENDIF
+  IF (PRESENT(sarfg)) THEN; ifg=sarfg ; ELSE ; ifg=pvap_sar ; ENDIF
 
   IF (ifg==1) THEN
     CALL molweight(chem,mw)
@@ -192,7 +192,7 @@ REAL FUNCTION vaporpressure(chem,bond,group,nring,rjg,sarfg)
   ELSE IF (ifg==3) THEN
     CALL simpol(chem,bond,group,nring,vaporpressure,latentheat)
   ELSE
-    WRITE(6,*) 'no method selected in vaporpressure function. Check pvapfg'
+    WRITE(6,*) 'no method selected in vaporpressure function. Check pvap_sar'
     STOP "in vaporpressure"
   ENDIF
 END FUNCTION vaporpressure
@@ -204,7 +204,7 @@ END FUNCTION vaporpressure
 ! the "iflost" flag (in module tempflag) is raised.
 !=======================================================================
 SUBROUTINE InOrOut(chem,parent,brch,stabl)
-  USE keyflag, ONLY: maxgen
+  USE keyuser, ONLY: maxgen
   USE atomtool, ONLY: cnum, getatoms
   USE tempflag, ONLY: iflost,xxc,xxh,xxn,xxo,xxr,xxs,xxfl,xxbr,xxcl
 
@@ -223,7 +223,7 @@ SUBROUTINE InOrOut(chem,parent,brch,stabl)
   loout=0
 
 ! flush out species based on max # of generation or max yield
-  IF (stabl>maxgen) loout=1
+  IF (stabl>=maxgen) loout=1
   IF (brch<5E-5) loout=1
 
 ! flush out species based on max # of generation of a given parent size
@@ -318,8 +318,15 @@ SUBROUTINE check_parenthesis(chem)
 
   CHARACTER(LEN=19),PARAMETER :: prog='*check_parenthesis*'
   CHARACTER(LEN=70)           :: mesg
+  CHARACTER(LEN=LEN(chem))    :: tchem
+
+  IF (chem(1:1)=='#') THEN 
+    tchem=chem(2:)
+  ELSE
+    tchem=chem
+  ENDIF
   
-  CALL grbond(chem,group,bond,dbflg,nring)
+  CALL grbond(tchem,group,bond,dbflg,nring)
   ngr=COUNT(group/=' ')
 
   DO i=1,ngr

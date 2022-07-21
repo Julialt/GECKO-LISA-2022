@@ -10,7 +10,8 @@ CONTAINS
 SUBROUTINE ho_voc(idnam,chem,bond,group,nring,brch,cut_off)
   USE keyparameter, ONLY: mxpd,mxnr,mecu,kohu,waru,ohu,mcou,mxcopd
   USE references, ONLY:mxlcod
-  USE keyflag, ONLY: wtopeflag,losar
+  USE keyflag, ONLY: losar
+  USE keyuser, ONLY: wtopefg
   USE toolbox, ONLY: addrx  
   USE searching, ONLY: srh5
   USE normchem, ONLY: stdchm
@@ -210,7 +211,7 @@ SUBROUTINE ho_voc(idnam,chem,bond,group,nring,brch,cut_off)
 ! write reaction rate for SAR assessment
     IF (losar) WRITE(ohu,'(1PE12.2,2x,a)') smk298, TRIM(chem)
 
-! Write k298 in the kicovi dataset
+! Write k298 in the kivoci dataset
     WRITE(kohu,'(a,2x,1pe10.2)') idnam, smk298
 
 ! if no reactions, warning message (expected for a few species only)
@@ -329,7 +330,7 @@ SUBROUTINE ho_voc(idnam,chem,bond,group,nring,brch,cut_off)
 ! =================================
 ! WRITE INFORMATION REQUIRED FOR OPERATOR
 ! =================================
-  IF (wtopeflag==1) THEN  
+  IF (wtopefg) THEN  
     nt2=0. ; ae3=0. ; a1=0. 
     opeloop2: DO i=1,nr
       IF (flag(i)/=0) THEN

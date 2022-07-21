@@ -14,7 +14,7 @@ CONTAINS
 SUBROUTINE rco3(idnam,chem,bond,group,brch,cut_off)
   USE keyparameter, ONLY: mxpd,mxnr,mecu,mxcopd
   USE references, ONLY:mxlcod
-  USE keyflag, ONLY: highnox
+  USE keyuser, ONLY: highnox
   USE database, ONLY: nkwrco3,kwrco3_arrh,kwrco3_stoi,kwrco3_rct,kwrco3_prd,kwrco3_com
   USE dictstacktool, ONLY: bratio
   USE normchem, ONLY: stdchm

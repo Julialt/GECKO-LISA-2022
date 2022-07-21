@@ -8,7 +8,7 @@ CONTAINS
 SUBROUTINE hoadd_arom(chem,bond,group,nca,nr,flag,tarrhc,pchem,coprod,nrxref,rxref)
   USE keyparameter, ONLY: mxcp,saru
   USE references, ONLY: mxlcod
-  USE keyflag, ONLY: sar_info
+  USE keyuser, ONLY: sar_info
   USE mapping, ONLY: gettrack
   USE reactool, ONLY: swap, rebond
   USE normchem, ONLY: stdchm
@@ -60,7 +60,7 @@ SUBROUTINE hoadd_arom(chem,bond,group,nca,nr,flag,tarrhc,pchem,coprod,nrxref,rxr
   kipso(1)=0.378E-12 ; kipso(2)=0. ; kipso(3)=89.
   frac(:)=0. ; arrhc(:)=0.
 
-  IF (sar_info==1) THEN                                         !! debug
+  IF (sar_info) THEN                                         !! debug
     WRITE(saru,*) '   '                                           !! debug
     WRITE(saru,*) '   '                                           !! debug
     WRITE(saru,*) '============== OH ADD AROM  ============== '   !! debug
@@ -127,7 +127,7 @@ SUBROUTINE hoadd_arom(chem,bond,group,nca,nr,flag,tarrhc,pchem,coprod,nrxref,rxr
         IF (p_sub(j)/=0) num_sub=num_sub+1
       ENDDO
       
-      IF (sar_info==1) THEN                                            !! debug
+      IF (sar_info) THEN                                            !! debug
         WRITE(saru,*) 'Nb subst:', num_sub                               !! debug
         DO j=1,2                                                       !! debug
           IF (o_sub(j)/=0) WRITE(saru,*) '-orto(',j,')=',group(o_sub(j)) !! debug
@@ -360,7 +360,7 @@ SUBROUTINE hoadd_arom(chem,bond,group,nca,nr,flag,tarrhc,pchem,coprod,nrxref,rxr
         ENDDO
       ENDDO Cd_loop
 
-      IF (sar_info==1) THEN                                     !! debug
+      IF (sar_info) THEN                                     !! debug
         WRITE(saru,*) 'addition sur group :',i                    !! debug
         WRITE(saru,*) 'k 298:', arrhc(1)*EXP(- arrhc(3)/298.)     !! debug
       ENDIF                                                     !! debug
@@ -425,7 +425,7 @@ SUBROUTINE hoadd_arom(chem,bond,group,nca,nr,flag,tarrhc,pchem,coprod,nrxref,rxr
       frac(2)=kadd1_298/sum298
       frac(3)=kadd2_298/sum298
 
-      IF (sar_info==1) WRITE(saru,*) 'frac(1:3) (%): ',INT(100*frac(:)) !! debug
+      IF (sar_info) WRITE(saru,*) 'frac(1:3) (%): ',INT(100*frac(:)) !! debug
 
 !--- WRITE NEW SPECIES
 

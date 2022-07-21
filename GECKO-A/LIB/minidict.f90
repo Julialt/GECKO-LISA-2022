@@ -1,5 +1,5 @@
 MODULE minidict
-  USE keyparameter, ONLY: mxlfo,mxlco  ! string length in the dictionnary
+  USE keyparameter, ONLY: mxlfo,mxlco  ! string length in the dictionary
   IMPLICIT NONE
 
   INTEGER, PARAMETER   :: mxminid=3000

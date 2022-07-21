@@ -221,7 +221,7 @@ END SUBROUTINE dhf
 SUBROUTINE dhf_thf(rname,chem,bond,group,nring,brch,cut_off)
   USE keyparameter, ONLY: mxnode,mxcp,mxnr,mxpd,mecu,dhfu
   USE references, ONLY:mxlcod
-  USE keyflag, ONLY: g2pfg, g2wfg
+  USE keyuser, ONLY: g2pfg, g2wfg
   USE mapping, ONLY: abcde_map
   USE reactool, ONLY: swap,rebond
   USE ringtool, ONLY: findring

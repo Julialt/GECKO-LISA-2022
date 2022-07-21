@@ -14,7 +14,7 @@ CONTAINS
 !=======================================================================
 SUBROUTINE loadc1mch()
   USE keyparameter, ONLY: mxlco,mxlfo,mxlfl
-  USE keyflag, ONLY: lopam
+  USE keyuser, ONLY: OFRfg
   USE dictstackdb, ONLY: nrec,ninorg,inorglst,dict,namlst
   USE sortstring, ONLY: sort_string ! to sort chemical
   IMPLICIT NONE
@@ -41,17 +41,17 @@ SUBROUTINE loadc1mch()
   filename="../DATA/dic_c1.dat"
   CALL rddict(filename,ninorg,iname,ichem,ifgrp,nrec,oname,ochem,ofgrp)
 
-  IF (lopam) THEN
-    filename="../DATA/dic_pam.dat"
+  IF (OFRfg) THEN
+    filename="../DATA/dic_OFR.dat"
     CALL rddict(filename,ninorg,iname,ichem,ifgrp,nrec,oname,ochem,ofgrp)
   ENDIF
 
   IF (nrec>SIZE(dict)) THEN
-    WRITE (6,*) 'error in loadc1mch, number of record exceed mni'
+    WRITE (6,*) 'error in loadc1mch, number of records exceeds mni'
     STOP "in rddict"
   ENDIF  
   IF (ninorg>SIZE(inorglst)) THEN
-    WRITE (6,*) 'error in loadc1mch, number of record exceed mni'
+    WRITE (6,*) 'error in loadc1mch, number of records exceeds mni'
     STOP "in loadc1mch"
   ENDIF  
 
@@ -73,8 +73,8 @@ SUBROUTINE loadc1mch()
   filename='../DATA/mch_inorg.dat'
   CALL rdfixmch(filename)
 
-  IF (lopam) THEN
-    filename='../DATA/mch_pam.dat'
+  IF (OFRfg) THEN
+    filename='../DATA/mch_OFR.dat'
     CALL rdfixmch(filename)
   ENDIF   
   
@@ -265,12 +265,12 @@ END SUBROUTINE rddict
 ! The reactions in "filename" are just read and copied in mechanism 
 ! given in the output (unit lout)  
 ! 
-! NOTE: Species names in filename may not exist in the dictionnary. 
+! NOTE: Species names in filename may not exist in the dictionary. 
 ! This point need to be adressed in future version.                           
 !=======================================================================
 SUBROUTINE rdfixmch(filename)
   USE keyparameter, ONLY: tfu1,mecu,refu
-  USE keyflag , ONLY: wrtref
+  USE keyuser, ONLY: wrtref
   USE references, ONLY: mxlcod   ! max length of comment's code in database
   USE rxwrttool, ONLY: count4rxn
   IMPLICIT NONE

@@ -1,0 +1,16 @@
+======================================
+ README for GECKO-A/INPUTS/cheminput*
+======================================
+Author: Julia Lee-Taylor, NCAR, July 2022
+
+The cheminput file gives the precursor list for a GECKO-A mechanism
+
+REFERENCE FILE: cheminput_reference 
+ - is a list of many species that have been successfully run in the GECKO-A generator
+ - attempts to list these species formulae written according to the GECKO-A standard
+
+USER INPUT FILE: cheminput.{name}
+ - contains a vertical list of precursors 
+ - formula starts in column 1
+ - a * in column 1 indicates a comment line
+ - the file must end with the statement "END" in columns 1:3

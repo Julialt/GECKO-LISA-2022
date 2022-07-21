@@ -2,6 +2,7 @@ MODULE outtool
 IMPLICIT NONE
 CONTAINS
 !SUBROUTINE dictelement()
+!SUBROUTINE diffusion_vol()
 !SUBROUTINE wrt_dict()
 !SUBROUTINE wrt_mxyield()
 !SUBROUTINE wrt_psat(myrflg,nanflg,simflg)
@@ -61,6 +62,109 @@ SUBROUTINE dictelement()
   
 END SUBROUTINE dictelement
 
+
+!=======================================================================
+! PURPOSE: Compute diffusion volume.
+! Molecular diffusion volume are estimated using the atomic diffusion 
+! volume and method described in "The Properties of Gases and Liquids", 
+! 5th Fifth Edition, McGraw-Hill 2004, B.E. Poling, J.M. Prausnitz, 
+! J.P. O’Connell.
+!=======================================================================
+SUBROUTINE diffusion_vol()
+  USE keyparameter, ONLY:mxnode,mxlgr,mxlfo,mxlco,tfu1,dirout
+  USE stdgrbond, ONLY: grbond
+  USE ringtool, ONLY: ring_data
+  USE dictstackdb, ONLY: nrec,dict,dctatom  !  dictionary data
+
+  CHARACTER(LEN=mxlgr) :: group(mxnode)
+  CHARACTER(LEN=mxlfo) :: chem
+  INTEGER :: bond(mxnode,mxnode)
+  INTEGER :: i,k,ngr,nvd
+  INTEGER :: dbflg, nring
+  REAL    :: vdmol
+
+  INTEGER,PARAMETER :: mxirg=6           ! max # of distinct rings 
+  INTEGER :: ndrg                        ! # of distinct rings
+  INTEGER :: trackrg(mxirg,SIZE(group))  ! (a,:)== track (node #) belonging ring a
+  LOGICAL :: lorgnod(mxirg,SIZE(group))  ! (a,b)==true if node b belong to ring a
+
+  ! atomic diffusion volumes
+  REAL,DIMENSION(4),PARAMETER :: vdatom = &
+    (/ 15.9, &     ! 1 => C
+       2.31, &     ! 2 => H
+       6.11, &     ! 3 => O
+       4.54 /)     ! 4 => N
+  ! correction for aromatic or heteroyclic ring       
+  REAL,PARAMETER :: vdring = -18.3  
+      
+  OPEN(tfu1,FILE=dirout//'vdiffusion.dat')
+  WRITE(tfu1,'(a)') '          ! number of records (species) in the file'
+  WRITE(tfu1,'(a)') '! Diffusion volume computed using the Fuller et al. approach,'
+  WRITE(tfu1,'(a)') '! as described in Poling et al. book (5th edition, 2004)'
+
+! ----------------------------
+! LOOP over the dictionary
+! ----------------------------
+  nvd=0
+! scroll the dictionary
+  recloop: DO i=2,nrec
+    chem=dict(i)(10:129)
+    IF (dctatom(i,2) < 2) CYCLE recloop           ! rm C1 and inorg. 
+    IF (dctatom(i,1) /=0) CYCLE recloop           ! rm radicals
+
+! check if '#' can be managed
+    IF (chem(1:1)/='C'.AND.chem(1:1)/='c'.AND.chem(1:2)/='-O' ) THEN
+      IF (chem(1:3)=='#mm' ) THEN
+        chem(1:)=chem(4:)
+      ELSE IF (chem(1:1)=='#' ) THEN
+        IF (INDEX(chem,'CH2OO')/=0)  CYCLE recloop  ! rm crieggee
+        chem(1:)=chem(2:)
+      ELSE
+        CYCLE recloop                               ! rm unexpected species 
+      ENDIF
+    ENDIF
+    
+! compute atomic diffusion volume (see reference in the header)
+    nvd = nvd + 1
+    vdmol = dctatom(i,2)*vdatom(1) + &  ! # of C
+            dctatom(i,3)*vdatom(2) + &  ! # of H
+            dctatom(i,4)*vdatom(4) + &  ! # of N
+            dctatom(i,5)*vdatom(3)      ! # of O
+
+! check for ring correction
+    CALL grbond(chem,group,bond,dbflg,nring)
+    IF (nring > 0) THEN
+
+      ! aromatic ring
+      IF  (INDEX(chem,'c') /= 0) THEN
+        vdmol = vdmol + vdring 
+
+      ! heterocyclic ring (i.e. -O in a ring)
+      ELSE IF (INDEX(chem,'-O') /= 0) THEN
+        ngr=COUNT(group/=' ')
+        grloop: DO k=1,ngr
+          IF (group(k)(1:2)=='-O') THEN
+            CALL ring_data(k,ngr,bond,group,ndrg,lorgnod,trackrg)
+            IF (ndrg > 0) THEN
+              vdmol = vdmol + vdring 
+              EXIT grloop
+            ENDIF
+          ENDIF
+        ENDDO grloop
+      ENDIF
+
+    ENDIF
+
+! write the diffusion volume
+    WRITE(tfu1,'(A1,A6,1x,f9.2)') 'G',dict(i)(1:6), vdmol
+  ENDDO recloop
+
+! write record and close file
+  OPEN(tfu1,POSITION='REWIND')  ;  WRITE(tfu1,'(i8$)') nvd
+  OPEN(tfu1,POSITION='APPEND')  ;  WRITE(tfu1,'(a4)') "END " 
+  CLOSE(tfu1)
+END SUBROUTINE diffusion_vol
+
 ! ======================================================================
 ! PURPOSE: write the dictionary in the corresponding outputs files, i.e.
 ! the "gas phase species" file and the actual dictionary of species. 
@@ -83,8 +187,8 @@ SUBROUTINE wrt_dict()
 
 ! write inorganic species
   DO i=1,ninorg
+    WRITE(dctu,'(a, f5.1,9(i3))') inorglst(i),wmass, (i0,j=1,9)
     WRITE(gasu,'(A1,A6,10X,A4)') "G",inorglst(i),"/1./"
-    WRITE(dctu,'(a,f5.1,9(i3))') inorglst(i),wmass, (i0,j=1,9)
   ENDDO
 
   recloop: DO i=2, nrec
@@ -92,15 +196,12 @@ SUBROUTINE wrt_dict()
 ! write C1 species
     IF (dctatom(i,2) < 2) THEN
       WRITE(gasu,'(A1,A6,10X,A1,F6.1,A1)') "G",dict(i),"/",dctmw(i) ,"/" 
-! generation number INCLUDED AS PART OF DICT
-      WRITE(dctu,'(a,f5.1,9(i3))') dict(i),dctmw(i),(dctatom(i,j),j=1,9)
-
+      WRITE(dctu,'(a, f5.1,9(i3))') dict(i),dctmw(i), (dctatom(i,j),j=1,9)
       CYCLE recloop   
     ENDIF
     
 ! write the species in the dictionary
     WRITE(gasu,'(A1,A6,10X,A1,F6.1,A1)') "G",dict(i),"/",dctmw(i) ,"/"
-! generation number IS INCLUDED AS PART OF DICT
     WRITE(dctu,'(a,f5.1,9(i3))') dict(i),dctmw(i),(dctatom(i,j),j=1,9)
 
   ENDDO recloop
@@ -137,7 +238,7 @@ SUBROUTINE wrt_ro2()
     filename=dirout//'pero'//ADJUSTL(filename)
     filename=filename(1:LEN_TRIM(filename))//'.dat'
     OPEN(40+i,FILE=filename)
-    WRITE(40+i,'(a)') '          ! number of record (RO2 species) in the file'
+    WRITE(40+i,'(a)') '          ! number of records (RO2 species) in the file'
   ENDDO
 
 
@@ -289,7 +390,7 @@ SUBROUTINE wrt_psat(myrflg,nanflg,simflg)
 ! write vapor pressure using myrdal SAR
   IF (myrflg==1) THEN
     OPEN(tfu1,FILE=dirout//'pvap.myr.dat')
-    WRITE(tfu1,'(a)') '          ! number of record (species) in the file'
+    WRITE(tfu1,'(a)') '          ! number of records (species) in the file'
     WRITE(tfu1,'(a)') '! data generated using MYRDAL SAR'
     WRITE(tfu1,'(a)') '! 1st line give the T used to estimate vapor' 
     WRITE(tfu1,'(a)') '! pressure (1st) and evaporation heat (2nd)' 
@@ -299,7 +400,7 @@ SUBROUTINE wrt_psat(myrflg,nanflg,simflg)
 ! write vapor pressure using NANOONAL SAR
   IF (nanflg==1) THEN
     OPEN(tfu2,FILE=dirout//'pvap.nan.dat')
-    WRITE(tfu2,'(a)') '          ! number of record (species) in the file'
+    WRITE(tfu2,'(a)') '          ! number of records (species) in the file'
     WRITE(tfu2,'(a)') '! data generated using NANOONAL SAR'
     WRITE(tfu2,'(a)') '! 1st line give the T used to estimate vapor' 
     WRITE(tfu2,'(a)') '! pressure (1st) and evaporation heat (2nd)' 
@@ -309,7 +410,7 @@ SUBROUTINE wrt_psat(myrflg,nanflg,simflg)
 ! write vapor pressure using SIMPOL SAR
   IF (simflg==1) THEN
     OPEN(tfu3,FILE=dirout//'pvap.sim.dat')
-    WRITE(tfu3,'(a)') '          ! number of record (species) in the file'
+    WRITE(tfu3,'(a)') '          ! number of records (species) in the file'
     WRITE(tfu3,'(a)') '! data generated using SIMPOL SAR'
     WRITE(tfu3,'(a)') '! 1st line give the T used to estimate vapor' 
     WRITE(tfu3,'(a)') '! pressure (1st) and evaporation heat (2nd)' 
@@ -317,7 +418,7 @@ SUBROUTINE wrt_psat(myrflg,nanflg,simflg)
   ENDIF
 
 ! ----------------------------
-! LOOP over the dictionnary
+! LOOP over the dictionary
 ! ----------------------------
 ! scroll the dictionary
   recloop: DO i=2,nrec
@@ -411,7 +512,7 @@ SUBROUTINE wrt_henry()
   OPEN(tfu1,FILE=dirout//'henry_gromhe.dat')
   WRITE(tfu1,'(a)') '! data generated using GROMHE SAR'
 
-! scroll the dictionnary
+! scroll the dictionary
   recloop: DO i=2, nrec
     chem=dict(i)(10:129)
     IF (dctatom(i,1) /= 0) CYCLE recloop  ! remove radicals
@@ -460,7 +561,7 @@ SUBROUTINE wrt_depo()
 ! open file
   OPEN(tfu1, FILE=dirout//'henry.dat')
 
-! scroll the dictionnary
+! scroll the dictionary
   recloop: DO i=2, nrec
     chem=dict(i)(10:129)
     IF (dcthenry(i) /= 0.) THEN
@@ -494,7 +595,7 @@ SUBROUTINE wrt_heatf()
 ! open file
   OPEN(tfu1, FILE=dirout//'dHeatf.dat')
 
-! scroll the dictionnary
+! scroll the dictionary
   recloop: DO i=2, nrec
     IF (dctatom(i,1) /= 0) CYCLE recloop   ! rm radicals
     IF (dctatom(i,2) < 2) CYCLE recloop    ! rm C1
@@ -531,10 +632,10 @@ SUBROUTINE wrt_Tg()
 ! -----------
   nspe=0
   OPEN(tfu1, FILE=dirout//'Tg.dat')
-  WRITE(tfu1,'(a)') '          ! number of record (species) in the file'
+  WRITE(tfu1,'(a)') '          ! number of records (species) in the file'
   
 ! ----------------------------
-! LOOP over the dictionnary
+! LOOP over the dictionary
 ! ----------------------------
   recloop: DO i=2,nrec
     IF (dctatom(i,1)/= 0) CYCLE recloop   ! rm radicals
@@ -585,60 +686,6 @@ SUBROUTINE wrt_Tg()
 END SUBROUTINE wrt_Tg
 
 ! ======================================================================
-! PURPOSE: compute and write the diffusion volume
-! for the partitioning species in the dictionary.
-! Atomic diffusion volumes for C,H,O,N units=(none):
-! Reference: Reid, Prausnitzs & Poling, The properties of liquids and gases,
-! McGraw-Hill inc., New York (1987)
-! ======================================================================
-SUBROUTINE wrt_difvol()
-  USE keyparameter, ONLY: mxlfo,mxlgr,mxnode,tfu1,dirout
-  USE dictstackdb, ONLY: nrec,dict,dctatom,dctmw
-  USE stdgrbond, ONLY: grbond
-  USE atomtool, ONLY: getatoms
-  IMPLICIT NONE
-
-  CHARACTER(LEN=mxlgr) :: group(mxnode)
-  CHARACTER(LEN=mxlfo) :: chem
-  INTEGER :: bond(mxnode,mxnode)
-  INTEGER :: i,ic,ih,in,io,ir,is,ifl,ibr,icl
-  INTEGER :: dbflg, nring
-  REAL    :: vdmol ! diffusion volumn of molecule
-  REAL,PARAMETER :: vdatom(4) =[15.9,2.31,6.11,4.54]
-
-! open file
-  OPEN(tfu1, FILE=dirout//'difvol.dat')
-
-! scroll the dictionary
-  recloop: DO i=2, nrec
-    IF (dctatom(i,1) /= 0) CYCLE recloop   ! rm radicals
-    IF (dctatom(i,2) < 2) CYCLE recloop    ! rm C1
-    IF (dctmw(i) ==0. ) CYCLE recloop      ! rm special species
-    chem=dict(i)(10:129)
-
-    IF (chem(1:1)/='C'.AND.chem(1:1)/='c'.AND.chem(1:2)/='-O' ) THEN
-      IF      (chem(1:3)=='#mm') THEN ; chem(1:)=chem(4:)
-      ELSE IF (chem(1:1)=='#'  ) THEN ; chem(1:)=chem(2:)
-      ENDIF
-    ENDIF
-
-  ! calculate vdmol for chem
-   CALL getatoms(chem,ic,ih,in,io,ir,is,ifl,ibr,icl)
-   vdmol = ic*vdatom(1) + ih*vdatom(2) + io*vdatom(3) + in*vdatom(4)
-
-! if chem = aromatic or heteroyclic ring, subtract 18.3
-   CALL grbond(chem,group,bond,dbflg,nring)
-    IF((nring.GT.0).AND.  &
-      (INDEX(chem,'c').GT.0.OR.INDEX(chem,'-O').GT.0)) THEN
-       vdmol = vdmol - 18.3
-    ENDIF
-
-    WRITE(tfu1,'(A1,A6,2x,f10.2)') 'G',dict(i)(1:6),vdmol
-  ENDDO recloop
-  WRITE(tfu1,'(a4)') 'END '  ;  CLOSE(tfu1)
-END SUBROUTINE wrt_difvol
-
-! ======================================================================
 ! PURPOSE: Write size of the mechanism
 ! ======================================================================
 SUBROUTINE wrt_size()
@@ -653,20 +700,20 @@ SUBROUTINE wrt_size()
   OPEN(tfu1, FILE=dirout//'size.dum')
   WRITE(tfu1,'(a)') "SIZE     ! as generated + 1"
 
-  WRITE(tfu1,'(i7,a)') totspecies+1, "  ! total number of species"        ! 1
-  WRITE(tfu1,'(i7,a)') nrx_all+1,    "  ! total number of reactions"      ! 2
-  WRITE(tfu1,'(i7,a)') nrx_hv+1,     "  ! HV reactions"                   ! 3
-  WRITE(tfu1,'(i7,a)') nrx_tb+1,     "  ! third body M reactions"         ! 4
-  WRITE(tfu1,'(i7,a)') nrx_o2+1,     "  ! O2 reactions"                   ! 5
+  WRITE(tfu1,'(i8,a)') totspecies+1, "  ! total number of species"        ! 1
+  WRITE(tfu1,'(i8,a)') nrx_all+1,    "  ! total number of reactions"      ! 2
+  WRITE(tfu1,'(i8,a)') nrx_hv+1,     "  ! HV reactions"                   ! 3
+  WRITE(tfu1,'(i8,a)') nrx_tb+1,     "  ! third body M reactions"         ! 4
+  WRITE(tfu1,'(i8,a)') nrx_o2+1,     "  ! O2 reactions"                   ! 5
 
-  WRITE(tfu1,'(i7,a)') nrx_extra+1,  "  ! EXTRA reactions"                ! 6
-  WRITE(tfu1,'(i7,a)') nrx_meo2+1,   "  ! CH3O2/RO2 reactions"            ! 7
-  WRITE(tfu1,'(i7,a)') nrx_fo+1,     "  ! fall off reactions"             ! 8
-  WRITE(tfu1,'(i7,a)') nrx_isom+1,   "  ! R(O.) isomerization reactions"  ! 9
-  WRITE(tfu1,'(i7,a)') nrx_ain+1,    "  ! gas <-> part. equilibrium"      !10
+  WRITE(tfu1,'(i8,a)') nrx_extra+1,  "  ! EXTRA reactions"                ! 6
+  WRITE(tfu1,'(i8,a)') nrx_meo2+1,   "  ! CH3O2/RO2 reactions"            ! 7
+  WRITE(tfu1,'(i8,a)') nrx_fo+1,     "  ! fall off reactions"             ! 8
+  WRITE(tfu1,'(i8,a)') nrx_isom+1,   "  ! R(O.) isomerization reactions"  ! 9
+  WRITE(tfu1,'(i8,a)') nrx_ain+1,    "  ! gas <-> part. equilibrium"      !10
 
-  WRITE(tfu1,'(i7,a)') nrx_win+1,    "  ! gas <-> wall equilibrium"       !11
-  WRITE(tfu1,'(i7,a)') nrx_tabcf+1,  "  ! variable stoi. coef. reactions" !13
+  WRITE(tfu1,'(i8,a)') nrx_win+1,    "  ! gas <-> wall equilibrium"       !11
+  WRITE(tfu1,'(i8,a)') nrx_tabcf+1,  "  ! variable stoi. coef. reactions" !13
   CLOSE(tfu1)
 
 END SUBROUTINE wrt_size

@@ -246,8 +246,8 @@ SUBROUTINE getnangrp(chem,group,bond,nring,rjg,nangroup,nbatom)
   INTEGER :: cdtracklen(mxtrk)         ! length of the ith track         
 
   INTEGER :: rgrec(mxcp,SIZE(group))     ! record of all rings (include duplicates)
-  INTEGER :: nrec                        ! # of record in rgrec
-  INTEGER :: lrec(mxcp)                  ! length o the record
+  INTEGER :: nrec                        ! # of records in rgrec
+  INTEGER :: lrec(mxcp)                  ! length of the record
   INTEGER :: fgrec(mxcp)                 ! record flag (duplicate or not)
   INTEGER,PARAMETER :: mxirg=6           ! max # of distinct rings 
   INTEGER :: ndrg                        ! # of distinct rings
